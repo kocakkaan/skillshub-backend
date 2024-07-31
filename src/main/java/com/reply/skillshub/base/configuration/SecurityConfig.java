@@ -1,4 +1,4 @@
-package com.reply.skillshub.configuration;
+package com.reply.skillshub.base.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,7 +37,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(expressionInterceptUrlRegistry ->
                         expressionInterceptUrlRegistry
-                                .requestMatchers("auth/login", "/error", "signup").permitAll()
+                                .requestMatchers("auth/login", "/error", "auth/signup").permitAll()
                                 .anyRequest().authenticated()
                                 )
                 .csrf(AbstractHttpConfigurer::disable);

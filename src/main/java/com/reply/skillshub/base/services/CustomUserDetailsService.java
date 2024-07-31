@@ -1,5 +1,6 @@
-package com.reply.skillshub.services;
+package com.reply.skillshub.base.services;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,10 +29,10 @@ public class CustomUserDetailsService implements UserDetailsService {
                  .orElseThrow(() ->
                          new UsernameNotFoundException("User not found with username or email: "+ usernameOrEmail));
 
-        Set<GrantedAuthority> authorities = user
-                .getUserRole()
+        Set<GrantedAuthority> authorities = List.of(user
+                .getUserRole())
                 .stream()
-                .map((role) -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toSet());
+                .map((role) -> new SimpleGrantedAuthority(role.name())).collect(Collectors.toSet());
 
         return new org.springframework.security.core.userdetails.User(user.getEmail(),
                 user.getPassword(),

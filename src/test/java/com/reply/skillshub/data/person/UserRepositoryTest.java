@@ -1,6 +1,7 @@
 package com.reply.skillshub.data.person;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,30 +27,30 @@ import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsA
 public class UserRepositoryTest extends BaseRepositoryTest {
 
     @Autowired
-    private UserRepository UserRepository;
+    private UserRepository userRepository;
 
     @Test
     void testSuccesfullSave() {
-        User savedPerson = UserRepository.save(returnUserWithEmail());
+        User savedPerson = userRepository.save(returnUserWithEmail());
 
         Assertions.assertThat(savedPerson.getId()).isNotNull();
     }
 
     @Test
     void throwsErrorWhenEmailNotUnique() {
-        UserRepository.save(returnUserWithEmail());
+        userRepository.save(returnUserWithEmail());
         Assertions
             .assertThatExceptionOfType(DataIntegrityViolationException.class)
-            .isThrownBy(() -> UserRepository.save(returnUserWithEmail()));
+            .isThrownBy(() -> userRepository.save(returnUserWithEmail()));
     }
 
     @Test
     void testPersonWithEmailAndLanguage() {
         User person = returnUserWithEmail();
         person.getSpeaks().add(returnSpeaks());
-        UserRepository.save(person);
+        userRepository.save(person);
 
-        User foundPerson = UserRepository.findByEmail(person.getEmail()).get();
+        User foundPerson = userRepository.findByEmail(person.getEmail()).get();
         Assertions.assertThat(foundPerson.getEmail()).isEqualTo(person.getEmail());
     }
 
@@ -61,11 +62,21 @@ public class UserRepositoryTest extends BaseRepositoryTest {
         speaks.setLanguage(language);
         speaks.setNative(true);
         person.getSpeaks().add(speaks);
-        UserRepository.save(person);
+        userRepository.save(person);
 
-        List<User> foundList = UserRepository.findBySpeaksLanguageLanguageCode(language.getLanguageCode());
+        List<User> foundList = userRepository.findBySpeaksLanguageLanguageCode(language.getLanguageCode());
         
         Assertions.assertThat(foundList.size()).isEqualTo(1);
+    }
+
+    @Test
+    void testFindByEmail() {
+        User userToSave = returnUserWithEmail();
+        userRepository.save(userToSave);
+
+        Optional<User> foundUser = userRepository.findByEmail(userToSave.getEmail());
+
+        Assertions.assertThat(foundUser.get().getEmail()).isEqualTo(userToSave.getEmail());
     }
 
     User returnUserWithEmail() {
