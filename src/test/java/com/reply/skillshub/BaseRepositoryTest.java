@@ -10,6 +10,7 @@ import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.Neo4jContainer;
+import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsAutoConfiguration;
@@ -19,18 +20,19 @@ import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsA
 @ImportAutoConfiguration(MigrationsAutoConfiguration.class)
 public class BaseRepositoryTest {
 
-    private static Neo4jContainer<?> neo4jContainer;
+	// @Container
+    // private static Neo4jContainer<?> neo4jContainer = new Neo4jContainer<>("neo4j:5.21.0").withAdminPassword("somePassword");
+
+	private static Neo4jContainer<?> neo4jContainer;
 
 	@BeforeAll
 	static void initializeNeo4j() {
-		neo4jContainer = new Neo4jContainer<>()
+		if (neo4jContainer == null) {
+			neo4jContainer = new Neo4jContainer<>("neo4j:5.21.0")
 			.withAdminPassword("somePassword");
-		neo4jContainer.start();
-	}
+			neo4jContainer.start();
+		}
 
-	@AfterAll
-	static void stopNeo4j() {
-		neo4jContainer.close();
 	}
 
 	@BeforeEach

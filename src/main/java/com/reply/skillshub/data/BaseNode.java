@@ -7,18 +7,21 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import com.reply.skillshub.data.person.Person;
+import com.reply.skillshub.data.user.User;
 
+import lombok.Data;
+
+@Data
 public class BaseNode {
 
     @LastModifiedDate
     Date lastModifiedDate;
 
     @LastModifiedBy
-    Person lastModifiedBy;
+    User lastModifiedBy;
 
     @CreatedBy
-    Person createdBy;
+    User createdBy;
 
     @CreatedDate
     Date createdDate;

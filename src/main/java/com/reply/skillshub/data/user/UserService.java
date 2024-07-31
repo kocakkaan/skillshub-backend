@@ -1,4 +1,4 @@
-package com.reply.skillshub.data.person;
+package com.reply.skillshub.data.user;
 
 import java.util.Set;
 
@@ -11,13 +11,13 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class PersonService {
+public class UserService {
     
-    private final PersonRepository personRepository;
+    private final UserRepository personRepository;
     private final Validator validator;
 
-    Person save(Person person) {
-        Set<ConstraintViolation<Person>> violations = validator.validate(person);
+    public User save(User person) {
+        Set<ConstraintViolation<User>> violations = validator.validate(person);
         if (!violations.isEmpty()) {
             // Handle validation errors (e.g., throw an exception, log errors, etc.)
             throw new IllegalArgumentException("Validation failed: " + violations);
