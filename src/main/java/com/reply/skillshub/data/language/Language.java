@@ -3,11 +3,8 @@ package com.reply.skillshub.data.language;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 
-import com.neovisionaries.i18n.CountryCode;
 import com.neovisionaries.i18n.LanguageAlpha3Code;
 import com.neovisionaries.i18n.LanguageCode;
-import com.neovisionaries.i18n.LocaleCode;
-
 import lombok.Data;
 
 @Node

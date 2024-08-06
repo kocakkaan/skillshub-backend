@@ -41,6 +41,11 @@
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
@@ -77,6 +82,13 @@
 			<version>0.2.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.instancio</groupId>
+			<artifactId>instancio-junit</artifactId>
+			<version>5.0.1</version>
+			<scope>test</scope>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -101,6 +113,26 @@
 			<groupId>com.neovisionaries</groupId>
 			<artifactId>nv-i18n</artifactId>
 			<version>1.29</version>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>spring-mock-mvc</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.microsoft.graph/microsoft-graph -->
+		<dependency>
+			<groupId>com.microsoft.graph</groupId>
+			<artifactId>microsoft-graph</artifactId>
+			<version>5.42.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.azure/azure-identity -->
+		<dependency>
+			<groupId>com.azure</groupId>
+			<artifactId>azure-identity</artifactId>
+			<version>1.13.2</version>
+			<scope>compile</scope>
 		</dependency>
 		
 		<!-- To bring up a Neo4j instance during test. -->

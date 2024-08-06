@@ -6,23 +6,13 @@ import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
-import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.language.bm.Lang;
-import com.neovisionaries.i18n.CountryCode;
-import com.neovisionaries.i18n.LanguageAlpha3Code;
 import com.neovisionaries.i18n.LanguageCode;
-import com.neovisionaries.i18n.LocaleCode;
 import com.reply.skillshub.BaseRepositoryTest;
 import com.reply.skillshub.data.language.Language;
 import com.reply.skillshub.data.speaks.Speaks;
 import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserRepository;
-
-import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsAutoConfiguration;
 
 public class UserRepositoryTest extends BaseRepositoryTest {
 

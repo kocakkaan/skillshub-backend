@@ -37,7 +37,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(expressionInterceptUrlRegistry ->
                         expressionInterceptUrlRegistry
-                                .requestMatchers("auth/login", "/error", "auth/signup").permitAll()
+                                .requestMatchers("/auth/login", "/error", "/auth/signup", "/auth/confirmation/*").permitAll()
                                 .anyRequest().authenticated()
                                 )
                 .csrf(AbstractHttpConfigurer::disable);
