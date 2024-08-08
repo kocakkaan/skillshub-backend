@@ -14,14 +14,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 import org.instancio.Instancio;
 
 import com.reply.skillshub.base.exceptionhandling.SkillhubExceptionHandler;
 import com.reply.skillshub.openapi.model.Error;
-import com.reply.skillshub.openapi.model.ErrorDetail;
 import com.reply.skillshub.openapi.model.SignUpRequest;
 
 @WebMvcTest(AuthentificationController.class)

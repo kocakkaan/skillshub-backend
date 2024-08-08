@@ -35,4 +35,8 @@ public class UserService {
     public Optional<User> findUserByConfirmationToken(String token) {
         return userRepository.findByConfirmationToken(token);
     }
+
+    public Optional<User> findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 }

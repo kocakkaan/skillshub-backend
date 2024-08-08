@@ -110,6 +110,23 @@
 			<version>2.0.3</version>
 		</dependency>
 		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.2</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.2</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.11.2</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.neovisionaries</groupId>
 			<artifactId>nv-i18n</artifactId>
 			<version>1.29</version>
@@ -174,6 +191,7 @@
 				<generateModelTests>false</generateModelTests>
 				<generateSupportingFiles>false</generateSupportingFiles>
 				<generateApiTests>false</generateApiTests>
+				<skipValidateSpec>true</skipValidateSpec>
 				<configOptions>
 					<interfaceOnly>true</interfaceOnly>
 					<useTags>true</useTags>
@@ -181,6 +199,7 @@
 					<useSpringBoot3>true</useSpringBoot3>
 					<skipDefaultInterface>true</skipDefaultInterface>
 					<dateLibrary>java8</dateLibrary>
+					<skipValidateSpec>true</skipValidateSpec>
 				</configOptions>
             </configuration>
             <executions>

@@ -45,6 +45,15 @@ public class UserRepositoryTest extends BaseRepositoryTest {
     }
 
     @Test
+    void testPersonWithEmailAndWithoutLanguage() {
+        User person = returnUserWithEmail();
+        userRepository.save(person);
+
+        User foundPerson = userRepository.findByEmail(person.getEmail()).get();
+        Assertions.assertThat(foundPerson.getEmail()).isEqualTo(person.getEmail());
+    }
+
+    @Test
     void testFindByLanguagesLanguageCode() {
         User person = returnUserWithEmail();
         Language language = returnLanguage();

@@ -3,8 +3,12 @@ package com.reply.skillshub.base.authentification;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.RememberMeAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,22 +19,47 @@ import com.reply.skillshub.data.EmailRequest;
 import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.data.userrole.UserRole;
+import com.reply.skillshub.openapi.model.LoginRequest;
+import com.reply.skillshub.openapi.model.LoginResponse;
 import com.reply.skillshub.openapi.model.SignUpRequest;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class AuthentificationService {
 
     @Value("${skillhub.server}") 
     private String server;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private EmailService emailService;
+    private final EmailService emailService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final JwtService jwtService;
+
+    public LoginResponse loginUser(LoginRequest loginRequest) {
+        		Authentication authenticationRequest =
+			UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.getEmail(), loginRequest.getAccessCode());
+		Authentication authenticationResponse =
+			this.authenticationManager.authenticate(authenticationRequest);
+        var principal = (org.springframework.security.core.userdetails.User) authenticationResponse.getPrincipal();
+
+        User user = userService.findUserByEmail(principal.getUsername()).get();
+        var jwt = jwtService.createJwtToken(principal.getUsername());
+
+        SecurityContextHolder.getContext().setAuthentication(new RememberMeAuthenticationToken(jwt, principal, principal.getAuthorities()));
+        
+        return new LoginResponse()
+                        .id(user.getId())
+                        .jwt(jwt)
+                        .role(user.getUserRole().name());
+    }
+
+
 
     public void signUpUser(SignUpRequest signUpRequest) {
         if (!signUpRequest.getAccessCode().equals(signUpRequest.getAccessCodeConfirmed())) {
