@@ -31,7 +31,7 @@ public class AuthentificationControllerTest {
 	private MockMvc mockMvc;
 
 	@MockBean
-	private AuthentificationServiceTest service;
+	private AuthentificationService service;
 
     @Test
     public void test_valid_signup_request() {
