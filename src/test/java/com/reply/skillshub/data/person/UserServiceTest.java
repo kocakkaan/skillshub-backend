@@ -6,11 +6,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
 import com.reply.skillshub.BaseRepositoryTest;
 import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.data.userrole.UserRole;
 
+@SpringBootTest
 public class UserServiceTest extends BaseRepositoryTest {
 
     @Autowired
@@ -58,6 +61,7 @@ public class UserServiceTest extends BaseRepositoryTest {
         personToSave1.setLastName("LastName");
         personToSave1.setEmail("maurits.de.roover@reply.com");
         personToSave1.setUserRole(UserRole.ADMIN);
+        personToSave1.setPassword("test");
         return personToSave1;
     }
 

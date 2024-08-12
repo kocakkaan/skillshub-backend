@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import com.neovisionaries.i18n.LanguageCode;
 import com.reply.skillshub.BaseRepositoryTest;
@@ -14,6 +15,7 @@ import com.reply.skillshub.data.speaks.Speaks;
 import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserRepository;
 
+@DataNeo4jTest
 public class UserRepositoryTest extends BaseRepositoryTest {
 
     @Autowired
