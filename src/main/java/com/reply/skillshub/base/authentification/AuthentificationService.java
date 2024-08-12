@@ -21,7 +21,7 @@ import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.data.userrole.UserRole;
 import com.reply.skillshub.openapi.model.LoginRequest;
 import com.reply.skillshub.openapi.model.LoginResponse;
-import com.reply.skillshub.openapi.model.SignUpRequest;
+import com.reply.skillshub.openapi.model.SignupRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -61,12 +61,12 @@ public class AuthentificationService {
 
 
 
-    public void signUpUser(SignUpRequest signUpRequest) {
-        if (!signUpRequest.getAccessCode().equals(signUpRequest.getAccessCodeConfirmed())) {
+    public void signUpUser(SignupRequest signupRequest) {
+        if (!signupRequest.getAccessCode().equals(signupRequest.getAccessCodeConfirmed())) {
             throw new ValidationException("Passwords must match");
         }
 
-        User newUser = convertSignUpRequestToUser(signUpRequest);
+        User newUser = convertSignupRequestToUser(signupRequest);
 
         newUser.setConfirmationToken(UUID.randomUUID().toString());
 
@@ -121,12 +121,12 @@ public class AuthentificationService {
         return emailLink.toString();     
     }
 
-    private User convertSignUpRequestToUser(SignUpRequest signUpRequest) {
+    private User convertSignupRequestToUser(SignupRequest signupRequest) {
         User user = new User();
-        user.setFirstName(signUpRequest.getFirstName());
-        user.setLastName(signUpRequest.getLastName());
-        user.setEmail(signUpRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(signUpRequest.getAccessCode()));
+        user.setFirstName(signupRequest.getFirstName());
+        user.setLastName(signupRequest.getLastName());
+        user.setEmail(signupRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(signupRequest.getAccessCode()));
         user.setUserRole(UserRole.ADMIN);
         return user;
     }

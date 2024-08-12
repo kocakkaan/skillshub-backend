@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.reply.skillshub.openapi.api.AuthentificationApi;
 import com.reply.skillshub.openapi.model.LoginRequest;
 import com.reply.skillshub.openapi.model.LoginResponse;
-import com.reply.skillshub.openapi.model.SignUpRequest;
+import com.reply.skillshub.openapi.model.SignupRequest;
 
 @RestController
 public class AuthentificationController implements AuthentificationApi {
@@ -18,8 +18,8 @@ public class AuthentificationController implements AuthentificationApi {
     }
 
     @Override
-    public ResponseEntity<String> authSignupPost(SignUpRequest signUpRequest) {
-        authentificationService.signUpUser(signUpRequest);
+    public ResponseEntity<String> authSignupPost(SignupRequest signupRequest) {
+        authentificationService.signUpUser(signupRequest);
         return ResponseEntity.ok("User registered successfully");
     }
 

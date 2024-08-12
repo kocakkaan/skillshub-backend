@@ -20,7 +20,7 @@ import org.instancio.Instancio;
 
 import com.reply.skillshub.base.exceptionhandling.SkillhubExceptionHandler;
 import com.reply.skillshub.openapi.model.Error;
-import com.reply.skillshub.openapi.model.SignUpRequest;
+import com.reply.skillshub.openapi.model.SignupRequest;
 
 @WebMvcTest(AuthentificationController.class)
 @ContextConfiguration(classes = {AuthentificationController.class, SkillhubExceptionHandler.class})
@@ -35,12 +35,12 @@ public class AuthentificationControllerTest {
 
     @Test
     public void test_valid_signup_request() {
-        SignUpRequest signUpRequest = Instancio.create(SignUpRequest.class);
-        signUpRequest.setAccessCodeConfirmed(signUpRequest.getAccessCode());
+        SignupRequest signupRequest = Instancio.create(SignupRequest.class);
+        signupRequest.setAccessCodeConfirmed(signupRequest.getAccessCode());
 
         given()
             .mockMvc(mockMvc)
-            .body(signUpRequest)
+            .body(signupRequest)
             .contentType("application/json")
             .when().post("/auth/signup")
             .then().assertThat().statusCode(200);
@@ -48,11 +48,11 @@ public class AuthentificationControllerTest {
 
     @ParameterizedTest
     @MethodSource("requiredParams")
-    public void test_invalid_signup_request(SignUpRequest signUpRequest) {
+    public void test_invalid_signup_request(SignupRequest signupRequest) {
 
         var errorMessage = given()
             .mockMvc(mockMvc)
-            .body(signUpRequest)
+            .body(signupRequest)
             .contentType("application/json")
             .when().post("/auth/signup")
             .as(Error.class);
@@ -62,11 +62,11 @@ public class AuthentificationControllerTest {
 
     private static Stream<Arguments> requiredParams() {
         return Stream.of(
-            Arguments.of(Instancio.create(SignUpRequest.class).accessCode(null)),
-            Arguments.of(Instancio.create(SignUpRequest.class).accessCodeConfirmed(null)),
-            Arguments.of(Instancio.create(SignUpRequest.class).email(null)),
-            Arguments.of(Instancio.create(SignUpRequest.class).firstName(null)),
-            Arguments.of(Instancio.create(SignUpRequest.class).lastName(null))
+            Arguments.of(Instancio.create(SignupRequest.class).accessCode(null)),
+            Arguments.of(Instancio.create(SignupRequest.class).accessCodeConfirmed(null)),
+            Arguments.of(Instancio.create(SignupRequest.class).email(null)),
+            Arguments.of(Instancio.create(SignupRequest.class).firstName(null)),
+            Arguments.of(Instancio.create(SignupRequest.class).lastName(null))
         );
     }
 }
