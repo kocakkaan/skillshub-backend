@@ -11,6 +11,7 @@ import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
 import com.reply.skillshub.data.speaks.Speaks;
 import com.reply.skillshub.data.userrole.UserRole;
+import com.reply.skillshub.data.company.Company;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -48,5 +49,8 @@ public class User {
 
     @Relationship(type = "SPEAKS")
     private List<Speaks> speaks = new ArrayList<>();
+
+    @Relationship(type = "WORKS_FOR")
+    private List<Company> companies = new ArrayList<>();
     
 }
