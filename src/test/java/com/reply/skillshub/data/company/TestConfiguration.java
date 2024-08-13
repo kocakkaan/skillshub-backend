@@ -1,0 +1,20 @@
+package com.reply.skillshub.data.company;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+
+@Configuration
+public class TestConfiguration {
+
+    @Bean
+    Validator validator() {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        return factory.getValidator();
+    }
+
+    
+}
