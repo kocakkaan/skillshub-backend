@@ -24,8 +24,7 @@ public class CompanyController implements CompanyApi {
 
     @Override
     public ResponseEntity<Company> userMeCompanyPost(CreateCompanyRequest createCompanyRequest) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'userMeCompanyPost'");
+        return ResponseEntity.ok(companyControllerService.createCompany(createCompanyRequest));
     }
     
 }

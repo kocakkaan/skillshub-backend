@@ -12,6 +12,7 @@ import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
 import com.reply.skillshub.data.user.User;
 
+import jakarta.validation.constraints.AssertFalse;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
@@ -28,4 +29,9 @@ public class Company {
 
     @Relationship(type = "WORKS_FOR", direction = Direction.INCOMING)
     private List<User> employees = new ArrayList<>();
+    
+    @AssertFalse
+    public boolean isEmployeesEmpty() {
+        return employees.isEmpty();
+    }
 }
