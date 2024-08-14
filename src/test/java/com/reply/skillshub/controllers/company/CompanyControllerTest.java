@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.reply.skillshub.base.exceptionhandling.SkillhubExceptionHandler;
 import com.reply.skillshub.base.exceptionhandling.exeptions.NoCompanyFound;
 import com.reply.skillshub.openapi.model.Company;
+import com.reply.skillshub.openapi.model.CreateCompanyRequest;
 
 import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.response.MockMvcResponse;
@@ -57,6 +58,32 @@ public class CompanyControllerTest {
 
         Assertions.assertNotSame(0, response.as(Company[].class).length);
         
+    }
+
+    @Test
+    public void shouldReturnAlistWithResponse200WhenSavedSuccessfully() {
+        doReturn(Instancio.createList(Company.class)).when(companyControllerService).getCompaniesForCurrentUser();
+
+        MockMvcResponse response = given()
+            .mockMvc(mockMvc)
+            .contentType(ContentType.JSON)
+            .body(Instancio.create(CreateCompanyRequest.class))
+            .when().post("/user/me/company");
+        
+        response.then().assertThat().statusCode(200);
+        
+    }
+
+    @Test
+    public void shouldReturn400WhenNoBody() {
+        doReturn(Instancio.createList(Company.class)).when(companyControllerService).getCompaniesForCurrentUser();
+
+        MockMvcResponse response = given()
+            .mockMvc(mockMvc)
+            .contentType(ContentType.JSON)
+            .when().post("/user/me/company");
+        
+        response.then().assertThat().statusCode(400);
     }
     
 }

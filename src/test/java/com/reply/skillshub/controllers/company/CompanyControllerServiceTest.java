@@ -1,5 +1,7 @@
 package com.reply.skillshub.controllers.company;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.List;
@@ -16,7 +18,9 @@ import com.reply.skillshub.base.exceptionhandling.exeptions.NoCompanyFound;
 import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.company.CompanyRepository;
+import com.reply.skillshub.data.company.CompanyService;
 import com.reply.skillshub.data.user.User;
+import com.reply.skillshub.openapi.model.CreateCompanyRequest;
 
 @ExtendWith(MockitoExtension.class)
 public class CompanyControllerServiceTest {
@@ -28,7 +32,7 @@ public class CompanyControllerServiceTest {
     private LoadCurrentUser loadCurrentUser;
 
     @Mock
-    private CompanyRepository companyRepository;
+    private CompanyService companyService;
     
 
     @Test
@@ -37,7 +41,7 @@ public class CompanyControllerServiceTest {
         var companyList = Instancio.createList(Company.class);
 
         doReturn(user).when(loadCurrentUser).loadSkillhubUserFromContext();
-        doReturn(companyList).when(companyRepository).findByEmployeesId(user.getId());
+        doReturn(companyList).when(companyService).findByEmployeesId(user.getId());
 
         var companiesDtos = companyControllerService.getCompaniesForCurrentUser();
 
@@ -57,9 +61,23 @@ public class CompanyControllerServiceTest {
         List<Company> companyList = List.of();
 
         doReturn(user).when(loadCurrentUser).loadSkillhubUserFromContext();
-        doReturn(companyList).when(companyRepository).findByEmployeesId(user.getId());
+        doReturn(companyList).when(companyService).findByEmployeesId(user.getId());
 
         Assertions.assertThrows(NoCompanyFound.class, () -> companyControllerService.getCompaniesForCurrentUser());
     }
+
+    @Test
+    void createCompany_returnsCorrectObjectAfterSave() {
+        var user = Instancio.create(User.class);
+        CreateCompanyRequest request = Instancio.create(CreateCompanyRequest.class);
+        
+        doReturn(user).when(loadCurrentUser).loadSkillhubUserFromContext();
+        doAnswer(invocation -> invocation.getArgument(0)).when(companyService).save(any(Company.class));
+        
+        com.reply.skillshub.openapi.model.Company company = companyControllerService.createCompany(request);
+
+        Assertions.assertEquals(request.getCompanyName(), company.getName());
+    }
+
     
 }
