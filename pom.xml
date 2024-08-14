@@ -216,7 +216,6 @@
 				<generateModelTests>false</generateModelTests>
 				<generateSupportingFiles>false</generateSupportingFiles>
 				<generateApiTests>false</generateApiTests>
-				<skipValidateSpec>true</skipValidateSpec>
 				<configOptions>
 					<interfaceOnly>true</interfaceOnly>
 					<useTags>true</useTags>
@@ -224,7 +223,6 @@
 					<useSpringBoot3>true</useSpringBoot3>
 					<skipDefaultInterface>true</skipDefaultInterface>
 					<dateLibrary>java8</dateLibrary>
-					<skipValidateSpec>true</skipValidateSpec>
 				</configOptions>
             </configuration>
             <executions>
