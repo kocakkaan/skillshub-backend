@@ -12,7 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.reply.skillshub.base.exceptionhandling.exeptions.InvalidConfirmationToken;
+import com.reply.skillshub.base.exceptionhandling.exeptions.UnconfirmedUser;
+import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ValidationException;
 import com.reply.skillshub.base.services.EmailService;
 import com.reply.skillshub.data.EmailRequest;
@@ -42,13 +43,18 @@ public class AuthentificationService {
     private final JwtService jwtService;
 
     public LoginResponse loginUser(LoginRequest loginRequest) {
-        		Authentication authenticationRequest =
-			UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.getEmail(), loginRequest.getAccessCode());
-		Authentication authenticationResponse =
-			this.authenticationManager.authenticate(authenticationRequest);
+        User user = userService.findUserByEmail(loginRequest.getEmail()).orElseThrow(() -> new UserNotFound());
+
+        if (!user.isConfirmed()) {
+            throw new UnconfirmedUser("A user must be confirmed to login. Please confirm your account");
+        }
+
+        Authentication authenticationRequest =
+	        UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.getEmail(), loginRequest.getAccessCode());
+		Authentication authenticationResponse = this.authenticationManager.authenticate(authenticationRequest);
+
         var principal = (org.springframework.security.core.userdetails.User) authenticationResponse.getPrincipal();
 
-        User user = userService.findUserByEmail(principal.getUsername()).get();
         var jwt = jwtService.createJwtToken(principal.getUsername());
 
         SecurityContextHolder.getContext().setAuthentication(new RememberMeAuthenticationToken(jwt, principal, principal.getAuthorities()));
@@ -84,7 +90,7 @@ public class AuthentificationService {
             user.setConfirmed(true);
             userService.save(user);
         } else {
-            throw new InvalidConfirmationToken("The user could not be identified");
+            throw new UnconfirmedUser("The user could not be identified");
         }
         
     }
