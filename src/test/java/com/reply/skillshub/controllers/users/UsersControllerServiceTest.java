@@ -16,14 +16,19 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.reply.skillshub.base.exceptionhandling.exeptions.InsufficientRights;
+import com.reply.skillshub.base.exceptionhandling.exeptions.InvalidConfirmationToken;
 import com.reply.skillshub.base.exceptionhandling.exeptions.NoCompanyFound;
+import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
+import com.reply.skillshub.base.services.EmailService;
 import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.company.CompanyService;
 import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserService;
+import com.reply.skillshub.openapi.model.ConfirmedUserResponse;
 import com.reply.skillshub.openapi.model.CreateUserRequest;
 import com.reply.skillshub.openapi.model.CreatedUserResponse;
+import com.reply.skillshub.openapi.model.UserConfirmRequest;
 
 @ExtendWith(MockitoExtension.class)
 public class UsersControllerServiceTest {
@@ -39,6 +44,9 @@ public class UsersControllerServiceTest {
 
     @Mock
     private LoadCurrentUser loadCurrentUser;
+
+    @Mock
+    private EmailService emailService;
 
     @Test
     void addNewUserNoCompanyFound() {
@@ -78,5 +86,31 @@ public class UsersControllerServiceTest {
         Assertions.assertEquals(request.getFirstName() + " " + request.getLastName(), response.getFullName());
         Assertions.assertNotNull(response.getRole());
         Assertions.assertEquals(company.getId(), response.getCompanyId());
+    }
+
+    @Test
+    void userNotFound_confirmUser() {
+        doReturn(Optional.empty()).when(userService).findUserById(anyString());
+        Assertions.assertThrows(UserNotFound.class, () -> usersControllerService.confirmUser("someId", null, null));
+    }
+
+    @Test
+    void invalidToken_confirmUser() {
+        User user = Instancio.create(User.class);
+        doReturn(Optional.of(user)).when(userService).findUserById(user.getId());
+        Assertions.assertThrows(InvalidConfirmationToken.class, () -> usersControllerService.confirmUser(user.getId(), "false", null));
+    }
+
+    @Test
+    void successful_confirmUser() {
+        User user = Instancio.create(User.class);
+        UserConfirmRequest request = Instancio.create(UserConfirmRequest.class);
+
+        doReturn(Optional.of(user)).when(userService).findUserById(user.getId());
+        doAnswer(invocation -> invocation.getArgument(0)).when(userService).save(any(User.class));
+
+        ConfirmedUserResponse response = usersControllerService.confirmUser(user.getId(), user.getConfirmationToken(), request);
+        
+        Assertions.assertEquals(user.getEmail(), response.getEmail());
     }
 }

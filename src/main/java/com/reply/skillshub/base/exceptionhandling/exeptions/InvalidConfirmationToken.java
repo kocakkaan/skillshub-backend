@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class InvalidConfirmationToken extends BaseException {
     
     public InvalidConfirmationToken() {
-        super(ErrorCode.VALIDATION_ERROR, "Invalid confirmation token");
+        super(ErrorCode.INVALID_CONFIRMATION_TOKEN, "Invalid confirmation token");
     }
 
     public InvalidConfirmationToken(String message) {
-        super(ErrorCode.VALIDATION_ERROR, message);
+        super(ErrorCode.INVALID_CONFIRMATION_TOKEN, message);
     }
 }

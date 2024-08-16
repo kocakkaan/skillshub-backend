@@ -4,9 +4,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.reply.skillshub.openapi.api.UsersApi;
+import com.reply.skillshub.openapi.model.ConfirmedUserResponse;
 import com.reply.skillshub.openapi.model.CreateUserRequest;
 import com.reply.skillshub.openapi.model.CreatedUserResponse;
+import com.reply.skillshub.openapi.model.UserConfirmRequest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -19,6 +22,12 @@ public class UsersController implements UsersApi {
     public ResponseEntity<CreatedUserResponse> companyCompanyIdEmployeesPost(String companyId,
             CreateUserRequest createUserRequest) {
         return ResponseEntity.status(201).body(usersControllerService.addNewUserToCompany(companyId, createUserRequest));
+    }
+
+    @Override
+    public ResponseEntity<ConfirmedUserResponse> usersUserIdConfirmationConfirmationTokenPut(String userId,
+            String confirmationToken, @Valid UserConfirmRequest userConfirmRequest) {
+        return ResponseEntity.status(201).body(usersControllerService.confirmUser(userId, confirmationToken, userConfirmRequest));
     }
     
 }

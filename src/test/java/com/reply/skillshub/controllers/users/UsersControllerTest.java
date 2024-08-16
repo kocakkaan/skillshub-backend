@@ -9,10 +9,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
-
 import com.reply.skillshub.base.exceptionhandling.SkillhubExceptionHandler;
 import com.reply.skillshub.data.company.Company;
+import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.openapi.model.CreateUserRequest;
+import com.reply.skillshub.openapi.model.UserConfirmRequest;
 
 import io.restassured.http.ContentType;
 
@@ -62,6 +63,18 @@ public class UsersControllerTest {
             .body(Instancio.create(CreateUserRequest.class))
             .when().post("/company/{CompanyId}/employees", "")
             .then().assertThat().statusCode(404);
+    }
+
+    @Test
+    void sucessfull_confirmUser() {
+        User user = Instancio.create(User.class);
+
+        given()
+            .mockMvc(mockMvc)
+            .contentType(ContentType.JSON)
+            .body(Instancio.create(UserConfirmRequest.class))
+            .when().put("/users/{userId}/confirmation/{confirmationToken}", user.getId(), user.getConfirmationToken())
+            .then().assertThat().statusCode(201);
     }
 
     
