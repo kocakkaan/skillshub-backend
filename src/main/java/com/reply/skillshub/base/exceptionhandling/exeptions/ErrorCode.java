@@ -6,7 +6,8 @@ public enum ErrorCode {
     VALIDATION_ERROR("ERROR-002"),
     API_VALIDATION_ERROR("ERROR-003"),
     NO_COMPANY_FOUND("ERROR-004"),
-    USER_NOT_FOUND("ERROR-005");
+    USER_NOT_FOUND("ERROR-005"),
+    INSUFFICIENT_RIGHTS("ERROR-006");
 
     private final String code;
 
