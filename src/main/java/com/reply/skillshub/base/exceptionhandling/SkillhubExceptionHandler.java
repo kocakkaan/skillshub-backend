@@ -47,7 +47,7 @@ public class SkillhubExceptionHandler extends ResponseEntityExceptionHandler {
             detail.setTopic(error.getObjectName() + ": " + error.getField());
             errorData.addDetailsItem(detail);
         }
-        return new ResponseEntity<>(errorData, new HttpHeaders(), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(errorData, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 	}
 
 
