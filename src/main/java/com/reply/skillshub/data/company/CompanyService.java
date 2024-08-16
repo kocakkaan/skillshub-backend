@@ -1,6 +1,7 @@
 package com.reply.skillshub.data.company;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -25,5 +26,8 @@ public class CompanyService {
         return companyRepository.findByEmployeesId(id);
     }
 
+    public Optional<Company> findById(String id) {
+        return companyRepository.findById(id);
+    }
     
 }

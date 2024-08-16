@@ -52,5 +52,8 @@ public class User {
 
     @Relationship(type = "WORKS_FOR")
     private List<Company> companies = new ArrayList<>();
-    
+
+    public String getFullname() {
+        return this.firstName + " " + this.lastName;
+    }
 }

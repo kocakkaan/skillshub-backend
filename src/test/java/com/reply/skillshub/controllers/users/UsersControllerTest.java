@@ -1,0 +1,68 @@
+package com.reply.skillshub.controllers.users;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+
+import com.reply.skillshub.base.exceptionhandling.SkillhubExceptionHandler;
+import com.reply.skillshub.data.company.Company;
+import com.reply.skillshub.openapi.model.CreateUserRequest;
+
+import io.restassured.http.ContentType;
+
+import org.instancio.Instancio;
+
+@WebMvcTest(UsersController.class)
+@ContextConfiguration(classes = {UsersController.class, SkillhubExceptionHandler.class})
+@AutoConfigureMockMvc(addFilters=false)
+public class UsersControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private UsersControllerService usersControllerService;
+
+    @Test
+    void createUserInCompany_withoutRequestBody() {
+        Company company = Instancio.create(Company.class);
+
+
+        given()
+            .mockMvc(mockMvc)
+            .contentType(ContentType.JSON)
+            .when().post("/company/{CompanyId}/employees", company.getId())
+            .then().assertThat().statusCode(400);
+    }
+
+    @Test
+    void createUserInCompany_withValidRequestBody() {
+        Company company = Instancio.create(Company.class);
+
+
+        given()
+            .mockMvc(mockMvc)
+            .contentType(ContentType.JSON)
+            .body(Instancio.create(CreateUserRequest.class))
+            .when().post("/company/{CompanyId}/employees", company.getId())
+            .then().assertThat().statusCode(201);
+    }
+
+    @Test
+    void createUserInCompany_withEmptyPath() {
+        given()
+            .mockMvc(mockMvc)
+            .contentType(ContentType.JSON)
+            .body(Instancio.create(CreateUserRequest.class))
+            .when().post("/company/{CompanyId}/employees", "")
+            .then().assertThat().statusCode(404);
+    }
+
+    
+}
