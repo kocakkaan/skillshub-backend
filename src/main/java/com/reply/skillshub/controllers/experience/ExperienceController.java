@@ -19,33 +19,28 @@ public class ExperienceController implements ExperiencesApi {
 
     @Override
     public ResponseEntity<Void> experiencesExperienceIdDelete(String experienceId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'experiencesExperienceIdDelete'");
+        experienceControllerService.deleteExperienceById(experienceId);
+        return ResponseEntity.status(204).build();
     }
 
     @Override
     public ResponseEntity<BaseExperience> experiencesExperienceIdGet(String experienceId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'experiencesExperienceIdGet'");
+        return ResponseEntity.ok(experienceControllerService.getExperienceById(experienceId));
     }
 
     @Override
-    public ResponseEntity<Void> experiencesExperienceIdPut(String experienceId, @Valid BaseExperience baseExperience) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'experiencesExperienceIdPut'");
+    public ResponseEntity<BaseExperience> experiencesExperienceIdPut(String experienceId, @Valid BaseExperience baseExperience) {
+        return ResponseEntity.ok(experienceControllerService.updateExperienceForUser(experienceId, baseExperience));
     }
 
     @Override
     public ResponseEntity<List<BaseExperience>> usersUserIdExperiencesGet(String userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'usersUserIdExperiencesGet'");
+        return ResponseEntity.ok(experienceControllerService.getExperiencesByUserId(userId));
     }
 
     @Override
-    public ResponseEntity<BaseExperience> usersUserIdExperiencesPost(String userId,
-            @Valid BaseExperience baseExperience) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'usersUserIdExperiencesPost'");
+    public ResponseEntity<BaseExperience> usersUserIdExperiencesPost(String userId, @Valid BaseExperience baseExperience) {
+        return ResponseEntity.ok(experienceControllerService.createExperienceForUser(userId, baseExperience));
     }
     
 }
