@@ -15,7 +15,7 @@ import com.reply.skillshub.data.language.Language;
 import com.reply.skillshub.data.skill.Skill;
 import com.reply.skillshub.data.user.User;
 
-import jakarta.validation.constraints.AssertFalse;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
@@ -30,7 +30,7 @@ public class Experience {
     @NotEmpty
     private String title;
 
-    private List<String> descriptions;
+    private List<String> descriptions = new ArrayList<>();
 
     @Relationship(type = "HAS_EXPERIENCE", direction = Direction.INCOMING)
     private List<User> employees = new ArrayList<>();
@@ -44,8 +44,8 @@ public class Experience {
     @Relationship(type = "IN_INDUSTRY", direction = Direction.OUTGOING)
     private List<Industry> industries = new ArrayList<>();
     
-    @AssertFalse
-    private boolean isCountEmployeesHigherAsOne() {
-        return employees.size() > 1;
+    @AssertTrue(message = "An experience must be assigned exactly one employee")
+    private boolean isCountEmployeesEqualToOne() {
+        return employees.size() == 1;
     }
 }
