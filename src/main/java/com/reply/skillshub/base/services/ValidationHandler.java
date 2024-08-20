@@ -6,22 +6,25 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import com.reply.skillshub.base.exceptionhandling.exeptions.ObjectDetail;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ValidationException;
 
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.ValidatorFactory;
 
-@Service
-@RequiredArgsConstructor
 public class ValidationHandler<T> {
 
     private Logger LOG = LoggerFactory.getLogger(ValidationHandler.class);
 
     private final Validator validator;
+
+    public ValidationHandler() {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        this.validator = factory.getValidator();
+    }
 
     public void validate(T entity) {
         Set<ConstraintViolation<T>> violations = validator.validate(entity);
