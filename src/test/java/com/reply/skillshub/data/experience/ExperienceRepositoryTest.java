@@ -58,6 +58,18 @@ public class ExperienceRepositoryTest {
     @Autowired
     private ExperienceRepository experienceRepository;
 
+    @Test
+    void test_findAllByUserId() {
+        Experience toSave = ExperienceTestData.returnValidExperience();
+        User user = toSave.getEmployee();
+
+        experienceRepository.save(toSave);
+
+        var foundExperiences = experienceRepository.findAllByEmployeesId(user.getId());
+
+        Assertions.assertNotEquals(0, foundExperiences.size());
+    }
+
     @ParameterizedTest
     @MethodSource("requiredParams")
     void testSuccesfullSave(Experience experience) {

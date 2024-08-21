@@ -1,5 +1,8 @@
 package com.reply.skillshub.data.experience;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -17,10 +20,17 @@ public class ExperienceService {
         experienceRepository.deleteById(id);
     }
 
+    public Optional<Experience> findById(String id) {
+        return experienceRepository.findById(id);
+    }
+
+    public List<Experience> findByUserId(String userId) {
+        return experienceRepository.findAllByEmployeesId(userId);
+    }
+
     public Experience save(Experience experience) {
         validationHandler.validate(experience);
         return experienceRepository.save(experience);
-
     }
     
 }

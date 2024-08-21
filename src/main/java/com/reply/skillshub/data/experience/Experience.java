@@ -2,6 +2,7 @@ package com.reply.skillshub.data.experience;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
@@ -51,5 +52,21 @@ public class Experience {
     @AssertTrue(message = "An experience must be assigned exactly one employee")
     private boolean isCountEmployeesEqualToOne() {
         return employees.size() == 1;
+    }
+
+    @AssertTrue(message = "An experience can have at most one industry")
+    private boolean isIndustrySmallerAsTwo() {
+        return industries.size() < 2;
+    }
+
+    public Optional<Industry> getIndustry() {
+        if (industries.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(industries.get(0));
+    }
+
+    public User getEmployee() {
+        return employees.get(0);
     }
 }
