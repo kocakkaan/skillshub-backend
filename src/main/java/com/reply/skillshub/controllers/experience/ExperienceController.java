@@ -30,7 +30,7 @@ public class ExperienceController implements ExperiencesApi {
 
     @Override
     public ResponseEntity<BaseExperience> experiencesExperienceIdPut(String experienceId, @Valid BaseExperience baseExperience) {
-        return ResponseEntity.ok(experienceControllerService.updateExperienceForUser(experienceId, baseExperience));
+        return ResponseEntity.ok(experienceControllerService.updateExperienceById(experienceId, baseExperience));
     }
 
     @Override
