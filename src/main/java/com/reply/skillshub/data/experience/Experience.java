@@ -1,5 +1,6 @@
 package com.reply.skillshub.data.experience;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,10 @@ public class Experience {
     private String title;
 
     private List<String> descriptions = new ArrayList<>();
+
+    private LocalDate startDate;
+
+    private LocalDate endDate;
 
     @Relationship(type = "HAS_EXPERIENCE", direction = Direction.INCOMING)
     private List<User> employees = new ArrayList<>();
