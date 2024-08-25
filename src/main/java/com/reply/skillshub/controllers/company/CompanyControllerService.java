@@ -2,13 +2,11 @@ package com.reply.skillshub.controllers.company;
 
 import java.util.List;
 
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.reply.skillshub.base.exceptionhandling.exeptions.NoCompanyFound;
 import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.data.company.Company;
-import com.reply.skillshub.data.company.CompanyRepository;
 import com.reply.skillshub.data.company.CompanyService;
 import com.reply.skillshub.openapi.model.CreateCompanyRequest;
 
