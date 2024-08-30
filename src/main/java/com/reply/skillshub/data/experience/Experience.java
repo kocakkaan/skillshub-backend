@@ -15,6 +15,7 @@ import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 import com.reply.skillshub.data.industry.Industry;
 import com.reply.skillshub.data.language.Language;
 import com.reply.skillshub.data.occupation.Occupation;
+import com.reply.skillshub.data.resumeexperience.ResumeExperience;
 import com.reply.skillshub.data.skill.Skill;
 import com.reply.skillshub.data.user.User;
 
@@ -53,6 +54,9 @@ public class Experience {
 
     @Relationship(type = "HAD_OCCUPATION", direction = Direction.OUTGOING)
     private List<Occupation> occupation = new ArrayList<>();
+
+    @Relationship(type = "BASED_OF", direction = Direction.INCOMING)
+    private List<ResumeExperience> dependentResumeExperiences;
     
     @AssertTrue(message = "An experience must be assigned exactly one employee")
     private boolean isCountEmployeesEqualToOne() {
