@@ -17,9 +17,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.reply.skillshub.base.exceptionhandling.exeptions.NoCompanyFound;
 import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.data.company.Company;
-import com.reply.skillshub.data.company.CompanyRepository;
 import com.reply.skillshub.data.company.CompanyService;
 import com.reply.skillshub.data.user.User;
+import com.reply.skillshub.openapi.model.CompanyDto;
 import com.reply.skillshub.openapi.model.CreateCompanyRequest;
 
 @ExtendWith(MockitoExtension.class)
@@ -74,7 +74,7 @@ public class CompanyControllerServiceTest {
         doReturn(user).when(loadCurrentUser).loadSkillhubUserFromContext();
         doAnswer(invocation -> invocation.getArgument(0)).when(companyService).save(any(Company.class));
         
-        com.reply.skillshub.openapi.model.Company company = companyControllerService.createCompany(request);
+        CompanyDto company = companyControllerService.createCompany(request);
 
         Assertions.assertEquals(request.getCompanyName(), company.getName());
     }

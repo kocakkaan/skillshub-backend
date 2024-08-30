@@ -14,8 +14,10 @@ import com.reply.skillshub.data.occupation.Occupation;
 import com.reply.skillshub.data.skill.Skill;
 import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserService;
-import com.reply.skillshub.openapi.model.BaseExperience;
-import com.reply.skillshub.openapi.model.OccupationalCategory;
+import com.reply.skillshub.openapi.model.ExperienceDto;
+import com.reply.skillshub.openapi.model.IndustryDto;
+import com.reply.skillshub.openapi.model.OccupationalCategoryDto;
+import com.reply.skillshub.openapi.model.SkillDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,47 +33,47 @@ public class ExperienceControllerService {
         experienceService.deleteExperienceById(id);
     }
 
-    public BaseExperience getExperienceById(String id) {
+    public ExperienceDto getExperienceById(String id) {
         Experience potential = experienceService.findById(id).orElseThrow(() -> new ExperienceNotFound());
         return convertExperienceToDto(potential);
     }
 
-    public List<BaseExperience> getExperiencesByUserId(String userId) {
+    public List<ExperienceDto> getExperiencesByUserId(String userId) {
         List<Experience> experiences = experienceService.findByUserId(userId);
         return experiences.stream().map(this::convertExperienceToDto).toList();
     }
 
-    public BaseExperience updateExperienceById(String experienceId, BaseExperience baseExperience) {
+    public ExperienceDto updateExperienceById(String experienceId, ExperienceDto ExperienceDto) {
         Experience experience = experienceService.findById(experienceId).orElseThrow(() -> new ExperienceNotFound());
-        return convertExperienceToDto(experienceService.save(updateExperienceWithBaseExperience(experience, baseExperience)));
+        return convertExperienceToDto(experienceService.save(updateExperienceWithBaseExperience(experience, ExperienceDto)));
     }
 
-    public BaseExperience createExperienceForUser(String userId, BaseExperience baseExperience) {
+    public ExperienceDto createExperienceForUser(String userId, ExperienceDto ExperienceDto) {
         User user = userService.findUserById(userId).orElseThrow(() -> new UserNotFound());
         Experience experience = new Experience();
         experience.setEmployees(List.of(user));
-        return convertExperienceToDto(experienceService.save(updateExperienceWithBaseExperience(experience, baseExperience)));
+        return convertExperienceToDto(experienceService.save(updateExperienceWithBaseExperience(experience, ExperienceDto)));
     }
-    private Experience updateExperienceWithBaseExperience(Experience experience, BaseExperience baseExperience) {
-        experience.setTitle(baseExperience.getTitle());
-        experience.setDescriptions(baseExperience.getResponsibilities());
-        experience.setIndustries(convertToIndustries(baseExperience.getIndustry()));
-        experience.setSkills(convertToSkillEntityList(baseExperience.getSkills()));
-        experience.setOccupation(convertToOccupation(baseExperience.getOccupationalCategory()));
-        baseExperience.getStartDate().ifPresent((date) -> experience.setStartDate(date));
-        baseExperience.getEndDate().ifPresent((date) -> experience.setEndDate(date));
+    private Experience updateExperienceWithBaseExperience(Experience experience, ExperienceDto ExperienceDto) {
+        experience.setTitle(ExperienceDto.getTitle());
+        experience.setDescriptions(ExperienceDto.getResponsibilities());
+        experience.setIndustries(convertToIndustries(ExperienceDto.getIndustry()));
+        experience.setSkills(convertToSkillEntityList(ExperienceDto.getSkills()));
+        experience.setOccupation(convertToOccupation(ExperienceDto.getOccupationalCategory()));
+        ExperienceDto.getStartDate().ifPresent((date) -> experience.setStartDate(date));
+        ExperienceDto.getEndDate().ifPresent((date) -> experience.setEndDate(date));
         return experience;
     }
     
-    private List<Occupation> convertToOccupation(OccupationalCategory occupationalCategory) {
+    private List<Occupation> convertToOccupation(OccupationalCategoryDto occupationalCategoryDto) {
         Occupation occupation = new Occupation();
-        occupation.setId(occupationalCategory.getId());
-        occupation.setLabel(occupationalCategory.getLabel());
+        occupation.setId(occupationalCategoryDto.getId());
+        occupation.setLabel(occupationalCategoryDto.getLabel());
         return List.of(occupation);
     }
 
-    private BaseExperience convertExperienceToDto(Experience experience) {
-        return new BaseExperience()
+    private ExperienceDto convertExperienceToDto(Experience experience) {
+        return new ExperienceDto()
             .id(experience.getId())
             .industry(convertToIndustryDto(experience.getIndustry()).orElse(null))
             .responsibilities(experience.getDescriptions())
@@ -80,44 +82,44 @@ public class ExperienceControllerService {
             .skills(convertToSkillDtoList(experience.getSkills()));
     }
 
-    private com.reply.skillshub.openapi.model.Skill convertToSkillDto(Skill skill) {
-        return new com.reply.skillshub.openapi.model.Skill()
+    private SkillDto convertToSkillDto(Skill skill) {
+        return new SkillDto()
             .id(skill.getId())
             .label(skill.getLabel());
     }
 
-    private List<com.reply.skillshub.openapi.model.Skill> convertToSkillDtoList(List<Skill> skills) {
+    private List<SkillDto> convertToSkillDtoList(List<Skill> skills) {
         return skills.stream()
             .map(this::convertToSkillDto)
             .toList();
     }
 
-    private List<Skill> convertToSkillEntityList(List<com.reply.skillshub.openapi.model.Skill> apiSkills) {
+    private List<Skill> convertToSkillEntityList(List<SkillDto> apiSkills) {
         return apiSkills.stream()
             .map(this::convertToSkillEntity)
             .toList();
     }
 
-    private Skill convertToSkillEntity(com.reply.skillshub.openapi.model.Skill  apiSkill) {
+    private Skill convertToSkillEntity(SkillDto  apiSkill) {
         Skill skillEntity = new Skill();
         skillEntity.setId(apiSkill.getId());
         skillEntity.setLabel(apiSkill.getLabel());
         return skillEntity;
     }
 
-    private Optional<com.reply.skillshub.openapi.model.Industry> convertToIndustryDto(Optional<Industry> industry) {
-        return industry.map(i -> new com.reply.skillshub.openapi.model.Industry()
+    private Optional<IndustryDto> convertToIndustryDto(Optional<Industry> industry) {
+        return industry.map(i -> new IndustryDto()
             .id(i.getId())
             .label(i.getLabel()));
     }
 
-    private List<Industry> convertToIndustries(Optional<com.reply.skillshub.openapi.model.Industry> indOptional) {
+    private List<Industry> convertToIndustries(Optional<IndustryDto> indOptional) {
         return indOptional.stream()
             .map(this::convertToIndustry)
             .toList();
     }
 
-    private Industry convertToIndustry(com.reply.skillshub.openapi.model.Industry industry) {
+    private Industry convertToIndustry(IndustryDto industry) {
         Industry industryEntity = new Industry();
         industryEntity.setId(industry.getId());
         industryEntity.setLabel(industry.getLabel());

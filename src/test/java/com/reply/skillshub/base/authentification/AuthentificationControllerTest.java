@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 import org.instancio.Instancio;
 
 import com.reply.skillshub.base.exceptionhandling.SkillhubExceptionHandler;
-import com.reply.skillshub.openapi.model.Error;
+import com.reply.skillshub.openapi.model.ErrorDto;
 import com.reply.skillshub.openapi.model.SignupRequest;
 
 @WebMvcTest(AuthentificationController.class)
@@ -55,7 +55,7 @@ public class AuthentificationControllerTest {
             .body(signupRequest)
             .contentType("application/json")
             .when().post("/auth/signup")
-            .as(Error.class);
+            .as(ErrorDto.class);
         
         Assertions.assertEquals(1, errorMessage.getDetails().size());
     }

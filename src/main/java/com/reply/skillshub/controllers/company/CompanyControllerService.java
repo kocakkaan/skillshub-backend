@@ -8,6 +8,7 @@ import com.reply.skillshub.base.exceptionhandling.exeptions.NoCompanyFound;
 import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.company.CompanyService;
+import com.reply.skillshub.openapi.model.CompanyDto;
 import com.reply.skillshub.openapi.model.CreateCompanyRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class CompanyControllerService {
 
     private final CompanyService companyService;
 
-    public List<com.reply.skillshub.openapi.model.Company> getCompaniesForCurrentUser() {
+    public List<CompanyDto> getCompaniesForCurrentUser() {
         var user = loadCurrentUser.loadSkillhubUserFromContext();
         var companies = companyService.findByEmployeesId(user.getId());
 
@@ -31,13 +32,13 @@ public class CompanyControllerService {
         return companies.stream().map(this::convertEntityToApiDto).toList();
     }
 
-    private com.reply.skillshub.openapi.model.Company convertEntityToApiDto(Company company) {
-        return new com.reply.skillshub.openapi.model.Company()
+    private CompanyDto convertEntityToApiDto(Company company) {
+        return new CompanyDto()
             .id(company.getId())
             .name(company.getLabel());
     }
 
-    public com.reply.skillshub.openapi.model.Company createCompany(CreateCompanyRequest createCompanyRequest) {
+    public CompanyDto createCompany(CreateCompanyRequest createCompanyRequest) {
         var company = new Company();
         var user = loadCurrentUser.loadSkillhubUserFromContext();
         company.setLabel(createCompanyRequest.getCompanyName());

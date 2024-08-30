@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.reply.skillshub.openapi.api.ExperiencesApi;
-import com.reply.skillshub.openapi.model.BaseExperience;
+import com.reply.skillshub.openapi.model.ExperienceDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,23 +24,23 @@ public class ExperienceController implements ExperiencesApi {
     }
 
     @Override
-    public ResponseEntity<BaseExperience> experiencesExperienceIdGet(String experienceId) {
+    public ResponseEntity<ExperienceDto> experiencesExperienceIdGet(String experienceId) {
         return ResponseEntity.ok(experienceControllerService.getExperienceById(experienceId));
     }
 
     @Override
-    public ResponseEntity<BaseExperience> experiencesExperienceIdPut(String experienceId, @Valid BaseExperience baseExperience) {
-        return ResponseEntity.ok(experienceControllerService.updateExperienceById(experienceId, baseExperience));
+    public ResponseEntity<ExperienceDto> experiencesExperienceIdPut(String experienceId, @Valid ExperienceDto ExperienceDto) {
+        return ResponseEntity.ok(experienceControllerService.updateExperienceById(experienceId, ExperienceDto));
     }
 
     @Override
-    public ResponseEntity<List<BaseExperience>> usersUserIdExperiencesGet(String userId) {
+    public ResponseEntity<List<ExperienceDto>> usersUserIdExperiencesGet(String userId) {
         return ResponseEntity.ok(experienceControllerService.getExperiencesByUserId(userId));
     }
 
     @Override
-    public ResponseEntity<BaseExperience> usersUserIdExperiencesPost(String userId, @Valid BaseExperience baseExperience) {
-        return ResponseEntity.ok(experienceControllerService.createExperienceForUser(userId, baseExperience));
+    public ResponseEntity<ExperienceDto> usersUserIdExperiencesPost(String userId, @Valid ExperienceDto ExperienceDto) {
+        return ResponseEntity.ok(experienceControllerService.createExperienceForUser(userId, ExperienceDto));
     }
     
 }

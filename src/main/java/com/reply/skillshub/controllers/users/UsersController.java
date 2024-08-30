@@ -8,6 +8,7 @@ import com.reply.skillshub.openapi.model.ConfirmedUserResponse;
 import com.reply.skillshub.openapi.model.CreateUserRequest;
 import com.reply.skillshub.openapi.model.CreatedUserResponse;
 import com.reply.skillshub.openapi.model.UserConfirmRequest;
+import com.reply.skillshub.openapi.model.UserMeProfilePicturePostRequest;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,13 @@ public class UsersController implements UsersApi {
     public ResponseEntity<ConfirmedUserResponse> usersUserIdConfirmationConfirmationTokenPut(String userId,
             String confirmationToken, @Valid UserConfirmRequest userConfirmRequest) {
         return ResponseEntity.status(201).body(usersControllerService.confirmUser(userId, confirmationToken, userConfirmRequest));
+    }
+
+    @Override
+    public ResponseEntity<Void> userMeProfilePicturePost(
+            @Valid UserMeProfilePicturePostRequest userMeProfilePicturePostRequest) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'userMeProfilePicturePost'");
     }
     
 }

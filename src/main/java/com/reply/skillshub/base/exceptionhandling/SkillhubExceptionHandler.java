@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.reply.skillshub.openapi.model.Error;
-import com.reply.skillshub.openapi.model.ErrorDetail;
+import com.reply.skillshub.openapi.model.ErrorDto;
+import com.reply.skillshub.openapi.model.ErrorDetailDto;
 
 import jakarta.validation.constraints.NotNull;
 
@@ -31,7 +31,7 @@ public class SkillhubExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({BaseException.class})
     public ResponseEntity<Object> handleDefaultBaseExceptions(BaseException e, WebRequest webRequest) {
         LOG.debug("Exception sent:", e);
-        var errorData = new Error().errorCode(e.getErrorCode().toString()).message(e.getMessage()).details(e.getDetails().stream().map(this::convertDetailToErrorDetail).toList());
+        var errorData = new ErrorDto().errorCode(e.getErrorCode().toString()).message(e.getMessage()).details(e.getDetails().stream().map(this::convertDetailToErrorDetail).toList());
         return new ResponseEntity<>(errorData, new HttpHeaders(), determineHttpStatus(e));
     }
 
@@ -39,12 +39,12 @@ public class SkillhubExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     @NotNull
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        var errorData = new Error().errorCode(ErrorCode.API_VALIDATION_ERROR.toString());
+        var errorData = new ErrorDto().errorCode(ErrorCode.API_VALIDATION_ERROR.toString());
         errorData.setMessage("Invalid Request Content");
-        for (var error: ex.getFieldErrors()) {
-            ErrorDetail detail = new ErrorDetail();
-            detail.setDetail(error.getDefaultMessage());
-            detail.setTopic(error.getObjectName() + ": " + error.getField());
+        for (var ErrorDto: ex.getFieldErrors()) {
+            ErrorDetailDto detail = new ErrorDetailDto();
+            detail.setDetail(ErrorDto.getDefaultMessage());
+            detail.setTopic(ErrorDto.getObjectName() + ": " + ErrorDto.getField());
             errorData.addDetailsItem(detail);
         }
         return new ResponseEntity<>(errorData, new HttpHeaders(), HttpStatus.BAD_REQUEST);
@@ -54,7 +54,7 @@ public class SkillhubExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({Exception.class})
     public ResponseEntity<Object> handleDefaultBaseExceptions(Exception e, WebRequest webRequest) {
         LOG.debug("Exception sent:", e);
-        var errorData = new Error().errorCode(ErrorCode.DEFAULT.name()).message(e.getMessage());
+        var errorData = new ErrorDto().errorCode(ErrorCode.DEFAULT.name()).message(e.getMessage());
         return new ResponseEntity<>(errorData, new HttpHeaders(), determineHttpStatus(e));
     }
 
@@ -65,8 +65,8 @@ public class SkillhubExceptionHandler extends ResponseEntityExceptionHandler {
         return responseStatus == null ? HttpStatus.INTERNAL_SERVER_ERROR : responseStatus.value();
     }
 
-    private ErrorDetail convertDetailToErrorDetail(ObjectDetail objectDetail) {
-        return new ErrorDetail().detail(objectDetail.getDetail()).topic(objectDetail.getTopic());
+    private ErrorDetailDto convertDetailToErrorDetail(ObjectDetail objectDetail) {
+        return new ErrorDetailDto().detail(objectDetail.getDetail()).topic(objectDetail.getTopic());
     }
     
 }

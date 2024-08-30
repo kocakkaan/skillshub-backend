@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.reply.skillshub.base.exceptionhandling.SkillhubExceptionHandler;
 import com.reply.skillshub.base.exceptionhandling.exeptions.NoCompanyFound;
-import com.reply.skillshub.openapi.model.Company;
+import com.reply.skillshub.openapi.model.CompanyDto;
 import com.reply.skillshub.openapi.model.CreateCompanyRequest;
 
 import io.restassured.http.ContentType;
@@ -47,7 +47,7 @@ public class CompanyControllerTest {
 
     @Test
     public void shouldReturnAlistWithResponse200WhenServiceReturnsList() {
-        doReturn(Instancio.createList(Company.class)).when(companyControllerService).getCompaniesForCurrentUser();
+        doReturn(Instancio.createList(CompanyDto.class)).when(companyControllerService).getCompaniesForCurrentUser();
 
         MockMvcResponse response = given()
             .mockMvc(mockMvc)
@@ -56,13 +56,13 @@ public class CompanyControllerTest {
         
         response.then().assertThat().statusCode(200);
 
-        Assertions.assertNotSame(0, response.as(Company[].class).length);
+        Assertions.assertNotSame(0, response.as(CompanyDto[].class).length);
         
     }
 
     @Test
     public void shouldReturnAlistWithResponse200WhenSavedSuccessfully() {
-        doReturn(Instancio.createList(Company.class)).when(companyControllerService).getCompaniesForCurrentUser();
+        doReturn(Instancio.createList(CompanyDto.class)).when(companyControllerService).getCompaniesForCurrentUser();
 
         MockMvcResponse response = given()
             .mockMvc(mockMvc)
@@ -76,7 +76,7 @@ public class CompanyControllerTest {
 
     @Test
     public void shouldReturn400WhenNoBody() {
-        doReturn(Instancio.createList(Company.class)).when(companyControllerService).getCompaniesForCurrentUser();
+        doReturn(Instancio.createList(CompanyDto.class)).when(companyControllerService).getCompaniesForCurrentUser();
 
         MockMvcResponse response = given()
             .mockMvc(mockMvc)
