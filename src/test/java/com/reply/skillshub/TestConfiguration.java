@@ -1,4 +1,4 @@
-package com.reply.skillshub.data.company;
+package com.reply.skillshub;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
