@@ -1,5 +1,6 @@
 package com.reply.skillshub.data.resume;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -35,13 +36,13 @@ public class Resume {
     private String role;
 
     @Relationship(type = "IN_INDUSTRY", direction = Direction.OUTGOING)
-    private List<Industry> industries;
+    private List<Industry> industries = new ArrayList<>();
 
     @Relationship(type = "USED_SKILL", direction = Direction.OUTGOING)
-    private List<ResumeSkill> skills;
+    private List<ResumeSkill> skills = new ArrayList<>();
 
     @Relationship(type = "GAINED_EXPERIENCE", direction = Direction.OUTGOING)
-    private List<ResumeExperience> experiences;
+    private List<ResumeExperience> experiences = new ArrayList<>();
 
     @AssertTrue
     private boolean isIndustryCountLowerAsTwo() {
