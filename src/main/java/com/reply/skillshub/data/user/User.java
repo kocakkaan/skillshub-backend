@@ -13,6 +13,7 @@ import com.reply.skillshub.data.speaks.Speaks;
 import com.reply.skillshub.data.userrole.UserRole;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.experience.Experience;
+import com.reply.skillshub.data.resume.Resume;
 import com.reply.skillshub.data.skill.Skill;
 
 import jakarta.validation.constraints.Email;
@@ -60,6 +61,9 @@ public class User {
 
     @Relationship(type = "HAS_SKILL")
     private List<Skill> skills = new ArrayList<>();
+
+    @Relationship(type = "HAS_RESUME")
+    private List<Resume> resumes = new ArrayList<>();
 
     public String getFullname() {
         return this.firstName + " " + this.lastName;

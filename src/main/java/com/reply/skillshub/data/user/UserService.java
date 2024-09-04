@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ValidationException;
 
 import jakarta.validation.ConstraintViolation;
@@ -42,5 +43,9 @@ public class UserService {
 
     public Optional<User> findUserById(String id) {
         return userRepository.findById(id);
+    }
+
+    public User findById(String id) {
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFound());
     }
 }
