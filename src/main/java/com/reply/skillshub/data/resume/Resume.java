@@ -13,6 +13,7 @@ import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 import com.reply.skillshub.data.industry.Industry;
 import com.reply.skillshub.data.resumeexperience.ResumeExperience;
 import com.reply.skillshub.data.resumeskill.ResumeSkill;
+import com.reply.skillshub.data.user.User;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotEmpty;
@@ -44,9 +45,17 @@ public class Resume {
     @Relationship(type = "GAINED_EXPERIENCE", direction = Direction.OUTGOING)
     private List<ResumeExperience> experiences = new ArrayList<>();
 
+    @Relationship(type = "HAS_RESUME", direction = Direction.INCOMING)
+    private List<User> users = new ArrayList<>();
+
     @AssertTrue
     private boolean isIndustryCountLowerAsTwo() {
         return industries.size() < 2;
+    }
+
+    @AssertTrue
+    private boolean isUserSizeExactlyOne() {
+        return users.size() == 1;
     }
 
 }
