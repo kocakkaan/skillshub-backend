@@ -2,6 +2,7 @@ package com.reply.skillshub.data.resumeexperience;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
@@ -31,6 +32,13 @@ public class ResumeExperience {
     @AssertTrue
     private boolean isBasedOfExperienceEqualToOne() {
         return basedOfExperience.size() == 1;
+    }
+
+    public Optional<Experience> getBasedOf() {
+        if (basedOfExperience.size() == 1) {
+            return Optional.of(basedOfExperience.get(0));
+        }
+        return Optional.empty();
     }
     
 }
