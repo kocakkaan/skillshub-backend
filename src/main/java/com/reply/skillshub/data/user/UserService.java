@@ -1,5 +1,6 @@
 package com.reply.skillshub.data.user;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -47,5 +48,13 @@ public class UserService {
 
     public User findById(String id) {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFound());
+    }
+
+    public List<User> findByCompaniesId(String company) {
+        return userRepository.findByCompaniesId(company);
+    }
+
+    public List<User> findByCompaniesIdIn(List<String> company) {
+        return userRepository.findByCompaniesIdIn(company);
     }
 }

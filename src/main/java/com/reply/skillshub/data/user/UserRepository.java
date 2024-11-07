@@ -20,5 +20,9 @@ public interface UserRepository extends Neo4jRepository<User, String> {
     boolean existsByEmail(String email);
 
     List<User> findBySpeaksLanguageLanguageCode(LanguageCode languageCode);
+
+    List<User> findByCompaniesId(String company);
+
+    List<User> findByCompaniesIdIn(List<String> company);
     
 }

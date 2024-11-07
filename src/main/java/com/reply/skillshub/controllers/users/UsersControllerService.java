@@ -12,15 +12,26 @@ import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
 import com.reply.skillshub.base.services.EmailService;
 import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.data.EmailRequest;
+import com.reply.skillshub.data.certificate.Certificate;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.company.CompanyService;
+import com.reply.skillshub.data.experience.Experience;
+import com.reply.skillshub.data.skill.Skill;
+import com.reply.skillshub.data.speaks.Speaks;
 import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.data.userrole.UserRole;
+import com.reply.skillshub.openapi.model.CertificateDto;
 import com.reply.skillshub.openapi.model.ConfirmedUserResponse;
 import com.reply.skillshub.openapi.model.CreateUserRequest;
 import com.reply.skillshub.openapi.model.CreatedUserResponse;
+import com.reply.skillshub.openapi.model.EmployeeDto;
+import com.reply.skillshub.openapi.model.ExperienceDto;
+import com.reply.skillshub.openapi.model.LanguageDto;
+import com.reply.skillshub.openapi.model.ProfileDto;
+import com.reply.skillshub.openapi.model.SkillDto;
 import com.reply.skillshub.openapi.model.UserConfirmRequest;
+import java.util.List;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -82,6 +93,69 @@ public class UsersControllerService {
         emailService.sendEmail(createNewUserEmailRequest(savedUser.getEmail()));
 
         return createUserResponse(savedUser, company);
+    }
+
+    public List<EmployeeDto> getEmployeesAccessibleToCurrentUser() {
+        User currentUser = loadCurrentUser.loadSkillhubUserFromContext();
+        return getEmployeesAccessibleToUser(currentUser);
+    }
+
+    public ProfileDto getProfileForCurrentUser() {
+        return getProfileForUser(loadCurrentUser.loadSkillhubUserFromContext());
+    }
+
+    public ProfileDto getProfileForEmployee(String employeeId) {
+        return getProfileForUser(userService.findById(employeeId));
+    }
+
+    private ProfileDto getProfileForUser(User user) {
+        var profile = new ProfileDto();
+        profile.setFullname(user.getFullname());
+        profile.setEmail(user.getEmail());
+        profile.setId(user.getId());
+        profile.setCertificates(user.getCertificates().stream().map(this::convertToCertificateDto).toList());
+        profile.setExperiences(user.getExperiences().stream().map(this::convertToExperienceDto).toList());
+        profile.setSkills(user.getSkills().stream().map(this::convertToSkillDto).toList());
+        profile.setLanguages(user.getSpeaks().stream().map(this::convertSpeaksToLanguageDto).toList());
+        return profile;
+    }
+
+    private LanguageDto convertSpeaksToLanguageDto(Speaks speaks) {
+        var language = speaks.getLanguage();
+        return new LanguageDto(language.getLanguageCode().getName(), language.getLanguageAlpha3Code().getName());
+    }
+
+    private SkillDto convertToSkillDto(Skill skill) {
+        var skillDto = new SkillDto(skill.getId(), skill.getLabel());
+        return skillDto;
+    }
+
+    private CertificateDto convertToCertificateDto(Certificate certificate) {
+        return new CertificateDto(certificate.getId(), certificate.getLabel());
+    }
+
+    private ExperienceDto convertToExperienceDto(Experience experience) {
+        var experienceDto = new ExperienceDto();
+        experienceDto.setTitle(experience.getTitle());
+        experienceDto.setResponsibilities(experience.getDescriptions());
+        return experienceDto;
+    }
+
+    public List<EmployeeDto> getEmployeeAccessibleToUserWithId(String userId) {
+        User user = userService.findUserById(userId).orElseThrow(() -> new UserNotFound());
+        return getEmployeesAccessibleToUser(user);
+    }
+
+    private List<EmployeeDto> getEmployeesAccessibleToUser(User user) {
+        List<String> companyIds = user.getCompanies().stream().map(Company::getId).toList();
+        return userService.findByCompaniesIdIn(companyIds).stream().map(this::convertUserToEmployeeDto).toList();
+    }
+
+    private EmployeeDto convertUserToEmployeeDto(User user) {
+        return new EmployeeDto()
+            .id(user.getId())
+            .fullname(user.getFullname())
+            .role(user.getUserRole().name());
     }
 
     private User createUserFromRequest(CreateUserRequest createUserRequest) {

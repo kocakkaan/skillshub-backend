@@ -11,6 +11,7 @@ import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
 import com.reply.skillshub.data.speaks.Speaks;
 import com.reply.skillshub.data.userrole.UserRole;
+import com.reply.skillshub.data.certificate.Certificate;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.experience.Experience;
 import com.reply.skillshub.data.resume.Resume;
@@ -34,10 +35,14 @@ public class User {
 
     @NotEmpty
     private String lastName;
+
+    private String profilePictureLocation;
     
     @Email
     @NotEmpty
     private String email;
+
+    private String phoneNumber;
 
     @NotNull
     private UserRole userRole;
@@ -64,6 +69,9 @@ public class User {
 
     @Relationship(type = "HAS_RESUME")
     private List<Resume> resumes = new ArrayList<>();
+
+    @Relationship(type = "HAS_CERTIFICATE")
+    private List<Certificate> certificates = new ArrayList<>();
 
     public String getFullname() {
         return this.firstName + " " + this.lastName;
