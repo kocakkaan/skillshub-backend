@@ -16,7 +16,7 @@ public class ExperienceService {
 
     private final ExperienceRepository experienceRepository;
 
-    private final ValidationHandler<Experience> validationHandler; 
+    private final ValidationHandler<Experience> validationHandler = new ValidationHandler<>(); 
 
     public void deleteExperienceById(String id) {
         experienceRepository.deleteById(id);

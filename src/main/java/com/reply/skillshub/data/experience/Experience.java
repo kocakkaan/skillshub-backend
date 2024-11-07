@@ -19,6 +19,7 @@ import com.reply.skillshub.data.resumeexperience.ResumeExperience;
 import com.reply.skillshub.data.skill.Skill;
 import com.reply.skillshub.data.user.User;
 
+import jakarta.validation.constraints.AssertFalse;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
@@ -66,6 +67,11 @@ public class Experience {
     @AssertTrue(message = "An experience can have at most one industry")
     private boolean isIndustrySmallerAsTwo() {
         return industries.size() < 2;
+    }
+
+    @AssertFalse(message = "An experience should not have more as four descriptions")
+    private boolean isDescriptionSizeSmallerAsFour() {
+        return descriptions.size() > 4;
     }
 
     public Optional<Industry> getIndustry() {
