@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.reply.skillshub.openapi.api.CompanyApi;
 import com.reply.skillshub.openapi.model.CompanyDto;
+import com.reply.skillshub.openapi.model.CompanyInformationDto;
 import com.reply.skillshub.openapi.model.CreateCompanyRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,11 @@ public class CompanyController implements CompanyApi {
     @Override
     public ResponseEntity<CompanyDto> userMeCompanyPost(CreateCompanyRequest createCompanyRequest) {
         return ResponseEntity.ok(companyControllerService.createCompany(createCompanyRequest));
+    }
+
+    @Override
+    public ResponseEntity<CompanyInformationDto> companyCompanyIdEmployeesGet(String companyId) {
+        return ResponseEntity.ok(companyControllerService.getCompanyInformation(companyId));
     }
     
 }

@@ -15,7 +15,7 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
 
-    private final ValidationHandler<Company> validationHandler;
+    private final ValidationHandler<Company> validationHandler = new ValidationHandler<>();
 
     public Company save(Company company) {
         validationHandler.validate(company);
