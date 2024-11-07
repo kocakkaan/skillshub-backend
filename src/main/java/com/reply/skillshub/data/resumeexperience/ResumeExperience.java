@@ -13,6 +13,7 @@ import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
 import com.reply.skillshub.data.experience.Experience;
 
+import jakarta.validation.constraints.AssertFalse;
 import jakarta.validation.constraints.AssertTrue;
 import lombok.Data;
 
@@ -34,8 +35,13 @@ public class ResumeExperience {
         return basedOfExperience.size() == 1;
     }
 
+    @AssertFalse(message = "An experience should not have more as four descriptions")
+    private boolean isDescriptionSizeSmallerAsFive() {
+        return descriptions.size() > 4;
+    }
+
     public Optional<Experience> getBasedOf() {
-        if (basedOfExperience.size() == 1) {
+        if (basedOfExperience.size() > 0) {
             return Optional.of(basedOfExperience.get(0));
         }
         return Optional.empty();

@@ -43,6 +43,10 @@ public class ResumeControllerService {
         resumeService.deleteById(id);
     }
 
+    public Resume findResumeEntityById(String id) {
+        return resumeService.findById(id);
+    }
+
     public ResumeDto findResumeById(String id) {
         Resume resume = resumeService.findById(id);
         return ResumeConverterUtil.convertResumeToDto(resume);

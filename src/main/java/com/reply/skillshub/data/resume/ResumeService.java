@@ -16,7 +16,7 @@ public class ResumeService {
 
     private final ResumeRepository repository;
 
-    private final ValidationHandler<Resume> validationHandler;
+    private final ValidationHandler<Resume> validationHandler = new ValidationHandler<>();
 
     public void deleteById(String id) {
         repository.deleteById(id);

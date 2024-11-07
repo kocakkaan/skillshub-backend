@@ -58,4 +58,17 @@ public class Resume {
         return users.size() == 1;
     }
 
+    public User getUser() {
+        if (users.isEmpty()) {
+            return null;
+        }
+        return users.get(0);
+    }
+
+    public Resume setUser(User user) {
+        users.clear();
+        users.add(user);
+        return this;
+    }
+
 }

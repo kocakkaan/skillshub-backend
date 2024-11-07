@@ -1,10 +1,14 @@
 package com.reply.skillshub.controllers.resume;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.reply.skillshub.controllers.resume.powerpoint.PowerPointService;
 import com.reply.skillshub.openapi.api.ResumesApi;
 import com.reply.skillshub.openapi.model.IndustryDto;
 import com.reply.skillshub.openapi.model.ResumeDto;
@@ -22,12 +26,25 @@ import lombok.RequiredArgsConstructor;
 public class ResumeController implements ResumesApi {
 
     private final ResumeControllerService resumeControllerService;
+    private final PowerPointService powerPointService;
 
     @Override
     public ResponseEntity<Void> exportToPptx(String resumeId, @NotNull @Valid String language,
             @NotNull @Valid String company) {
+        var resume = resumeControllerService.findResumeEntityById(resumeId);
+        var pptDto = powerPointService.createPowerPointDto(resume, language, company);
+        var ppt = powerPointService.createPowerPoint(pptDto);
+        var test = new ByteArrayOutputStream();
+        try {
+            ppt.write(test);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        // powerPointService.createPowerPoint();
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'exportToPptx'");
+        // ResponseEntity.
+        return ResponseEntity.status(200).build();
     }
 
     @Override
@@ -48,7 +65,7 @@ public class ResumeController implements ResumesApi {
     }
 
     @Override
-    public ResponseEntity<ResumeDto> resumesResumeIdIndustriesPatch(String resumeId, @Valid List<IndustryDto> industries) {
+    public ResponseEntity<ResumeDto> resumesResumeIdIndustriesPatch(String resumeId, List<IndustryDto> industries) {
         return ResponseEntity.ok(resumeControllerService.updateResumeIndustries(resumeId, industries));
     }
 
@@ -91,5 +108,15 @@ public class ResumeController implements ResumesApi {
     public ResponseEntity<ResumeDto> usersUserIdResumesPost(String userId, @Valid ResumeDto resumeDto) {
         return ResponseEntity.ok(resumeControllerService.createResumeForUser(userId, resumeDto));
     }
-    
+
+    @Override
+    public ResponseEntity<Resource> resumesResumeIdExportToImgPost(String resumeId, String language, String company) {
+        var resume = resumeControllerService.findResumeEntityById("someId");
+        var pptDto = powerPointService.createPowerPointDto(null, language, company);
+        var ppt = powerPointService.createPowerPoint(pptDto);
+        var output = powerPointService.getFirstSlideAsImage(ppt);
+        return ResponseEntity.status(200).body(output);
+    }
+
+
 }
