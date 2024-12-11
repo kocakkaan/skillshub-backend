@@ -17,6 +17,7 @@ import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.company.CompanyService;
 import com.reply.skillshub.data.experience.Experience;
 import com.reply.skillshub.data.skill.Skill;
+import com.reply.skillshub.data.skill.SkillService;
 import com.reply.skillshub.data.speaks.Speaks;
 import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserService;
@@ -44,6 +45,8 @@ public class UsersControllerService {
     private final CompanyService companyService;
 
     private final UserService userService;
+
+    private final SkillService skillService;
 
     private final LoadCurrentUser loadCurrentUser;
 
@@ -106,6 +109,14 @@ public class UsersControllerService {
 
     public ProfileDto getProfileForEmployee(String employeeId) {
         return getProfileForUser(userService.findById(employeeId));
+    }
+
+    public SkillDto addSkillToUser(String userId, String skillId) {
+        var skill = skillService.findById(skillId);
+        var user = userService.findById(userId);
+        user.getSkills().add(skill);
+        userService.save(user);
+        return new SkillDto(skill.getId(), skill.getLabel());
     }
 
     private ProfileDto getProfileForUser(User user) {

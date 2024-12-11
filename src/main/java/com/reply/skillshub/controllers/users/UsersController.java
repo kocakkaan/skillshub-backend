@@ -60,8 +60,7 @@ public class UsersController implements UsersApi {
 
     @Override
     public ResponseEntity<SkillDto> usersUserIdSkillsSkillIdPost(String userId, String skillId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'usersUserIdSkillsSkillIdPost'");
+        return ResponseEntity.ok(usersControllerService.addSkillToUser(userId, skillId));
     }
     
 }

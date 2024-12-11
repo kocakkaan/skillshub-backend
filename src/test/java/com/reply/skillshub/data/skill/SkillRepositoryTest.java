@@ -1,6 +1,4 @@
-package com.reply.skillshub.data.company;
-
-import java.util.List;
+package com.reply.skillshub.data.skill;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,28 +12,15 @@ import com.reply.skillshub.data.user.User;
 public class SkillRepositoryTest extends BaseRepositoryTest {
 
     @Autowired
-    private SkillRepository companyRepository;
+    private SkillRepository skillRepository;
 
     @Test
     void succesfullySaveCompany() {
-        Company company = new Company();
-        company.setLabel("tester");
-        company.getEmployees().add(returnUserWithEmail());
-        Company savedCompany = companyRepository.save(company);
-        Assertions.assertNotNull(savedCompany.getId());
-    }
-
-    @Test
-    void test_findByEmployeesId() {
-        Company company = new Company();
-        User user = returnUserWithEmail();
-        company.setLabel("tester");
-        company.getEmployees().add(user);
-        companyRepository.save(company);
-
-        List<Company> companyList = companyRepository.findByEmployeesId(user.getId());
-
-        Assertions.assertEquals(1, companyList.size());
+        Skill skill = new Skill();
+        skill.setLabel("tester");
+        skill.getEmployees().add(returnUserWithEmail());
+        Skill savedSkill = skillRepository.save(skill);
+        Assertions.assertNotNull(savedSkill.getId());
     }
 
     User returnUserWithEmail() {

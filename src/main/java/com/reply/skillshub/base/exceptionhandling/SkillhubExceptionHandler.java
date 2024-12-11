@@ -50,7 +50,6 @@ public class SkillhubExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorData, new HttpHeaders(), HttpStatus.BAD_REQUEST);
 	}
 
-
     @ExceptionHandler({Exception.class})
     public ResponseEntity<Object> handleDefaultBaseExceptions(Exception e, WebRequest webRequest) {
         LOG.debug("Exception sent:", e);
