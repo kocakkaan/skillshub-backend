@@ -16,6 +16,10 @@ import com.reply.skillshub.data.certificate.Certificate;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.company.CompanyService;
 import com.reply.skillshub.data.experience.Experience;
+import com.reply.skillshub.data.industry.Industry;
+import com.reply.skillshub.data.occupation.Occupation;
+import com.reply.skillshub.data.resume.Resume;
+import com.reply.skillshub.data.resumeskill.ResumeSkill;
 import com.reply.skillshub.data.skill.Skill;
 import com.reply.skillshub.data.skill.SkillService;
 import com.reply.skillshub.data.speaks.Speaks;
@@ -28,11 +32,16 @@ import com.reply.skillshub.openapi.model.CreateUserRequest;
 import com.reply.skillshub.openapi.model.CreatedUserResponse;
 import com.reply.skillshub.openapi.model.EmployeeDto;
 import com.reply.skillshub.openapi.model.ExperienceDto;
+import com.reply.skillshub.openapi.model.IndustryDto;
 import com.reply.skillshub.openapi.model.LanguageDto;
+import com.reply.skillshub.openapi.model.OccupationalCategoryDto;
 import com.reply.skillshub.openapi.model.ProfileDto;
+import com.reply.skillshub.openapi.model.ResumeDto;
+import com.reply.skillshub.openapi.model.ResumeSkillDto;
 import com.reply.skillshub.openapi.model.SkillDto;
 import com.reply.skillshub.openapi.model.UserConfirmRequest;
 import java.util.List;
+import java.util.Optional;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -128,12 +137,32 @@ public class UsersControllerService {
         profile.setExperiences(user.getExperiences().stream().map(this::convertToExperienceDto).toList());
         profile.setSkills(user.getSkills().stream().map(this::convertToSkillDto).toList());
         profile.setLanguages(user.getSpeaks().stream().map(this::convertSpeaksToLanguageDto).toList());
+        profile.setResumes(user.getResumes().stream().map(this::convertToResumeDto).toList());
         return profile;
+    }
+
+    private ResumeDto convertToResumeDto(Resume resume) {
+        var newResume = new ResumeDto();
+        newResume.setId(resume.getId());
+        newResume.setTitle(resume.getTitle());
+        newResume.setSkills(resume.getSkills().stream().map(this::convertToResumeSkillDto).toList());
+        newResume.setBackground(resume.getBackground());
+        newResume.setIndustries(resume.getIndustries().stream().map(this::convertToIndustryDto).toList());
+        // newResume.set(convertToOccupationalCategoryDto(resume.getRole()));
+        return newResume;
     }
 
     private LanguageDto convertSpeaksToLanguageDto(Speaks speaks) {
         var language = speaks.getLanguage();
         return new LanguageDto(language.getLanguageCode().getName(), language.getLanguageAlpha3Code().getName());
+    }
+
+    private ResumeSkillDto convertToResumeSkillDto(ResumeSkill resumeSkill) {
+        var resumeSkillDto = new ResumeSkillDto();
+        resumeSkillDto.setId(resumeSkill.getId());
+        resumeSkillDto.setParentSkill(convertToSkillDto(resumeSkill.getParent()));
+        resumeSkillDto.setRelatedEssentialSkills(resumeSkill.getSkills().stream().map(this::convertToSkillDto).toList());
+        return resumeSkillDto;
     }
 
     private SkillDto convertToSkillDto(Skill skill) {
@@ -147,9 +176,23 @@ public class UsersControllerService {
 
     private ExperienceDto convertToExperienceDto(Experience experience) {
         var experienceDto = new ExperienceDto();
+        experienceDto.setId(Optional.of(experience.getId()));
         experienceDto.setTitle(experience.getTitle());
         experienceDto.setResponsibilities(experience.getDescriptions());
+        experienceDto.setSkills(experience.getSkills().stream().map(this::convertToSkillDto).toList());
+        experienceDto.setStartDate(Optional.ofNullable(experience.getStartDate()));
+        experienceDto.setEndDate(Optional.ofNullable(experience.getEndDate()));
+        experienceDto.setIndustry(Optional.ofNullable(experience.getIndustries().stream().map(this::convertToIndustryDto).findFirst().orElse(null)));
+        experienceDto.setOccupationalCategory(experience.getOccupation().stream().map(this::convertToOccupationalCategoryDto).findFirst().orElse(null));
         return experienceDto;
+    }
+
+    private IndustryDto convertToIndustryDto(Industry industry) {
+        return new IndustryDto(industry.getId(), industry.getLabel());
+    }
+
+    private OccupationalCategoryDto convertToOccupationalCategoryDto(Occupation occupation) {
+        return new OccupationalCategoryDto(occupation.getId(), occupation.getLabel());
     }
 
     public List<EmployeeDto> getEmployeeAccessibleToUserWithId(String userId) {

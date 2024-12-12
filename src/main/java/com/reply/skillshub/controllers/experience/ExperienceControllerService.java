@@ -78,7 +78,10 @@ public class ExperienceControllerService {
             .industry(convertToIndustryDto(experience.getIndustry()).orElse(null))
             .responsibilities(experience.getDescriptions())
             .title(experience.getTitle())
-            .occupationalCategory(null)
+            .occupationalCategory(experience.getOccupation().stream().map(oc -> new OccupationalCategoryDto()
+                .id(oc.getId())
+                .label(oc.getLabel()))
+                .findFirst().orElse(null))
             .skills(convertToSkillDtoList(experience.getSkills()));
     }
 

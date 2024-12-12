@@ -53,7 +53,7 @@ public class Experience {
     @Relationship(type = "IN_INDUSTRY", direction = Direction.OUTGOING)
     private List<Industry> industries = new ArrayList<>();
 
-    @Relationship(type = "HAD_OCCUPATION", direction = Direction.OUTGOING)
+    @Relationship(type = "IN_ROLE", direction = Direction.OUTGOING)
     private List<Occupation> occupation = new ArrayList<>();
 
     @Relationship(type = "BASED_OF", direction = Direction.INCOMING)
@@ -62,6 +62,11 @@ public class Experience {
     @AssertTrue(message = "An experience must be assigned exactly one employee")
     private boolean isCountEmployeesEqualToOne() {
         return employees.size() == 1;
+    }
+
+    @AssertTrue(message = "An experience must have one occupation")
+    private boolean isOccupationSizeEqualToOne() {
+        return occupation.size() == 1;
     }
 
     @AssertTrue(message = "An experience can have at most one industry")

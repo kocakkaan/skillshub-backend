@@ -45,14 +45,14 @@ public class PowerPointService {
             return powerPointInformation;
         }
 
-        powerPointInformation.setPosition(resume.getRole());
+        powerPointInformation.setPosition(resume.getRole().getLabel());
         powerPointInformation.setProfilePictureLocation(resume.getUser().getProfilePictureLocation());
         powerPointInformation.setCompany(company);
         powerPointInformation.setLanguage(language);
         powerPointInformation.setName(resume.getUser().getFullname());
         powerPointInformation.setEmail(resume.getUser().getEmail());
         powerPointInformation.setPhone(resume.getUser().getPhoneNumber());
-        powerPointInformation.setRole(resume.getRole());
+        powerPointInformation.setRole(resume.getRole().getLabel());
         powerPointInformation.setTitle(resume.getTitle());
         powerPointInformation.setSkills(resume.getSkills().stream().map(this::convertSkillToPowerPointSkill).toList());
         powerPointInformation.setIndustries(resume.getIndustries().stream().map((industry) -> industry.getLabel()).toList());
@@ -93,7 +93,7 @@ public class PowerPointService {
 
     private PowerPointInformation.PowerPointSkill convertSkillToPowerPointSkill(ResumeSkill skill) {
       PowerPointInformation.PowerPointSkill powerPointSkill = new PowerPointInformation.PowerPointSkill();
-      powerPointSkill.setParentSkill(skill.getParent().get(0).getLabel());
+      powerPointSkill.setParentSkill(skill.getParent().getLabel());
       powerPointSkill.setChildSkills(skill.getSkills().stream().map((childSkill) -> childSkill.getLabel()).toList());
       return powerPointSkill;
     }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.data.experience.ExperienceService;
+import com.reply.skillshub.data.occupation.Occupation;
 import com.reply.skillshub.data.resume.Resume;
 import com.reply.skillshub.data.resume.ResumeService;
 import com.reply.skillshub.data.resumeexperience.ResumeExperience;
@@ -101,9 +102,16 @@ public class ResumeControllerService {
 
     public ResumeDto updateResumeRole(String id, UpdateResumeRoleRequest role) {
         Resume resume = resumeService.findById(id);
-        resume.setRole(role.getLabel());
+        resume.setRole(convertToRoleToOccupation(role));
         resumeService.save(resume);
         return ResumeConverterUtil.convertResumeToDto(resume);
+    }
+
+    private Occupation convertToRoleToOccupation(UpdateResumeRoleRequest role) {
+        Occupation occupation = new Occupation();
+        occupation.setLabel(role.getLabel());
+        occupation.setId(role.getId());
+        return occupation;
     }
 
     public ResumeDto updateResumeBackground(String id, String background) {

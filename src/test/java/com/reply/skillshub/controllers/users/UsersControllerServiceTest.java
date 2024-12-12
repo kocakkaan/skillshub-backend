@@ -113,4 +113,17 @@ public class UsersControllerServiceTest {
         
         Assertions.assertEquals(user.getEmail(), response.getEmail());
     }
+
+    @Test
+    void successful_getProfileForCurrentUser() {
+        User user = Instancio.create(User.class);
+        doReturn(user).when(loadCurrentUser).loadSkillhubUserFromContext();
+        var profile = usersControllerService.getProfileForCurrentUser();
+        Assertions.assertNotNull(profile);
+        Assertions.assertEquals(user.getResumes().size(), profile.getResumes().size());
+        Assertions.assertEquals(user.getSkills().size(), profile.getSkills().size());
+        Assertions.assertEquals(user.getExperiences().size(), profile.getExperiences().size());
+        Assertions.assertEquals(user.getCertificates().size(), profile.getCertificates().size());
+        // Assertions.assertEquals(user.getEducations().size(), profile.getEducations().size());
+    }
 }

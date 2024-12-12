@@ -11,6 +11,7 @@ import org.springframework.data.neo4j.core.schema.Relationship.Direction;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
 import com.reply.skillshub.data.industry.Industry;
+import com.reply.skillshub.data.occupation.Occupation;
 import com.reply.skillshub.data.resumeexperience.ResumeExperience;
 import com.reply.skillshub.data.resumeskill.ResumeSkill;
 import com.reply.skillshub.data.user.User;
@@ -34,7 +35,7 @@ public class Resume {
     private String title;
 
     // This should be occupation probably
-    private String role;
+    private Occupation role;
 
     @Relationship(type = "IN_INDUSTRY", direction = Direction.OUTGOING)
     private List<Industry> industries = new ArrayList<>();

@@ -37,5 +37,9 @@ public class ResumeSkill {
     private boolean isParentEqualToOne() {
         return parent.size() == 1;
     }
+
+    public Skill getParent() {
+        return parent.get(0);
+    }
     
 }

@@ -111,7 +111,7 @@ public class ResumeConverterUtilTest {
         
         assertNotNull(skill);
         assertEquals(skillDto.getId(), skill.getId());
-        assertEquals(parentSkillDto.getId(), skill.getParent().get(0).getId());
+        assertEquals(parentSkillDto.getId(), skill.getParent().getId());
         assertEquals(relatedSkillsDto.size(), skill.getSkills().size());
         assertEquals(relatedSkillsDto.get(0).getId(), skill.getSkills().get(0).getId());
         assertEquals(relatedSkillsDto.get(1).getId(), skill.getSkills().get(1).getId());

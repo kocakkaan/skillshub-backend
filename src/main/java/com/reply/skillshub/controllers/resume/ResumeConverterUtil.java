@@ -36,7 +36,7 @@ public class ResumeConverterUtil {
     public static ResumeSkill convertSkillDtoToEntity(ResumeSkillDto dto) {
         ResumeSkill skill = new ResumeSkill();
         skill.setId(dto.getId());
-        skill.getParent().add(convertSkillDtoToEntity(dto.getParentSkill()));
+        skill.setParent(List.of(convertSkillDtoToEntity(dto.getParentSkill())));
         skill.getSkills().addAll(convertSkillsDtoToEntity(dto.getRelatedEssentialSkills()));
         return skill;
     }
@@ -51,7 +51,7 @@ public class ResumeConverterUtil {
     private static ResumeSkillDto convertSkillToDto(ResumeSkill skill) {
         ResumeSkillDto skillDto = new ResumeSkillDto();
         skillDto.setId(skill.getId());
-        skillDto.setParentSkill(convertSkillToDto(skill.getParent().get(0)));
+        skillDto.setParentSkill(convertSkillToDto(skill.getParent()));
         skillDto.setRelatedEssentialSkills(convertSkillsToDto(skill.getSkills()));
         return skillDto;
     }
