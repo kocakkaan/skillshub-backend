@@ -123,7 +123,7 @@ public class UsersControllerServiceTest {
         Assertions.assertEquals(user.getResumes().size(), profile.getResumes().size());
         Assertions.assertEquals(user.getSkills().size(), profile.getSkills().size());
         Assertions.assertEquals(user.getExperiences().size(), profile.getExperiences().size());
-        Assertions.assertEquals(user.getCertificates().size(), profile.getCertificates().size());
+        Assertions.assertEquals(user.getHasCertificates().size(), profile.getCertificates().size());
         // Assertions.assertEquals(user.getEducations().size(), profile.getEducations().size());
     }
 }
