@@ -1,9 +1,11 @@
 package com.reply.skillshub.data.certificate;
 
+import com.reply.skillshub.data.user.User;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
+
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
@@ -17,6 +19,9 @@ public class Certificate {
     private String id;
 
     @NotEmpty
-    private String label;
+    private String name;
+
+    @NotEmpty
+    private String issuer;
 }
 

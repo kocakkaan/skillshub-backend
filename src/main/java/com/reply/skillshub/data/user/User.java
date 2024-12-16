@@ -3,6 +3,7 @@ package com.reply.skillshub.data.user;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.reply.skillshub.data.hascertificate.HasCertificate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Node;
@@ -71,7 +72,7 @@ public class User {
     private List<Resume> resumes = new ArrayList<>();
 
     @Relationship(type = "HAS_CERTIFICATE")
-    private List<Certificate> certificates = new ArrayList<>();
+    private List<HasCertificate> hasCertificates = new ArrayList<>();
 
     public String getFullname() {
         return this.firstName + " " + this.lastName;
