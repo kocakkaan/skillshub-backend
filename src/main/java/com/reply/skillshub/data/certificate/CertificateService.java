@@ -3,7 +3,6 @@ package com.reply.skillshub.data.certificate;
 import com.reply.skillshub.base.services.ValidationHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.testcontainers.shaded.org.checkerframework.checker.units.qual.C;
 
 import java.util.Optional;
 
@@ -12,6 +11,7 @@ import java.util.Optional;
 public class CertificateService {
 
     private final CertificateRepository certificateRepository;
+
     private final ValidationHandler<Certificate> validationHandler = new ValidationHandler<>();
 
     public Certificate save(Certificate certificate) {

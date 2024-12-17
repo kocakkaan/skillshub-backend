@@ -21,15 +21,15 @@ public class CertificateControllerService {
         return userService.findById(userId).getHasCertificates();
     }
 
-    public Certificate saveCertificate(CertificateDto certificateDto){
+    public Certificate convertToCertificateAndSave(CertificateDto certificateDto){
         Certificate certificate = new Certificate();
         certificate.setName(certificateDto.getName());
         certificate.setIssuer(certificateDto.getIssuer());
-        return certificate;
+        return certificateService.save(certificate);
     }
 
-    public void saveCertificateForUser(String userId, CertificateDto certificateDto) throws UserNotFound{
-        Certificate certificate = certificateService.findByName(certificateDto.getName()).orElse(saveCertificate(certificateDto));
+    public HasCertificate saveCertificateForUser(String userId, CertificateDto certificateDto) throws UserNotFound{
+        Certificate certificate = certificateService.findByName(certificateDto.getName()).orElse(convertToCertificateAndSave(certificateDto));
         User user = userService.findUserById(userId).orElseThrow(UserNotFound::new);
 
         HasCertificate hasCertificate = new HasCertificate();
@@ -37,11 +37,11 @@ public class CertificateControllerService {
         hasCertificate.setFile(certificateDto.getFile());
         hasCertificate.setIssuedDate(certificateDto.getIssuedDate());
         hasCertificate.setExpirationDate(certificateDto.getExpirationDate());
-        user.getHasCertificates().add(hasCertificate);
 
-        hasCertificateService.save(hasCertificate);
+        HasCertificate savedHasCertificate = hasCertificateService.save(hasCertificate);
+        user.getHasCertificates().add(savedHasCertificate);
         userService.save(user);
 
-
+        return savedHasCertificate;
     }
 }
