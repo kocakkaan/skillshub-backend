@@ -45,14 +45,14 @@ public class PowerPointService {
             return powerPointInformation;
         }
 
-        powerPointInformation.setPosition(resume.getRole().getLabel());
+        resume.getOptionalRole().ifPresent(role -> powerPointInformation.setPosition(role.getLabel()));
         powerPointInformation.setProfilePictureLocation(resume.getUser().getProfilePictureLocation());
         powerPointInformation.setCompany(company);
         powerPointInformation.setLanguage(language);
         powerPointInformation.setName(resume.getUser().getFullname());
         powerPointInformation.setEmail(resume.getUser().getEmail());
         powerPointInformation.setPhone(resume.getUser().getPhoneNumber());
-        powerPointInformation.setRole(resume.getRole().getLabel());
+        resume.getOptionalRole().ifPresent(role -> powerPointInformation.setRole(role.getLabel()));
         powerPointInformation.setTitle(resume.getTitle());
         powerPointInformation.setSkills(resume.getSkills().stream().map(this::convertSkillToPowerPointSkill).toList());
         powerPointInformation.setIndustries(resume.getIndustries().stream().map((industry) -> industry.getLabel()).toList());

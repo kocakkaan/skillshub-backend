@@ -26,6 +26,10 @@ public class ExperienceService {
         return experienceRepository.findById(id);
     }
 
+    public List<Experience> findAllById(List<String> ids) {
+        return experienceRepository.findAllById(ids);
+    }
+
     public Experience loadById(String id) {
         return experienceRepository.findById(id).orElseThrow(() -> new ExperienceNotFound());
     }

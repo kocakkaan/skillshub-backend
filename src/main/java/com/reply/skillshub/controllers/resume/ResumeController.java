@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.reply.skillshub.controllers.resume.powerpoint.PowerPointService;
 import com.reply.skillshub.openapi.api.ResumesApi;
+import com.reply.skillshub.openapi.model.CreateInitialResumeDto;
 import com.reply.skillshub.openapi.model.IndustryDto;
 import com.reply.skillshub.openapi.model.ResumeDto;
 import com.reply.skillshub.openapi.model.ResumeExperienceDto;
 import com.reply.skillshub.openapi.model.ResumeSkillDto;
+import com.reply.skillshub.openapi.model.ResumesResumeIdBackgroundPatchRequest;
 import com.reply.skillshub.openapi.model.UpdateResumeRoleRequest;
 import com.reply.skillshub.openapi.model.UpdateResumeTitleRequest;
 
@@ -105,17 +107,27 @@ public class ResumeController implements ResumesApi {
     }
 
     @Override
-    public ResponseEntity<ResumeDto> usersUserIdResumesPost(String userId, @Valid ResumeDto resumeDto) {
-        return ResponseEntity.ok(resumeControllerService.createResumeForUser(userId, resumeDto));
+    public ResponseEntity<ResumeDto> usersUserIdResumesPost(String userId, CreateInitialResumeDto createInitialResumeDto) {
+        return ResponseEntity.ok(resumeControllerService.createInitialResumeForUser(userId, createInitialResumeDto));
     }
 
     @Override
     public ResponseEntity<Resource> resumesResumeIdExportToImgPost(String resumeId, String language, String company) {
-        var resume = resumeControllerService.findResumeEntityById("someId");
+        // var resume = resumeControllerService.findResumeEntityById("someId");
         var pptDto = powerPointService.createPowerPointDto(null, language, company);
         var ppt = powerPointService.createPowerPoint(pptDto);
         var output = powerPointService.getFirstSlideAsImage(ppt);
         return ResponseEntity.status(200).body(output);
+    }
+
+    @Override
+    public ResponseEntity<ResumeDto> resumesResumeIdBackgroundPatch(String resumeId, ResumesResumeIdBackgroundPatchRequest resumesResumeIdBackgroundPatchRequest) {
+        return ResponseEntity.ok(resumeControllerService.updateResumeBackground(resumeId, resumesResumeIdBackgroundPatchRequest));
+    }
+
+    @Override
+    public ResponseEntity<ResumeDto> resumesResumeIdExperiencesPut(String resumeId, List<String> ids) {
+        return ResponseEntity.ok(resumeControllerService.addExperiencesToResume(resumeId, ids));
     }
 
 

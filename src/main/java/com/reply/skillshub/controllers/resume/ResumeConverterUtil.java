@@ -2,6 +2,7 @@ package com.reply.skillshub.controllers.resume;
 
 import java.util.List;
 
+import com.reply.skillshub.data.occupation.Occupation;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ResumeNotFound;
 import com.reply.skillshub.data.experience.Experience;
 import com.reply.skillshub.data.industry.Industry;
@@ -14,6 +15,7 @@ import com.reply.skillshub.openapi.model.ResumeDto;
 import com.reply.skillshub.openapi.model.ResumeExperienceDto;
 import com.reply.skillshub.openapi.model.ResumeSkillDto;
 import com.reply.skillshub.openapi.model.SkillDto;
+import com.reply.skillshub.openapi.model.UpdateResumeRoleRequest;
 
 public class ResumeConverterUtil {
 
@@ -75,8 +77,19 @@ public class ResumeConverterUtil {
         ResumeDto resumeDto = new ResumeDto();
         resumeDto.setBackground(resume.getBackground());
         resumeDto.setTitle(resume.getTitle());
+        resumeDto.setId(resume.getId());
+        resume.getOptionalRole().ifPresent((r) -> resumeDto.setRole(convertToUpdateResumeRoleRequest(r)));
+        resumeDto.setSkills(resume.getSkills().stream().map(ResumeConverterUtil::convertSkillToDto).toList());
+        resumeDto.setIndustries(resume.getIndustries().stream().map(ResumeConverterUtil::convertIndustryToDto).toList());
         resumeDto.setExperiences(convertExperiences(resume.getExperiences()));
         return resumeDto;
+    }
+
+    private static UpdateResumeRoleRequest convertToUpdateResumeRoleRequest(Occupation occupation) {
+        UpdateResumeRoleRequest role = new UpdateResumeRoleRequest();
+        role.setLabel(occupation.getLabel());
+        role.setId(occupation.getId());
+        return role;
     }
 
     private static List<ResumeExperienceDto> convertExperiences(List<ResumeExperience> experiences) {
@@ -89,6 +102,7 @@ public class ResumeConverterUtil {
         dto.setBasedOf(basedOf.getId());
         dto.setResponsibilities(experience.getDescriptions());
         dto.setSkills(convertSkillsToDto(basedOf.getSkills()));
+        dto.setTitle(basedOf.getTitle());
         return dto;
     }
 

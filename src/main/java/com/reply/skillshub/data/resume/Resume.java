@@ -2,6 +2,7 @@ package com.reply.skillshub.data.resume;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
@@ -28,14 +29,14 @@ public class Resume {
     @GeneratedValue(UUIDStringGenerator.class)    
     private String id;
 
-    @NotEmpty
     private String background;
 
     @NotEmpty
     private String title;
 
     // This should be occupation probably
-    private Occupation role;
+    @Relationship(type = "FOR_ROLE", direction = Direction.OUTGOING)
+    private List<Occupation> role = new ArrayList<>();
 
     @Relationship(type = "IN_INDUSTRY", direction = Direction.OUTGOING)
     private List<Industry> industries = new ArrayList<>();
@@ -50,11 +51,16 @@ public class Resume {
     private List<User> users = new ArrayList<>();
 
     @AssertTrue
-    private boolean isIndustryCountLowerAsTwo() {
-        return industries.size() < 2;
+    private boolean isIndustryCountLowerAsThree() {
+        return industries.size() < 3;
     }
 
-    @AssertTrue
+    @AssertTrue(message = "A resume can have at most one role")
+    private boolean isRoleCountLowerAsTwo() {
+        return role.size() < 2;
+    }
+
+    @AssertTrue(message = "A resume must have at least one user")
     private boolean isUserSizeExactlyOne() {
         return users.size() == 1;
     }
@@ -70,6 +76,13 @@ public class Resume {
         users.clear();
         users.add(user);
         return this;
+    }
+
+    public Optional<Occupation> getOptionalRole() {
+        if (role.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(role.get(0));
     }
 
 }

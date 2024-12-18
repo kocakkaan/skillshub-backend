@@ -13,10 +13,12 @@ import com.reply.skillshub.data.resumeexperience.ResumeExperience;
 import com.reply.skillshub.data.resumeskill.ResumeSkill;
 import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserService;
+import com.reply.skillshub.openapi.model.CreateInitialResumeDto;
 import com.reply.skillshub.openapi.model.IndustryDto;
 import com.reply.skillshub.openapi.model.ResumeDto;
 import com.reply.skillshub.openapi.model.ResumeExperienceDto;
 import com.reply.skillshub.openapi.model.ResumeSkillDto;
+import com.reply.skillshub.openapi.model.ResumesResumeIdBackgroundPatchRequest;
 import com.reply.skillshub.openapi.model.UpdateResumeRoleRequest;
 import com.reply.skillshub.openapi.model.UpdateResumeTitleRequest;
 
@@ -57,6 +59,10 @@ public class ResumeControllerService {
         return createResumeDto(loadCurrentUser.loadSkillhubUserFromContext(), resumeDto);
     }
 
+    public ResumeDto createInitialResumeForUser(String userId, CreateInitialResumeDto createInitialResumeDto) {
+        return createInitialResumeDto(userService.findById(userId), createInitialResumeDto);
+    }
+
     public ResumeDto createResumeForUser(String userId, ResumeDto resumeDto) {
         return createResumeDto(userService.findById(userId), resumeDto);
     }
@@ -74,6 +80,21 @@ public class ResumeControllerService {
         resume.setSkills(resumeDto.getSkills().stream().map(ResumeConverterUtil::convertSkillDtoToEntity).toList());
         resume.setExperiences(resumeDto.getExperiences().stream().map((dto) -> ResumeConverterUtil.convertExperienDtoToEntity(experienceService.loadById(dto.getBasedOf()), dto)).toList());
         return resume;
+    }
+
+    private ResumeDto createInitialResumeDto(User user, CreateInitialResumeDto createInitialResumeDto) {
+        Resume resume = new Resume();
+        if (createInitialResumeDto.getBaseResumeId().isPresent()) {
+            Resume baseResume = resumeService.findById(createInitialResumeDto.getBaseResumeId().get());
+            resume.setRole(baseResume.getRole());
+            resume.setIndustries(baseResume.getIndustries());
+            resume.setSkills(baseResume.getSkills());
+            resume.setExperiences(baseResume.getExperiences());
+        }
+        resume.getUsers().add(user);
+        resume.setTitle(createInitialResumeDto.getTitle());
+        resumeService.save(resume);
+        return ResumeConverterUtil.convertResumeToDto(resume);
     }
 
 
@@ -102,7 +123,17 @@ public class ResumeControllerService {
 
     public ResumeDto updateResumeRole(String id, UpdateResumeRoleRequest role) {
         Resume resume = resumeService.findById(id);
-        resume.setRole(convertToRoleToOccupation(role));
+        var occupation = convertToRoleToOccupation(role);
+        if (occupation != null) {
+            resume.setRole(List.of(occupation));
+        }
+        resumeService.save(resume);
+        return ResumeConverterUtil.convertResumeToDto(resume);
+    }
+
+    public ResumeDto updateResumeBackground(String id, ResumesResumeIdBackgroundPatchRequest background) {
+        Resume resume = resumeService.findById(id);
+        resume.setBackground(background.getBackground());
         resumeService.save(resume);
         return ResumeConverterUtil.convertResumeToDto(resume);
     }
@@ -132,6 +163,19 @@ public class ResumeControllerService {
     public ResumeDto updateResumeIndustries(String id, List<IndustryDto> industries) {
         Resume resume = resumeService.findById(id);
         resume.setIndustries(industries.stream().map(ResumeConverterUtil::convertIndustryDtoToEntity).toList());
+        resumeService.save(resume);
+        return ResumeConverterUtil.convertResumeToDto(resume);
+    }
+
+    public ResumeDto addExperiencesToResume(String id, List<String> ids) {
+        var experiences = experienceService.findAllById(ids);
+        var resume = resumeService.findById(id);
+        experiences.forEach(experience -> {
+            var resumeExperience = new ResumeExperience();
+            resumeExperience.getBasedOfExperience().add(experience);
+            resumeExperience.setDescriptions(experience.getDescriptions());
+            resume.getExperiences().add(resumeExperience);
+        });
         resumeService.save(resume);
         return ResumeConverterUtil.convertResumeToDto(resume);
     }
