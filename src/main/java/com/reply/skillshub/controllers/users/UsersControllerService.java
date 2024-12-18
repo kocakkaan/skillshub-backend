@@ -187,10 +187,10 @@ public class UsersControllerService {
         var certificateDto = new CertificateDto();
         certificateDto.setId(hasCertificate.getId());
         certificateDto.setIssuer(hasCertificate.getCertificate().getIssuer());
+        certificateDto.setName(hasCertificate.getCertificate().getName());
         certificateDto.setIssuedDate(hasCertificate.getIssuedDate());
         certificateDto.setExpirationDate(hasCertificate.getExpirationDate());
-        //UserInformationDto(String id, String name, String email, String phone, String jwt, String role)
-        //var userInfoDto = new UserInformationDto(certificate.getUser().getId(),certificate.getUser().getFirstName(), certificate.getUser().getEmail(), certificate.getUser().getPhoneNumber(), certificate.getUser().g)
+        certificateDto.setFile(hasCertificate.getFile());
         return certificateDto;
     }
 
