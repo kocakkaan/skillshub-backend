@@ -8,14 +8,18 @@ import com.reply.skillshub.data.hascertificate.HasCertificateService;
 import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.openapi.model.CertificateDto;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
+@RequiredArgsConstructor
 public class CertificateControllerService {
 
-    UserService userService;
-    CertificateService certificateService;
-    HasCertificateService hasCertificateService;
+    private final UserService userService;
+    private final CertificateService certificateService;
+    private final HasCertificateService hasCertificateService;
 
     public List<HasCertificate> findAllByUserId(String userId) {
         return userService.findById(userId).getHasCertificates();
