@@ -25,14 +25,14 @@ public class CertificateControllerService {
         return userService.findById(userId).getHasCertificates();
     }
 
-    public Certificate convertToCertificateAndSave(CertificateDto certificateDto){
+    public Certificate convertToCertificateAndSave(CertificateDto certificateDto) {
         Certificate certificate = new Certificate();
         certificate.setName(certificateDto.getName());
         certificate.setIssuer(certificateDto.getIssuer());
         return certificateService.save(certificate);
     }
 
-    public HasCertificate saveCertificateForUser(String userId, CertificateDto certificateDto) throws UserNotFound{
+    public HasCertificate saveCertificateForUser(String userId, CertificateDto certificateDto) throws UserNotFound {
         Certificate certificate = certificateService.findByName(certificateDto.getName()).orElse(convertToCertificateAndSave(certificateDto));
         User user = userService.findUserById(userId).orElseThrow(UserNotFound::new);
 

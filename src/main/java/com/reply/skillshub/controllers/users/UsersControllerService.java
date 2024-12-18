@@ -72,7 +72,7 @@ public class UsersControllerService {
 
     public ConfirmedUserResponse confirmUser(String userId, String confirmationToken, @Valid UserConfirmRequest userConfirmRequest) {
         User user = userService.findUserById(userId).orElseThrow(() -> new UserNotFound());
-        
+
         if (!user.getConfirmationToken().equals(confirmationToken)) {
             throw new InvalidConfirmationToken();
         }
@@ -94,8 +94,8 @@ public class UsersControllerService {
 
     public CreatedUserResponse addNewUserToCompany(@NotEmpty String companyId, CreateUserRequest createUserRequest) {
         Company company = companyService
-                            .findById(companyId)
-                            .orElseThrow(() -> new NoCompanyFound());
+                .findById(companyId)
+                .orElseThrow(() -> new NoCompanyFound());
 
         BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
 
@@ -264,5 +264,5 @@ public class UsersControllerService {
         email.setSubject("An account has been created for you");
         return email;
     }
-    
+
 }

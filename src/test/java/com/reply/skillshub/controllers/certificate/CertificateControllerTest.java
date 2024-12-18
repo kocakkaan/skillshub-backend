@@ -22,8 +22,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
 @WebMvcTest(CertificateController.class)
-@ContextConfiguration(classes = { CertificateController.class, SkillhubExceptionHandler.class})
-@AutoConfigureMockMvc(addFilters=false)
+@ContextConfiguration(classes = {CertificateController.class, SkillhubExceptionHandler.class})
+@AutoConfigureMockMvc(addFilters = false)
 public class CertificateControllerTest {
 
     @Autowired

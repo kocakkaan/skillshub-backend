@@ -36,7 +36,7 @@ public class HasCertificateServiceTest {
     }
 
     @Test
-    void successful_save(){
+    void successful_save() {
         HasCertificate hasCertificate = Instancio.create(HasCertificate.class);
 
         doReturn(hasCertificate).when(hasCertificateRepository).save(any(HasCertificate.class));

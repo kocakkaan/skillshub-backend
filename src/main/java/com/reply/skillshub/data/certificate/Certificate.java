@@ -1,6 +1,5 @@
 package com.reply.skillshub.data.certificate;
 
-import com.reply.skillshub.data.user.User;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
@@ -13,7 +12,7 @@ import lombok.Data;
 @Node
 @Data
 public class Certificate {
-    
+
     @Id
     @GeneratedValue(UUIDStringGenerator.class)
     private String id;

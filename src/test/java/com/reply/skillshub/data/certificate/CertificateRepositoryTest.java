@@ -12,7 +12,7 @@ public class CertificateRepositoryTest extends BaseRepositoryTest {
     private CertificateRepository certificateRepository;
 
     @Test
-    void test_findCertificateById(){
+    void test_findCertificateById() {
         Certificate certificate = new Certificate();
         certificate.setName("New certificate name");
         certificate.setIssuer("AWS");

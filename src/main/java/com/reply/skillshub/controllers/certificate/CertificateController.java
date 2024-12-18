@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class CertificateController implements CertificatesApi{
+public class CertificateController implements CertificatesApi {
 
     private final CertificateControllerService certificateControllerService;
 
@@ -30,16 +30,15 @@ public class CertificateController implements CertificatesApi{
         try {
             HasCertificate savedHasCertificate = certificateControllerService.saveCertificateForUser(userId, certificateDto);
             newCertificateDto = convertToCertificateDto(savedHasCertificate);
-        }
-        catch (UserNotFound userNotFound){
-            return  ResponseEntity.status(404).build();
+        } catch (UserNotFound userNotFound) {
+            return ResponseEntity.status(404).build();
         }
 
         return ResponseEntity.ok(newCertificateDto);
     }
 
     private CertificateDto convertToCertificateDto(HasCertificate hasCertificate) {
-        CertificateDto certificateDto =  new CertificateDto();
+        CertificateDto certificateDto = new CertificateDto();
         certificateDto.setId(hasCertificate.getCertificate().getId());
         certificateDto.setIssuer(hasCertificate.getCertificate().getIssuer());
         certificateDto.setExpirationDate(hasCertificate.getExpirationDate());

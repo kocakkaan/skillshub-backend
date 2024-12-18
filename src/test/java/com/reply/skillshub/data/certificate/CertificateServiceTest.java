@@ -39,7 +39,7 @@ public class CertificateServiceTest {
     }
 
     @Test
-    void successful_save(){
+    void successful_save() {
         Certificate certificate = new Certificate();
         certificate.setIssuer("AWS");
         certificate.setName("Title");
@@ -52,7 +52,7 @@ public class CertificateServiceTest {
     }
 
     @Test
-    void findCertificatebyName(){
+    void findCertificatebyName() {
         Certificate certificate = new Certificate();
         certificate.setIssuer("AWS");
         certificate.setName("Title");
@@ -66,7 +66,7 @@ public class CertificateServiceTest {
     }
 
     @Test
-    void findCertificateById(){
+    void findCertificateById() {
         Certificate certificate = new Certificate();
         certificate.setIssuer("AWS");
         certificate.setName("Title");

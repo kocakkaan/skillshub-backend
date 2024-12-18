@@ -38,13 +38,13 @@ public class CertificateControllerServiceTest {
     private HasCertificateService hasCertificateService;
 
     @Test
-    void testFindAllByUserId(){
+    void testFindAllByUserId() {
         List<HasCertificate> hasCertificateList = Instancio.createList(HasCertificate.class);
-        User user  = Instancio.create(User.class);
+        User user = Instancio.create(User.class);
 
         doReturn(user).when(userService).findById(any(String.class));
 
-        List <HasCertificate> hasCertificatesListOutput = certificateControllerService.findAllByUserId("id");
+        List<HasCertificate> hasCertificatesListOutput = certificateControllerService.findAllByUserId("id");
 
         Assertions.assertEquals(user.getHasCertificates().size(), hasCertificatesListOutput.size());
 
