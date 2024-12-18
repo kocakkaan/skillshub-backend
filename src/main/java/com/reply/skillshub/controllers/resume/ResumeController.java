@@ -113,8 +113,8 @@ public class ResumeController implements ResumesApi {
 
     @Override
     public ResponseEntity<Resource> resumesResumeIdExportToImgPost(String resumeId, String language, String company) {
-        // var resume = resumeControllerService.findResumeEntityById("someId");
-        var pptDto = powerPointService.createPowerPointDto(null, language, company);
+        var resume = resumeControllerService.findResumeEntityById(resumeId);
+        var pptDto = powerPointService.createPowerPointDto(resume, language, company);
         var ppt = powerPointService.createPowerPoint(pptDto);
         var output = powerPointService.getFirstSlideAsImage(ppt);
         return ResponseEntity.status(200).body(output);
@@ -128,6 +128,12 @@ public class ResumeController implements ResumesApi {
     @Override
     public ResponseEntity<ResumeDto> resumesResumeIdExperiencesPut(String resumeId, List<String> ids) {
         return ResponseEntity.ok(resumeControllerService.addExperiencesToResume(resumeId, ids));
+    }
+
+    @Override
+    public ResponseEntity<Void> resumesResumeIdExperienceExperienceIdDelete(String resumeId, String experienceId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'resumesResumeIdExperienceExperienceIdDelete'");
     }
 
 

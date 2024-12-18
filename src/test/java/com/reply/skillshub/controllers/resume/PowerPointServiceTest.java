@@ -2,8 +2,15 @@ package com.reply.skillshub.controllers.resume;
 
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import static org.instancio.Select.all;
 import static org.instancio.Select.field;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 import com.reply.skillshub.controllers.resume.powerpoint.PowerPointInformation;
 import com.reply.skillshub.controllers.resume.powerpoint.PowerPointService;
@@ -12,7 +19,7 @@ import com.reply.skillshub.data.resumeexperience.ResumeExperience;
 import com.reply.skillshub.data.resumeskill.ResumeSkill;
 import com.reply.skillshub.data.user.User;
 
-public class PowerPointServiceTest {
+class PowerPointServiceTest {
 
     @Test
     void testPowerPoint() {
@@ -38,11 +45,58 @@ public class PowerPointServiceTest {
         service.createPowerPoint(information);
     }
 
+    @ParameterizedTest
+    @MethodSource("provideIncompleteResumes")
+    void testPowerPointIncompleteResume() {
+        var service = new PowerPointService();
+        var resume = Instancio.create(Resume.class);
+        var information = service.createPowerPointDto(resume, "en", "ML_REPLY");
+        service.createPowerPoint(information);
+    }
+
+    private static Stream<Arguments> provideIncompleteResumes() {
+        var startingPoint = Instancio.of(Resume.class);
+        var completeResume = startingPoint.create();
+        var noBackground = startingPoint.set(field(Resume::getBackground), null).create();
+        var noSkills = startingPoint.set(field(Resume::getSkills), List.of()).create();
+        var noExperiences = startingPoint.set(field(Resume::getExperiences), List.of()).create();
+        var noIndustries = startingPoint.set(field(Resume::getIndustries), List.of()).create();
+        return Stream.of(
+            Arguments.of(completeResume),
+            Arguments.of(noBackground),
+            Arguments.of(noSkills),
+            Arguments.of(noExperiences),
+            Arguments.of(noIndustries)
+        );
+    }
+
+    
+
     @Test
     void testPowerPointEmptyInformationObject() {
         var service = new PowerPointService();
         var information = new PowerPointInformation();
         information.setProfilePictureLocation("pictures/Heepen_Jonas.png");
+        service.createPowerPoint(information);
+    }
+
+    @Test
+    void testPowerPointWithNullAndEmptyLists() {
+        var service = new PowerPointService();
+        var information = Instancio.of(PowerPointInformation.class)
+            .set(all(String.class), null)
+            .supply(all(List.class), () -> List.of())
+            .create();
+        service.createPowerPoint(information);
+    }
+
+    @Test
+    void testPowerPointRandomProfilePictureLocation() {
+        var service = new PowerPointService();
+        var information = Instancio.of(PowerPointInformation.class)
+            .generate(field(PowerPointInformation::getSkills), gen -> gen.collection().size(10))
+            .generate(field(PowerPointInformation::getExperiences), gen -> gen.collection().size(4))
+            .create();
         service.createPowerPoint(information);
     }
 

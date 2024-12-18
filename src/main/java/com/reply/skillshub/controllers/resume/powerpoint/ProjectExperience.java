@@ -64,6 +64,9 @@ public class ProjectExperience {
     }
 
     private String getRelevantProjectExperienceLabel() {
+        if (this.pointInformation.getLanguage() == null) {
+            return "Relevant Project Experience (Selection)";
+        }
         switch (this.pointInformation.getLanguage()) {
           case "en":
             return "Relevant Project Experience (Selection)";

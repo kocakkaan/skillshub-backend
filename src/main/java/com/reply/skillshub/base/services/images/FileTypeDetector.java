@@ -7,6 +7,9 @@ import java.util.Optional;
 public class FileTypeDetector {
 
     public static Optional<String> detectFileType(String filePath) {
+        if (filePath == null) {
+            return Optional.empty();
+        }
         try (FileInputStream fis = new FileInputStream(filePath)) {
             byte[] fileSignature = new byte[4];
             int bytesRead = fis.read(fileSignature);

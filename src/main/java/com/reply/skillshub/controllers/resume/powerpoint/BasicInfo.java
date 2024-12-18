@@ -51,7 +51,10 @@ public class BasicInfo {
         int fixedHeightPixel = Util.convertCmToPixels(fixedHeightCm);
        
         InputStream run_stream = loadFile(this.pointInformation.getProfilePictureLocation());
-        String fileType = FileTypeDetector.detectFileType(this.pointInformation.getProfilePictureLocation()).get();
+        if (run_stream == null) {
+            run_stream = loadFile("src/main/resources/static/runningman/reply_running_man.png"); // TODO Don't hardcode bro
+        }
+        String fileType = FileTypeDetector.detectFileType(this.pointInformation.getProfilePictureLocation()).orElse("PNG");
         PictureData.PictureType type = getPictureDataFromString(fileType);
         byte[] resizedImageData = ResizeImageService.resizeImage(run_stream, fixedWidthPixel, fixedHeightPixel);
         XSLFPictureData picture = this.ppt.addPicture(resizedImageData, type);
@@ -60,6 +63,9 @@ public class BasicInfo {
     }
 
     private InputStream loadFile(String path) {
+        if (path == null) {
+            return null;
+        }
         try {
             InputStream inputStream = new FileInputStream(path);
             return inputStream;
