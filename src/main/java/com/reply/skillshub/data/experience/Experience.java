@@ -41,22 +41,22 @@ public class Experience {
 
     private LocalDate endDate;
 
-    @Relationship(type = "HAS_EXPERIENCE", direction = Direction.INCOMING)
+    @Relationship(type = "HAS_EXPERIENCE", direction = Direction.INCOMING, cascadeUpdates = false)
     private List<User> employees = new ArrayList<>();
 
-    @Relationship(type = "GAINED_IN", direction = Direction.INCOMING)
+    @Relationship(type = "GAINED_IN", direction = Direction.INCOMING, cascadeUpdates = false)
     private List<Skill> skills = new ArrayList<>();
 
-    @Relationship(type = "WORKED_IN", direction = Direction.OUTGOING)
+    @Relationship(type = "WORKED_IN", direction = Direction.OUTGOING, cascadeUpdates = false)
     private List<Language> languages = new ArrayList<>();
 
-    @Relationship(type = "IN_INDUSTRY", direction = Direction.OUTGOING)
+    @Relationship(type = "IN_INDUSTRY", direction = Direction.OUTGOING, cascadeUpdates = false)
     private List<Industry> industries = new ArrayList<>();
 
-    @Relationship(type = "IN_ROLE", direction = Direction.OUTGOING)
+    @Relationship(type = "IN_ROLE", direction = Direction.OUTGOING, cascadeUpdates = false)
     private List<Occupation> occupation = new ArrayList<>();
 
-    @Relationship(type = "BASED_OF", direction = Direction.INCOMING)
+    @Relationship(type = "BASED_OF", direction = Direction.INCOMING, cascadeUpdates = false)
     private List<ResumeExperience> dependentResumeExperiences;
     
     @AssertTrue(message = "An experience must be assigned exactly one employee")
