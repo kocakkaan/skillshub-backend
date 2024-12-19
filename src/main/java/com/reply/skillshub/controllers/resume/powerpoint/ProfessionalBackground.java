@@ -4,8 +4,10 @@ import java.awt.Color;
 
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
+
 import static com.reply.skillshub.controllers.resume.powerpoint.SharedValues.*;
 
 public class ProfessionalBackground {
@@ -41,8 +43,10 @@ public class ProfessionalBackground {
 
   private void addProfessionalBackground(XSLFSlide slide) {
     XSLFTextShape text = slide.createTextBox();
+    XSLFTextParagraph p = text.addNewTextParagraph();
     var background = this.pointInformation.getBackground() == null ? "" : this.pointInformation.getBackground();
-    XSLFTextRun run = text.setText(background);
+    XSLFTextRun run = p.addNewTextRun();
+    run.setText(background);
     run.setFontSize(9.0);
     run.setFontFamily(TEXT_FONT_FACE);
     run.setFontColor(Color.decode("#252625"));
