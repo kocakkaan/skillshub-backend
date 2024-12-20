@@ -2,6 +2,7 @@ package com.reply.skillshub.data.resumeskill;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
@@ -24,22 +25,25 @@ public class ResumeSkill {
     @GeneratedValue(UUIDStringGenerator.class)    
     private String id;
 
-    @Relationship(type = "HAS_PARENT", direction = Direction.OUTGOING)
+    @Relationship(type = "HAS_PARENT", direction = Direction.OUTGOING, cascadeUpdates = false)
     private List<Skill> parent = new ArrayList<>();
 
-    @Relationship(type = "INCLUDES_SKILL", direction = Direction.OUTGOING)
+    @Relationship(type = "INCLUDES_SKILL", direction = Direction.OUTGOING, cascadeUpdates = false)
     private List<Skill> skills = new ArrayList<>();
 
-    @Relationship(type = "USED_SKILL", direction = Direction.INCOMING)
+    @Relationship(type = "USED_SKILL", direction = Direction.INCOMING, cascadeUpdates = false)
     private List<Resume> resumes = new ArrayList<>();
 
-    @AssertTrue
-    private boolean isParentEqualToOne() {
-        return parent.size() == 1;
+    @AssertTrue(message = "A resume skill can have at most one parent")
+    private boolean isParentSmallerAsTwo() {
+        return parent.size() < 2;
     }
 
-    public Skill getParent() {
-        return parent.get(0);
+    public Optional<Skill> getParent() {
+        if (parent.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(parent.get(0));
     }
     
 }

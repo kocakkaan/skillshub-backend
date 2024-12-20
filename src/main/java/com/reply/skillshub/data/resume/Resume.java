@@ -38,7 +38,7 @@ public class Resume {
     @Relationship(type = "FOR_ROLE", direction = Direction.OUTGOING)
     private List<Occupation> role = new ArrayList<>();
 
-    @Relationship(type = "IN_INDUSTRY", direction = Direction.OUTGOING)
+    @Relationship(type = "IN_INDUSTRY", direction = Direction.OUTGOING, cascadeUpdates = false)
     private List<Industry> industries = new ArrayList<>();
 
     @Relationship(type = "USED_SKILL", direction = Direction.OUTGOING)
@@ -50,9 +50,9 @@ public class Resume {
     @Relationship(type = "HAS_RESUME", direction = Direction.INCOMING)
     private List<User> users = new ArrayList<>();
 
-    @AssertTrue
-    private boolean isIndustryCountLowerAsThree() {
-        return industries.size() < 3;
+    @AssertTrue(message = "A resume can have at most five industries assigned")
+    private boolean isIndustryCountLowerAsFive() {
+        return industries.size() < 5;
     }
 
     @AssertTrue(message = "A resume can have at most one role")

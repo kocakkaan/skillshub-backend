@@ -94,7 +94,7 @@ public class PowerPointService {
 
   private PowerPointInformation.PowerPointSkill convertSkillToPowerPointSkill(ResumeSkill skill) {
     PowerPointInformation.PowerPointSkill powerPointSkill = new PowerPointInformation.PowerPointSkill();
-    powerPointSkill.setParentSkill(skill.getParent().getLabel());
+    skill.getParent().ifPresent(parent -> powerPointSkill.setParentSkill(parent.getLabel()));
     powerPointSkill.setChildSkills(skill.getSkills().stream().map((childSkill) -> childSkill.getLabel()).toList());
     return powerPointSkill;
   }

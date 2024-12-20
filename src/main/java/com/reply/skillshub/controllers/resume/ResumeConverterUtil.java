@@ -1,6 +1,7 @@
 package com.reply.skillshub.controllers.resume;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.reply.skillshub.data.occupation.Occupation;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ResumeNotFound;
@@ -38,22 +39,22 @@ public class ResumeConverterUtil {
     public static ResumeSkill convertSkillDtoToEntity(ResumeSkillDto dto) {
         ResumeSkill skill = new ResumeSkill();
         skill.setId(dto.getId());
-        skill.setParent(List.of(convertSkillDtoToEntity(dto.getParentSkill())));
+        dto.getParentSkill().ifPresent(parent -> skill.setParent(List.of(convertSkillDtoToEntity(parent))));;
         skill.getSkills().addAll(convertSkillsDtoToEntity(dto.getRelatedEssentialSkills()));
         return skill;
     }
 
-    private static SkillDto convertSkillToDto(Skill skill) {
+    public static SkillDto convertSkillToDto(Skill skill) {
         SkillDto skillDto = new SkillDto();
         skillDto.setId(skill.getId());
         skillDto.setLabel(skill.getLabel());
         return skillDto;
     }
 
-    private static ResumeSkillDto convertSkillToDto(ResumeSkill skill) {
+    public static ResumeSkillDto convertSkillToDto(ResumeSkill skill) {
         ResumeSkillDto skillDto = new ResumeSkillDto();
         skillDto.setId(skill.getId());
-        skillDto.setParentSkill(convertSkillToDto(skill.getParent()));
+        skill.getParent().ifPresent((p) -> skillDto.setParentSkill(Optional.of(convertSkillToDto(p))));
         skillDto.setRelatedEssentialSkills(convertSkillsToDto(skill.getSkills()));
         return skillDto;
     }

@@ -160,7 +160,7 @@ public class UsersControllerService {
     private ResumeSkillDto convertToResumeSkillDto(ResumeSkill resumeSkill) {
         var resumeSkillDto = new ResumeSkillDto();
         resumeSkillDto.setId(resumeSkill.getId());
-        resumeSkillDto.setParentSkill(convertToSkillDto(resumeSkill.getParent()));
+        resumeSkill.getParent().ifPresent(parent -> resumeSkillDto.setParentSkill(Optional.of(convertToSkillDto(parent))));
         resumeSkillDto.setRelatedEssentialSkills(resumeSkill.getSkills().stream().map(this::convertToSkillDto).toList());
         return resumeSkillDto;
     }

@@ -12,6 +12,7 @@ import org.springframework.data.neo4j.core.schema.Relationship.Direction;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
 import com.reply.skillshub.data.experience.Experience;
+import com.reply.skillshub.data.resume.Resume;
 
 import jakarta.validation.constraints.AssertFalse;
 import jakarta.validation.constraints.AssertTrue;
@@ -29,6 +30,9 @@ public class ResumeExperience {
 
     @Relationship(type = "BASED_OF", direction = Direction.OUTGOING)
     private List<Experience> basedOfExperience = new ArrayList<>();
+
+    @Relationship(type = "GAINED_EXPERIENCE", direction = Direction.INCOMING)
+    private List<Resume> resumes = new ArrayList<>();
 
     @AssertTrue
     private boolean isBasedOfExperienceEqualToOne() {

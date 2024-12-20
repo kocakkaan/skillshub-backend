@@ -33,5 +33,9 @@ public class IndustryService {
     public List<Industry> findByLabel(String label) {
         return industryRepository.findByLabel(label);
     }
+
+    public List<Industry> findAllByResumeId(String resumeId) {
+        return industryRepository.findAllByResumeId(resumeId);
+    }
     
 }

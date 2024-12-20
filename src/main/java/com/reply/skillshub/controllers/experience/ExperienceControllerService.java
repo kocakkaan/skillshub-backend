@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.reply.skillshub.base.exceptionhandling.exeptions.ExperienceNotFound;
+import com.reply.skillshub.base.exceptionhandling.exeptions.ResumeSkillNotFound;
 import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
 import com.reply.skillshub.data.experience.Experience;
 import com.reply.skillshub.data.experience.ExperienceService;
@@ -34,7 +34,7 @@ public class ExperienceControllerService {
     }
 
     public ExperienceDto getExperienceById(String id) {
-        Experience potential = experienceService.findById(id).orElseThrow(() -> new ExperienceNotFound());
+        Experience potential = experienceService.findById(id).orElseThrow(() -> new ResumeSkillNotFound());
         return convertExperienceToDto(potential);
     }
 
@@ -44,7 +44,7 @@ public class ExperienceControllerService {
     }
 
     public ExperienceDto updateExperienceById(String experienceId, ExperienceDto ExperienceDto) {
-        Experience experience = experienceService.findById(experienceId).orElseThrow(() -> new ExperienceNotFound());
+        Experience experience = experienceService.findById(experienceId).orElseThrow(() -> new ResumeSkillNotFound());
         return convertExperienceToDto(experienceService.save(updateExperienceWithBaseExperience(experience, ExperienceDto)));
     }
 

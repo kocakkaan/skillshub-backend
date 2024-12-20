@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.reply.skillshub.data.experience.Experience;
 import com.reply.skillshub.data.industry.Industry;
@@ -94,7 +95,7 @@ public class ResumeConverterUtilTest {
         SkillDto parentSkillDto = new SkillDto();
         parentSkillDto.setId("2L");
         parentSkillDto.setLabel("Parent Skill");
-        skillDto.setParentSkill(parentSkillDto);
+        skillDto.setParentSkill(Optional.of(parentSkillDto));
         
         List<SkillDto> relatedSkillsDto = new ArrayList<>();
         SkillDto relatedSkillDto1 = new SkillDto();
@@ -111,7 +112,11 @@ public class ResumeConverterUtilTest {
         
         assertNotNull(skill);
         assertEquals(skillDto.getId(), skill.getId());
-        assertEquals(parentSkillDto.getId(), skill.getParent().getId());
+        String parentId = null;
+        if (skill.getParent().isPresent()) {
+            parentId = skill.getParent().get().getId();
+        }
+        assertEquals(parentSkillDto.getId(), parentId);
         assertEquals(relatedSkillsDto.size(), skill.getSkills().size());
         assertEquals(relatedSkillsDto.get(0).getId(), skill.getSkills().get(0).getId());
         assertEquals(relatedSkillsDto.get(1).getId(), skill.getSkills().get(1).getId());

@@ -6,11 +6,14 @@ import org.springframework.stereotype.Service;
 
 import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.data.experience.ExperienceService;
+import com.reply.skillshub.data.industry.IndustryService;
 import com.reply.skillshub.data.occupation.Occupation;
 import com.reply.skillshub.data.resume.Resume;
 import com.reply.skillshub.data.resume.ResumeService;
 import com.reply.skillshub.data.resumeexperience.ResumeExperience;
+import com.reply.skillshub.data.resumeexperience.ResumeExperienceService;
 import com.reply.skillshub.data.resumeskill.ResumeSkill;
+import com.reply.skillshub.data.resumeskill.ResumeSkillService;
 import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.openapi.model.CreateInitialResumeDto;
@@ -29,6 +32,9 @@ import lombok.RequiredArgsConstructor;
 public class ResumeControllerService {
 
     private final ResumeService resumeService;
+    private final ResumeSkillService resumeSkillService;
+    private final IndustryService industryService;
+    private final ResumeExperienceService resumeExperienceService;
     private final ExperienceService experienceService;
     private final UserService userService;
     private final LoadCurrentUser loadCurrentUser;
@@ -42,8 +48,24 @@ public class ResumeControllerService {
         return resumeService.findByUserId(userId).stream().map(ResumeConverterUtil::convertResumeToDto).toList();
     }
 
+    public List<ResumeSkillDto> findResumeSkills(String id) {
+        return resumeSkillService.findAllByResumesId(id).stream().map(ResumeConverterUtil::convertSkillToDto).toList();
+    }
+
+    public List<ResumeExperienceDto> findResumeExperiences(String id) {
+        return resumeExperienceService.findAllByResumesId(id).stream().map(ResumeConverterUtil::convertResumeExperienceToDto).toList();
+    }
+
+    public List<IndustryDto> findResumeIndustries(String id) {
+        return industryService.findAllByResumeId(id).stream().map(ResumeConverterUtil::convertIndustryToDto).toList();
+    }
+
     public void deleteResumeById(String id ) {
         resumeService.deleteById(id);
+    }
+
+    public void deleteResumeExperienceById(String id) {
+        resumeExperienceService.deleteById(id);
     }
 
     public Resume findResumeEntityById(String id) {
