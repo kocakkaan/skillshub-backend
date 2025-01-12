@@ -60,6 +60,17 @@ public class ResumeControllerService {
         return industryService.findAllByResumeId(id).stream().map(ResumeConverterUtil::convertIndustryToDto).toList();
     }
 
+    public ResumeExperienceDto findResumeExperienceById(String id) {
+        return ResumeConverterUtil.convertResumeExperienceToDto(resumeExperienceService.findById(id));
+    }
+
+    public ResumeExperienceDto updateResumeExperience(String id, ResumeExperienceDto experience) {
+        ResumeExperience resumeExperience = resumeExperienceService.findById(id);
+        resumeExperience.setDescriptions(experience.getResponsibilities());
+        resumeExperienceService.save(resumeExperience);
+        return ResumeConverterUtil.convertResumeExperienceToDto(resumeExperience);
+    }
+
     public void deleteResumeById(String id ) {
         resumeService.deleteById(id);
     }

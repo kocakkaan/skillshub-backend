@@ -1,5 +1,6 @@
 package com.reply.skillshub.controllers.resume.powerpoint;
 
+import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
@@ -28,6 +29,7 @@ public class ProjectExperience {
 
         for (var experience : this.pointInformation.getExperiences()) {
             var paragraph = title.addNewTextParagraph();
+            paragraph.setSpaceBefore(50.0);
             var titleText = paragraph.addNewTextRun();
             titleText.setText(experience.getTitle() + " - " + experience.getPosition());
             titleText.setFontSize(8.0);
@@ -35,13 +37,18 @@ public class ProjectExperience {
             for (var description : experience.getDescriptions()) {
                 var descriptionParagraph = title.addNewTextParagraph();
                 descriptionParagraph.setBullet(true);
-                descriptionParagraph.setIndent(4.0);
+                descriptionParagraph.setIndent(-8.0);
                 descriptionParagraph.setIndentLevel(0);
-                descriptionParagraph.setLeftMargin(8.0);
+                descriptionParagraph.setLeftMargin(16.0);
+                descriptionParagraph.setBulletFontSize(100.0);
                 descriptionParagraph.setBulletCharacter("\u25AA");
+                descriptionParagraph.setTextAlign(TextAlign.LEFT);
                 var textDescription = descriptionParagraph.addNewTextRun();
                 textDescription.setText(description);
                 textDescription.setFontSize(8.0);
+                textDescription.setBold(false);
+                textDescription.setFontColor(Color.decode("#252625"));
+                textDescription.setFontFamily("PT Sans");
             }
         }
         Util.setSizeAndPosition(title, 11, START_SECOND_ROW + HEIGHT_TITLE_SHAPE, WIDTH_SECOND_COLUMN, 8.3);

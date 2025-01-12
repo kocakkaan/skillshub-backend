@@ -12,6 +12,7 @@ import com.reply.skillshub.data.resumeexperience.ResumeExperience;
 import com.reply.skillshub.data.resumeskill.ResumeSkill;
 import com.reply.skillshub.data.skill.Skill;
 import com.reply.skillshub.openapi.model.IndustryDto;
+import com.reply.skillshub.openapi.model.OccupationalCategoryDto;
 import com.reply.skillshub.openapi.model.ResumeDto;
 import com.reply.skillshub.openapi.model.ResumeExperienceDto;
 import com.reply.skillshub.openapi.model.ResumeSkillDto;
@@ -100,10 +101,19 @@ public class ResumeConverterUtil {
     static ResumeExperienceDto convertResumeExperienceToDto(ResumeExperience experience) {
         ResumeExperienceDto dto = new ResumeExperienceDto();
         Experience basedOf = experience.getBasedOf().orElseThrow(() -> new ResumeNotFound("Experience needs to exist here."));
+        dto.setId(experience.getId());
         dto.setBasedOf(basedOf.getId());
         dto.setResponsibilities(experience.getDescriptions());
         dto.setSkills(convertSkillsToDto(basedOf.getSkills()));
         dto.setTitle(basedOf.getTitle());
+        basedOf.getOccupation().ifPresent(occ -> dto.setRole(convertToOccupationocc(occ)));
+        return dto;
+    }
+
+    private static OccupationalCategoryDto convertToOccupationocc(Occupation occ) {
+        OccupationalCategoryDto dto = new OccupationalCategoryDto();
+        dto.setId(occ.getId());
+        dto.setLabel(occ.getLabel());
         return dto;
     }
 

@@ -3,10 +3,9 @@ package com.reply.skillshub.controllers.resume.powerpoint;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -67,10 +66,26 @@ public class PowerPointService {
     XSLFSlide slide = ppt.getSlides().get(0);
     Dimension pgsize = ppt.getPageSize();
 
-    BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_RGB);
+    // Scale factor for higher resolution
+    double scale = 3.0; // Increase this factor for higher resolution
+
+    int width = (int) (pgsize.width * scale);
+    int height = (int) (pgsize.height * scale);
+
+    BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     Graphics2D graphics = img.createGraphics();
+
+    // Apply scaling
+    graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+    graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+    graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    graphics.scale(scale, scale);
+
+    var font = graphics.getFont();
+
     graphics.setPaint(java.awt.Color.white);
-    graphics.fill(new java.awt.Rectangle(0, 0, pgsize.width, pgsize.height));
+    graphics.fill(new java.awt.Rectangle(0, 0, width, height));
+    
     slide.draw(graphics);
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -87,7 +102,7 @@ public class PowerPointService {
       ResumeExperience experience) {
     PowerPointInformation.PowerPointExperience powerPointExperience = new PowerPointInformation.PowerPointExperience();
     powerPointExperience.setTitle(experience.getBasedOf().get().getTitle());
-    powerPointExperience.setPosition(experience.getBasedOf().get().getOccupation().get(0).getLabel());
+    experience.getBasedOf().get().getOccupation().ifPresent((occ) -> powerPointExperience.setPosition(occ.getLabel()));
     powerPointExperience.setDescriptions(experience.getDescriptions());
     return powerPointExperience;
   }
@@ -168,11 +183,11 @@ public class PowerPointService {
 
   private void addFootText(XSLFSlide slide) {
     XSLFTextShape text = slide.createTextBox();
-    XSLFTextRun run = text.setText("This is a footer");
+    XSLFTextRun run = text.setText("Machine Learning Reply | Short CV");
     run.setFontSize(12.0);
     run.setFontFamily(SharedValues.TEXT_FONT_FACE);
     run.setFontColor(Color.decode("#7F7F7F"));
     text.setVerticalAlignment(VerticalAlignment.TOP);
-    Util.setSizeAndPosition(text, 0.8, 17.88, 7.4, 0.77);
+    Util.setSizeAndPosition(text, 0.8, 17.88, 20, 0.77);
   }
 }

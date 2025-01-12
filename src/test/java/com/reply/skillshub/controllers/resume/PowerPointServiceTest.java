@@ -1,5 +1,6 @@
 package com.reply.skillshub.controllers.resume;
 
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,6 +10,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static org.instancio.Select.all;
 import static org.instancio.Select.field;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -28,14 +31,25 @@ class PowerPointServiceTest {
         Resume resume = Instancio.of(Resume.class)
             .generate(field(Resume::getBackground), gen -> gen.string().length(300))
             .generate(field(ResumeSkill::getSkills), gen -> gen.collection().size(10))
-            .generate(all(String.class).within(field(ResumeExperience::getDescriptions).toScope()), gen -> gen.string().length(200))
+            .generate(all(String.class).within(field(ResumeExperience::getDescriptions).toScope()), gen -> gen.string().length(200).lowerCase())
             .generate(field(Resume::getExperiences),  gen -> gen.collection().maxSize(4).minSize(2))
             .generate(field(ResumeExperience::getDescriptions), gen -> gen.collection().minSize(2).maxSize(4))
             .create();
         resume.setUser(user);
         var service = new PowerPointService();
-        var information = service.createPowerPointDto(resume, "en", "ML_REPLY");
-        service.createPowerPoint(information);
+        var information = service.createPowerPointDto(resume, "en", "Reply");
+        var ppt = service.createPowerPoint(information);
+        savePowerPoint(ppt);
+    }
+
+    private void savePowerPoint(XMLSlideShow ppt) {
+        try {
+            var test = new FileOutputStream("test.pptx");
+            ppt.write(test);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     @Test

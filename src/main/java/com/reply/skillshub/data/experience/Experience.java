@@ -89,4 +89,11 @@ public class Experience {
     public User getEmployee() {
         return employees.get(0);
     }
+
+    public Optional<Occupation> getOccupation() {
+        if (occupation.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(occupation.get(0));
+    }
 }

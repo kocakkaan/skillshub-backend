@@ -53,7 +53,7 @@ public class User {
     private String confirmationToken;
     
     @NotNull
-    private boolean isConfirmed;
+    private boolean confirmed;
 
     @Relationship(type = "SPEAKS")
     private List<Speaks> speaks = new ArrayList<>();

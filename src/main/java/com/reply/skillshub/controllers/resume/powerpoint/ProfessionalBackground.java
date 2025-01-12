@@ -43,6 +43,7 @@ public class ProfessionalBackground {
 
   private void addProfessionalBackground(XSLFSlide slide) {
     XSLFTextShape text = slide.createTextBox();
+    text.clearText();
     XSLFTextParagraph p = text.addNewTextParagraph();
     var background = this.pointInformation.getBackground() == null ? "" : this.pointInformation.getBackground();
     XSLFTextRun run = p.addNewTextRun();

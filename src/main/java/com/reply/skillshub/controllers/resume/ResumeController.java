@@ -19,8 +19,6 @@ import com.reply.skillshub.openapi.model.ResumesResumeIdBackgroundPatchRequest;
 import com.reply.skillshub.openapi.model.UpdateResumeRoleRequest;
 import com.reply.skillshub.openapi.model.UpdateResumeTitleRequest;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,8 +29,7 @@ public class ResumeController implements ResumesApi {
   private final PowerPointService powerPointService;
 
   @Override
-  public ResponseEntity<Void> exportToPptx(String resumeId, @NotNull String language,
-      @NotNull String company) {
+  public ResponseEntity<Void> exportToPptx(String resumeId, String language, String company) {
     var resume = resumeControllerService.findResumeEntityById(resumeId);
     var pptDto = powerPointService.createPowerPointDto(resume, language, company);
     var ppt = powerPointService.createPowerPoint(pptDto);
@@ -154,6 +151,17 @@ public class ResumeController implements ResumesApi {
   @Override
   public ResponseEntity<List<ResumeSkillDto>> resumesResumeIdSkillsGet(String resumeId) {
     return ResponseEntity.ok(resumeControllerService.findResumeSkills(resumeId));
+  }
+
+  @Override
+  public ResponseEntity<ResumeExperienceDto> resumesResumeIdExperienceExperienceIdGet(String resumeId, String experienceId) {
+    return ResponseEntity.ok(resumeControllerService.findResumeExperienceById(experienceId));
+  }
+
+  @Override
+  public ResponseEntity<ResumeExperienceDto> resumesResumeIdExperienceExperienceIdPut(String resumeId, String experienceId,
+      ResumeExperienceDto resumeExperienceDto) {
+    return ResponseEntity.ok(resumeControllerService.updateResumeExperience(experienceId, resumeExperienceDto));
   }
 
 }
