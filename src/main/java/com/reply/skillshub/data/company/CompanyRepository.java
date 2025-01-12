@@ -5,6 +5,6 @@ import java.util.List;
 
 public interface CompanyRepository extends Neo4jRepository<Company, String> {
 
-    List<Company> findByEmployeesId(String employeeId);
+    <T> List<T> findByEmployeesId(String employeeId, Class<T> type);
 
 }

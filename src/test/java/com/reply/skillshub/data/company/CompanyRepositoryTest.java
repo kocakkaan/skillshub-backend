@@ -33,7 +33,7 @@ public class CompanyRepositoryTest extends BaseRepositoryTest {
         company.getEmployees().add(user);
         companyRepository.save(company);
 
-        List<Company> companyList = companyRepository.findByEmployeesId(user.getId());
+        List<Company> companyList = companyRepository.findByEmployeesId(user.getId(), Company.class);
 
         Assertions.assertEquals(1, companyList.size());
     }

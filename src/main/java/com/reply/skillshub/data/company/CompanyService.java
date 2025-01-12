@@ -23,7 +23,11 @@ public class CompanyService {
     }
 
     public List<Company> findByEmployeesId(String id) {
-        return companyRepository.findByEmployeesId(id);
+        return companyRepository.findByEmployeesId(id, Company.class);
+    }
+
+    public List<BaseCompany> findBaseCompanyByEmployeesId(String id) {
+        return companyRepository.findByEmployeesId(id, BaseCompany.class);
     }
 
     public Optional<Company> findById(String id) {
