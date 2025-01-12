@@ -17,6 +17,7 @@ import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ValidationException;
 import com.reply.skillshub.base.services.EmailService;
 import com.reply.skillshub.data.EmailRequest;
+import com.reply.skillshub.data.user.BaseUser;
 import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.data.userrole.UserRole;
@@ -43,9 +44,9 @@ public class AuthentificationService {
     private final JwtService jwtService;
 
     public LoginResponse loginUser(LoginRequest loginRequest) {
-        User user = userService.findUserByEmail(loginRequest.getEmail()).orElseThrow(() -> new UserNotFound());
+        BaseUser user = userService.findBaseUserByEmail(loginRequest.getEmail()).orElseThrow(() -> new UserNotFound());
 
-        if (!user.isConfirmed()) {
+        if (!user.getConfirmed()) {
             throw new UnconfirmedUser("A user must be confirmed to login. Please confirm your account");
         }
 

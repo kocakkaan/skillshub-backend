@@ -13,7 +13,7 @@ public interface UserRepository extends Neo4jRepository<User, String> {
 
     List<User> findByLastName(String lastname);
 
-    Optional<User> findByEmail(String email);
+    <T> Optional<T> findByEmail(String email, Class<T> type);
 
     Optional<User> findByConfirmationToken(String confirmationToken);
 

@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.reply.skillshub.data.user.User;
+import com.reply.skillshub.data.user.BaseUser;
 import com.reply.skillshub.data.user.UserRepository;
 
 @Service
@@ -25,9 +25,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-          User user = userRepository.findByEmail(usernameOrEmail)
-                 .orElseThrow(() ->
-                         new UsernameNotFoundException("User not found with username or email: "+ usernameOrEmail));
+        var optionalUser = userRepository.findByEmail(usernameOrEmail, BaseUser.class);
+        var user = optionalUser
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        "User not found with username or email: " + usernameOrEmail));
 
         Set<GrantedAuthority> authorities = List.of(user
                 .getUserRole())
@@ -38,5 +39,5 @@ public class CustomUserDetailsService implements UserDetailsService {
                 user.getPassword(),
                 authorities);
     }
-    
+
 }

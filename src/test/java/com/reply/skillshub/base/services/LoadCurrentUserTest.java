@@ -34,7 +34,7 @@ public class LoadCurrentUserTest {
     void testloadSkillhubUserFromContext() {
         var user = Instancio.create(User.class);
         user.setEmail("test");
-        doReturn(Optional.of(user)).when(userRepository).findByEmail("test");
+        doReturn(Optional.of(user)).when(userRepository).findByEmail("test", User.class);
         Assertions.assertThat(loadCurrentUser.loadSkillhubUserFromContext().getEmail()).isEqualTo("test");
     }
 }

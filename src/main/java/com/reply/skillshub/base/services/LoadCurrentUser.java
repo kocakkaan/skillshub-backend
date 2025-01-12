@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
 import com.reply.skillshub.data.user.UserRepository;
+import com.reply.skillshub.data.user.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,13 +15,13 @@ import org.springframework.security.core.userdetails.User;
 @RequiredArgsConstructor
 public class LoadCurrentUser {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     public User loadContextUser() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     public com.reply.skillshub.data.user.User loadSkillhubUserFromContext() {
-        return userRepository.findByEmail(loadContextUser().getUsername()).orElseThrow(() -> new UserNotFound());
+        return userService.findUserByEmail(loadContextUser().getUsername()).orElseThrow(() -> new UserNotFound());
     }
 }

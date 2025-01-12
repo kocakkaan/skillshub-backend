@@ -45,8 +45,8 @@ public class UserRepositoryTest extends BaseRepositoryTest {
         person.getSpeaks().add(returnSpeaks());
         userRepository.save(person);
 
-        User foundPerson = userRepository.findByEmail(person.getEmail()).get();
-        Assertions.assertThat(foundPerson.getEmail()).isEqualTo(person.getEmail());
+        Optional<User> foundPerson = userRepository.findByEmail(person.getEmail(), User.class);
+        Assertions.assertThat(foundPerson.get().getEmail()).isEqualTo(person.getEmail());
     }
 
     @Test
@@ -54,8 +54,8 @@ public class UserRepositoryTest extends BaseRepositoryTest {
         User person = returnUserWithEmail();
         userRepository.save(person);
 
-        User foundPerson = userRepository.findByEmail(person.getEmail()).get();
-        Assertions.assertThat(foundPerson.getEmail()).isEqualTo(person.getEmail());
+        Optional<User> foundPerson = userRepository.findByEmail(person.getEmail(), User.class);
+        Assertions.assertThat(foundPerson.get().getEmail()).isEqualTo(person.getEmail());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class UserRepositoryTest extends BaseRepositoryTest {
         User userToSave = returnUserWithEmail();
         userRepository.save(userToSave);
 
-        Optional<User> foundUser = userRepository.findByEmail(userToSave.getEmail());
+        Optional<User> foundUser = userRepository.findByEmail(userToSave.getEmail(), User.class);
 
         Assertions.assertThat(foundUser.get().getEmail()).isEqualTo(userToSave.getEmail());
     }
