@@ -1,9 +1,11 @@
 package com.reply.skillshub.data.experience;
 
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.instancio.Instancio;
+import static org.instancio.Select.field;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -52,18 +54,6 @@ public class ExperienceRepositoryTest {
     @Autowired
     private ExperienceRepository experienceRepository;
 
-    @Test
-    void test_findAllByUserId() {
-        Experience toSave = ExperienceTestData.returnValidExperience();
-        User user = toSave.getEmployee();
-
-        experienceRepository.save(toSave);
-
-        var foundExperiences = experienceRepository.findAllByEmployeesId(user.getId());
-
-        Assertions.assertNotEquals(0, foundExperiences.size());
-    }
-
     @ParameterizedTest
     @MethodSource("requiredParams")
     void testSuccesfullSave(Experience experience) {
@@ -75,9 +65,14 @@ public class ExperienceRepositoryTest {
     }
 
     private static Stream<Arguments> requiredParams() {
-
+        var experienceBase = Instancio.of(Experience.class);
+        experienceBase.set(field(Experience::getIndustries), List.of());
+        experienceBase.set(field(Experience::getLanguages), List.of());
+        experienceBase.set(field(Experience::getSkills), List.of());
+        experienceBase.set(field(Experience::getOccupation), null);
+        experienceBase.set(field(Experience::getEndDate), null);
         return Stream.of(
-            Arguments.of(Instancio.create(Experience.class))
+            Arguments.of(experienceBase.create())
         );
     }
 

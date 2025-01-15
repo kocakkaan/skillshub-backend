@@ -26,16 +26,16 @@ public class ExperienceService {
         return experienceRepository.findById(id);
     }
 
+    public <T> Optional<T> findById(String id, Class<T> type) {
+        return experienceRepository.findById(id, type);
+    }
+
     public List<Experience> findAllById(List<String> ids) {
         return experienceRepository.findAllById(ids);
     }
 
     public Experience loadById(String id) {
         return experienceRepository.findById(id).orElseThrow(() -> new ResumeSkillNotFound());
-    }
-
-    public List<Experience> findByUserId(String userId) {
-        return experienceRepository.findAllByEmployeesId(userId);
     }
 
     public Experience save(Experience experience) {

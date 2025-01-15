@@ -40,7 +40,7 @@ public class ResumeControllerService {
     private final LoadCurrentUser loadCurrentUser;
 
     public List<ResumeDto> findResumesForCurrentUser() {
-        User currentUser = loadCurrentUser.loadSkillhubUserFromContext();
+        var currentUser = loadCurrentUser.loadSkillhubUserFromContext();
         return resumeService.findByUserId(currentUser.getId()).stream().map(ResumeConverterUtil::convertResumeToDto).toList();
     }
 
@@ -89,7 +89,7 @@ public class ResumeControllerService {
     }
 
     public ResumeDto createResumeForCurrentUser(ResumeDto resumeDto) {
-        return createResumeDto(loadCurrentUser.loadSkillhubUserFromContext(), resumeDto);
+        return createResumeDto(userService.findById(loadCurrentUser.loadSkillhubUserFromContext().getId()), resumeDto);
     }
 
     public ResumeDto createInitialResumeForUser(String userId, CreateInitialResumeDto createInitialResumeDto) {

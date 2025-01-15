@@ -9,7 +9,8 @@ import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.data.company.BaseCompany;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.company.CompanyService;
-import com.reply.skillshub.data.user.User;
+import com.reply.skillshub.data.user.BaseUser;
+import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.openapi.model.CompanyDto;
 import com.reply.skillshub.openapi.model.CompanyInformationDto;
 import com.reply.skillshub.openapi.model.CreateCompanyRequest;
@@ -24,6 +25,8 @@ public class CompanyControllerService {
     private final LoadCurrentUser loadCurrentUser;
 
     private final CompanyService companyService;
+
+    private final UserService userService;
 
     public List<CompanyDto> getCompaniesForCurrentUser() {
         var user = loadCurrentUser.loadSkillhubUserFromContext();
@@ -51,25 +54,26 @@ public class CompanyControllerService {
 
     public CompanyDto createCompany(CreateCompanyRequest createCompanyRequest) {
         var company = new Company();
-        var user = loadCurrentUser.loadSkillhubUserFromContext();
+        var baseUser = loadCurrentUser.loadSkillhubUserFromContext();
+        var user = userService.findById(baseUser.getId());
         company.setLabel(createCompanyRequest.getCompanyName());
         company.getEmployees().add(user);
         return convertEntityToApiDto(companyService.save(company));
     }
 
     public CompanyInformationDto getCompanyInformation(String companyId) {
-        var company = companyService.findById(companyId).orElseThrow(NoCompanyFound::new);
+        var company = companyService.findBaseCompanyById(companyId).orElseThrow(NoCompanyFound::new);
         return new CompanyInformationDto()
             .id(company.getId())
             .name(company.getLabel())
             .employees(company.getEmployees().stream().map(this::convertEmployeeToApiDto).toList());
     }
 
-    private EmployeeDto convertEmployeeToApiDto(User employee) {
+    private EmployeeDto convertEmployeeToApiDto(BaseUser employee) {
         return new EmployeeDto()
             .id(employee.getId())
-            .fullname(employee.getFullname())
-            .company(employee.getCompanies().get(0).getLabel());
+            .fullname(employee.getFullName())
+            .company("TODO: Implement company name");
     }
     
 }

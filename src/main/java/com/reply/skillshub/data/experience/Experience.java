@@ -41,10 +41,7 @@ public class Experience {
 
     private LocalDate endDate;
 
-    @Relationship(type = "HAS_EXPERIENCE", direction = Direction.INCOMING, cascadeUpdates = false)
-    private List<User> employees = new ArrayList<>();
-
-    @Relationship(type = "GAINED_IN", direction = Direction.INCOMING, cascadeUpdates = false)
+    @Relationship(type = "INVOLVES_SKILL", direction = Direction.OUTGOING, cascadeUpdates = false)
     private List<Skill> skills = new ArrayList<>();
 
     @Relationship(type = "WORKED_IN", direction = Direction.OUTGOING, cascadeUpdates = false)
@@ -53,21 +50,22 @@ public class Experience {
     @Relationship(type = "IN_INDUSTRY", direction = Direction.OUTGOING, cascadeUpdates = false)
     private List<Industry> industries = new ArrayList<>();
 
+    @NotEmpty
     @Relationship(type = "IN_ROLE", direction = Direction.OUTGOING, cascadeUpdates = false)
-    private List<Occupation> occupation = new ArrayList<>();
+    private Occupation occupation;
 
-    @Relationship(type = "BASED_OF", direction = Direction.INCOMING, cascadeUpdates = false)
-    private List<ResumeExperience> dependentResumeExperiences;
+    // @Relationship(type = "BASED_OF", direction = Direction.INCOMING, cascadeUpdates = false)
+    // private List<ResumeExperience> dependentResumeExperiences = new ArrayList<>();
     
-    @AssertTrue(message = "An experience must be assigned exactly one employee")
-    private boolean isCountEmployeesEqualToOne() {
-        return employees.size() == 1;
-    }
+    // @AssertTrue(message = "An experience must be assigned exactly one employee")
+    // private boolean isCountEmployeesEqualToOne() {
+    //     return employees.size() == 1;
+    // }
 
-    @AssertTrue(message = "An experience must have one occupation")
-    private boolean isOccupationSizeEqualToOne() {
-        return occupation.size() == 1;
-    }
+    // @AssertTrue(message = "An experience must have one occupation")
+    // private boolean isOccupationSizeEqualToOne() {
+    //     return occupation.size() == 1;
+    // }
 
     @AssertTrue(message = "An experience can have at most one industry")
     private boolean isIndustrySmallerAsTwo() {
@@ -86,14 +84,8 @@ public class Experience {
         return Optional.of(industries.get(0));
     }
 
-    public User getEmployee() {
-        return employees.get(0);
-    }
+    // public User getEmployee() {
+    //     return employees.get(0);
+    // }
 
-    public Optional<Occupation> getOccupation() {
-        if (occupation.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(occupation.get(0));
-    }
 }

@@ -34,26 +34,29 @@ public class ExperienceControllerService {
     }
 
     public ExperienceDto getExperienceById(String id) {
-        Experience potential = experienceService.findById(id).orElseThrow(() -> new ResumeSkillNotFound());
+        var potential = experienceService.findById(id, BaseExperience.class).orElseThrow(() -> new ResumeSkillNotFound());
         return convertExperienceToDto(potential);
     }
 
     public List<ExperienceDto> getExperiencesByUserId(String userId) {
-        List<Experience> experiences = experienceService.findByUserId(userId);
-        return experiences.stream().map(this::convertExperienceToDto).toList();
+        var user = userService.findById(userId);
+        return user.getExperiences().stream().map(this::convertExperienceToDto).toList();
     }
 
     public ExperienceDto updateExperienceById(String experienceId, ExperienceDto ExperienceDto) {
-        Experience experience = experienceService.findById(experienceId).orElseThrow(() -> new ResumeSkillNotFound());
+        var experience = experienceService.findById(experienceId).orElseThrow(() -> new ResumeSkillNotFound());
         return convertExperienceToDto(experienceService.save(updateExperienceWithBaseExperience(experience, ExperienceDto)));
     }
 
     public ExperienceDto createExperienceForUser(String userId, ExperienceDto ExperienceDto) {
         User user = userService.findUserById(userId).orElseThrow(() -> new UserNotFound());
         Experience experience = new Experience();
-        experience.setEmployees(List.of(user));
-        return convertExperienceToDto(experienceService.save(updateExperienceWithBaseExperience(experience, ExperienceDto)));
+        var savedExperience = experienceService.save(updateExperienceWithBaseExperience(experience, ExperienceDto));
+        user.getExperiences().add(savedExperience);
+        userService.save(user);
+        return convertExperienceToDto(savedExperience);
     }
+
     private Experience updateExperienceWithBaseExperience(Experience experience, ExperienceDto ExperienceDto) {
         experience.setTitle(ExperienceDto.getTitle());
         experience.setDescriptions(ExperienceDto.getResponsibilities());
@@ -65,11 +68,23 @@ public class ExperienceControllerService {
         return experience;
     }
     
-    private List<Occupation> convertToOccupation(OccupationalCategoryDto occupationalCategoryDto) {
+    private Occupation convertToOccupation(OccupationalCategoryDto occupationalCategoryDto) {
         Occupation occupation = new Occupation();
         occupation.setId(occupationalCategoryDto.getId());
         occupation.setLabel(occupationalCategoryDto.getLabel());
-        return List.of(occupation);
+        return occupation;
+    }
+
+    private ExperienceDto convertExperienceToDto(BaseExperience experience) {
+        return new ExperienceDto()
+            .id(experience.getId())
+            .responsibilities(experience.getDescriptions())
+            .title(experience.getTitle())
+            .occupationalCategory(experience.getOccupation().stream().map(oc -> new OccupationalCategoryDto()
+                .id(oc.getId())
+                .label(oc.getLabel()))
+                .findFirst().orElse(null))
+            .skills(experience.getSkills().stream().map(this::convertToSkillDto).toList());
     }
 
     private ExperienceDto convertExperienceToDto(Experience experience) {
@@ -78,14 +93,19 @@ public class ExperienceControllerService {
             .industry(convertToIndustryDto(experience.getIndustry()).orElse(null))
             .responsibilities(experience.getDescriptions())
             .title(experience.getTitle())
-            .occupationalCategory(experience.getOccupation().stream().map(oc -> new OccupationalCategoryDto()
-                .id(oc.getId())
-                .label(oc.getLabel()))
-                .findFirst().orElse(null))
+            .occupationalCategory(new OccupationalCategoryDto()
+                .id(experience.getOccupation().getId())
+                .label(experience.getOccupation().getLabel()))
             .skills(convertToSkillDtoList(experience.getSkills()));
     }
 
     private SkillDto convertToSkillDto(Skill skill) {
+        return new SkillDto()
+            .id(skill.getId())
+            .label(skill.getLabel());
+    }
+
+    private SkillDto convertToSkillDto(BaseExperience.Skill skill) {
         return new SkillDto()
             .id(skill.getId())
             .label(skill.getLabel());

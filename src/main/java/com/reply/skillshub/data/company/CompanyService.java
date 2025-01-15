@@ -30,8 +30,18 @@ public class CompanyService {
         return companyRepository.findByEmployeesId(id, BaseCompany.class);
     }
 
+    public List<MinimalCompany> findMinimalCompanyByEmployeesId(String id) {
+        return companyRepository.findByEmployeesId(id, MinimalCompany.class);
+    }
+
     public Optional<Company> findById(String id) {
         return companyRepository.findById(id);
     }
+
+    public Optional<BaseCompany> findBaseCompanyById(String id) {
+        return companyRepository.findById(id, BaseCompany.class);
+    }
+
+
     
 }

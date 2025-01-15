@@ -54,11 +54,15 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFound());
     }
 
+    public EmployeeProfile findEmployeeProfileById(String id) {
+        return userRepository.findById(id, EmployeeProfile.class).orElseThrow(() -> new UserNotFound());
+    }
+
     public List<User> findByCompaniesId(String company) {
         return userRepository.findByCompaniesId(company);
     }
 
-    public List<User> findByCompaniesIdIn(List<String> company) {
+    public List<Employee> findByCompaniesIdIn(List<String> company) {
         return userRepository.findByCompaniesIdIn(company);
     }
 }

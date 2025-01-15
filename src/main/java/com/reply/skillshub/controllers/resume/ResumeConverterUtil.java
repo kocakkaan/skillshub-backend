@@ -106,7 +106,9 @@ public class ResumeConverterUtil {
         dto.setResponsibilities(experience.getDescriptions());
         dto.setSkills(convertSkillsToDto(basedOf.getSkills()));
         dto.setTitle(basedOf.getTitle());
-        basedOf.getOccupation().ifPresent(occ -> dto.setRole(convertToOccupationocc(occ)));
+        if (basedOf.getOccupation() != null) {
+            dto.setRole(convertToOccupationocc(basedOf.getOccupation()));
+        }
         return dto;
     }
 

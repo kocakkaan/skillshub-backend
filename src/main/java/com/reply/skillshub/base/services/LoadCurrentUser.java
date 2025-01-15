@@ -21,7 +21,7 @@ public class LoadCurrentUser {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    public com.reply.skillshub.data.user.User loadSkillhubUserFromContext() {
-        return userService.findUserByEmail(loadContextUser().getUsername()).orElseThrow(() -> new UserNotFound());
+    public com.reply.skillshub.data.user.BaseUser loadSkillhubUserFromContext() {
+        return userService.findBaseUserByEmail(loadContextUser().getUsername()).orElseThrow(() -> new UserNotFound());
     }
 }

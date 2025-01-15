@@ -26,10 +26,4 @@ public class Skill {
     @NotEmpty
     private String label;
 
-    @Relationship(type = "HAS_SKILL", direction = Direction.INCOMING)
-    private List<User> employees = new ArrayList<>();
-
-    @Relationship(type = "GAINED_IN", direction = Direction.OUTGOING)
-    private List<Skill> skills = new ArrayList<>();
-    
 }

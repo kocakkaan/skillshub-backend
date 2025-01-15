@@ -26,7 +26,4 @@ public class Industry {
     @NotEmpty
     private String label;
     
-    @Relationship(type = "IN_INDUSTRY", direction = Direction.INCOMING, cascadeUpdates = false)
-    private List<Experience> experiences = new ArrayList<>();
-    
 }

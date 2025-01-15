@@ -15,6 +15,7 @@ import com.reply.skillshub.data.EmailRequest;
 import com.reply.skillshub.data.certificate.Certificate;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.company.CompanyService;
+import com.reply.skillshub.data.company.MinimalCompany;
 import com.reply.skillshub.data.experience.Experience;
 import com.reply.skillshub.data.industry.Industry;
 import com.reply.skillshub.data.occupation.Occupation;
@@ -23,6 +24,9 @@ import com.reply.skillshub.data.resumeskill.ResumeSkill;
 import com.reply.skillshub.data.skill.Skill;
 import com.reply.skillshub.data.skill.SkillService;
 import com.reply.skillshub.data.speaks.Speaks;
+import com.reply.skillshub.data.user.BaseUser;
+import com.reply.skillshub.data.user.Employee;
+import com.reply.skillshub.data.user.EmployeeProfile;
 import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.data.userrole.UserRole;
@@ -36,6 +40,7 @@ import com.reply.skillshub.openapi.model.IndustryDto;
 import com.reply.skillshub.openapi.model.LanguageDto;
 import com.reply.skillshub.openapi.model.OccupationalCategoryDto;
 import com.reply.skillshub.openapi.model.ProfileDto;
+import com.reply.skillshub.openapi.model.ProfileDtoResumesInner;
 import com.reply.skillshub.openapi.model.ResumeDto;
 import com.reply.skillshub.openapi.model.ResumeSkillDto;
 import com.reply.skillshub.openapi.model.SkillDto;
@@ -90,7 +95,7 @@ public class UsersControllerService {
                             .findById(companyId)
                             .orElseThrow(() -> new NoCompanyFound());
 
-        User currentUser = loadCurrentUser.loadSkillhubUserFromContext();
+        BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
 
         if (company.getEmployees().stream().noneMatch(user -> user.getId().equals(currentUser.getId()))) {
             throw new InsufficientRights();
@@ -108,16 +113,19 @@ public class UsersControllerService {
     }
 
     public List<EmployeeDto> getEmployeesAccessibleToCurrentUser() {
-        User currentUser = loadCurrentUser.loadSkillhubUserFromContext();
-        return getEmployeesAccessibleToUser(currentUser);
+        BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
+        return getEmployeesAccessibleToUser(currentUser.getId());
     }
 
     public ProfileDto getProfileForCurrentUser() {
-        return getProfileForUser(loadCurrentUser.loadSkillhubUserFromContext());
+        var currentBaseUser = loadCurrentUser.loadSkillhubUserFromContext();
+        var employeeProfile = userService.findEmployeeProfileById(currentBaseUser.getId());
+        return getProfileForUser(employeeProfile);
     }
 
     public ProfileDto getProfileForEmployee(String employeeId) {
-        return getProfileForUser(userService.findById(employeeId));
+        var employeeProfile = userService.findEmployeeProfileById(employeeId);
+        return getProfileForUser(employeeProfile);
     }
 
     public SkillDto addSkillToUser(String userId, String skillId) {
@@ -128,26 +136,23 @@ public class UsersControllerService {
         return new SkillDto(skill.getId(), skill.getLabel());
     }
 
-    private ProfileDto getProfileForUser(User user) {
+    private ProfileDto getProfileForUser(EmployeeProfile user) {
         var profile = new ProfileDto();
-        profile.setFullname(user.getFullname());
+        profile.setFullname(user.getFullName());
         profile.setEmail(user.getEmail());
         profile.setId(user.getId());
         profile.setCertificates(user.getCertificates().stream().map(this::convertToCertificateDto).toList());
         profile.setExperiences(user.getExperiences().stream().map(this::convertToExperienceDto).toList());
         profile.setSkills(user.getSkills().stream().map(this::convertToSkillDto).toList());
-        profile.setLanguages(user.getSpeaks().stream().map(this::convertSpeaksToLanguageDto).toList());
+        // profile.setLanguages(user.getSpeaks().stream().map(this::convertSpeaksToLanguageDto).toList());
         profile.setResumes(user.getResumes().stream().map(this::convertToResumeDto).toList());
         return profile;
     }
 
-    private ResumeDto convertToResumeDto(Resume resume) {
-        var newResume = new ResumeDto();
+    private ProfileDtoResumesInner convertToResumeDto(EmployeeProfile.Resume resume) {
+        var newResume = new ProfileDtoResumesInner();
         newResume.setId(resume.getId());
         newResume.setTitle(resume.getTitle());
-        newResume.setSkills(resume.getSkills().stream().map(this::convertToResumeSkillDto).toList());
-        newResume.setBackground(resume.getBackground());
-        newResume.setIndustries(resume.getIndustries().stream().map(this::convertToIndustryDto).toList());
         // newResume.set(convertToOccupationalCategoryDto(resume.getRole()));
         return newResume;
     }
@@ -170,19 +175,24 @@ public class UsersControllerService {
         return skillDto;
     }
 
-    private CertificateDto convertToCertificateDto(Certificate certificate) {
+    private SkillDto convertToSkillDto(EmployeeProfile.Skill skill) {
+        var skillDto = new SkillDto(skill.getId(), skill.getLabel());
+        return skillDto;
+    }
+
+    private CertificateDto convertToCertificateDto(EmployeeProfile.Certificate certificate) {
         return new CertificateDto(certificate.getId(), certificate.getLabel());
     }
 
-    private ExperienceDto convertToExperienceDto(Experience experience) {
+    private ExperienceDto convertToExperienceDto(EmployeeProfile.Experience experience) {
         var experienceDto = new ExperienceDto();
         experienceDto.setId(Optional.of(experience.getId()));
         experienceDto.setTitle(experience.getTitle());
         experienceDto.setResponsibilities(experience.getDescriptions());
         experienceDto.setSkills(experience.getSkills().stream().map(this::convertToSkillDto).toList());
-        experienceDto.setStartDate(Optional.ofNullable(experience.getStartDate()));
-        experienceDto.setEndDate(Optional.ofNullable(experience.getEndDate()));
-        experienceDto.setIndustry(Optional.ofNullable(experience.getIndustries().stream().map(this::convertToIndustryDto).findFirst().orElse(null)));
+        // experienceDto.setStartDate(Optional.ofNullable(experience.getStartDate()));
+        // experienceDto.setEndDate(Optional.ofNullable(experience.getEndDate()));
+        // experienceDto.setIndustry(Optional.ofNullable(experience.getIndustries().stream().map(this::convertToIndustryDto).findFirst().orElse(null)));
         experienceDto.setOccupationalCategory(experience.getOccupation().stream().map(this::convertToOccupationalCategoryDto).findFirst().orElse(null));
         return experienceDto;
     }
@@ -191,24 +201,24 @@ public class UsersControllerService {
         return new IndustryDto(industry.getId(), industry.getLabel());
     }
 
-    private OccupationalCategoryDto convertToOccupationalCategoryDto(Occupation occupation) {
+    private OccupationalCategoryDto convertToOccupationalCategoryDto(EmployeeProfile.Occupation occupation) {
         return new OccupationalCategoryDto(occupation.getId(), occupation.getLabel());
     }
 
     public List<EmployeeDto> getEmployeeAccessibleToUserWithId(String userId) {
-        User user = userService.findUserById(userId).orElseThrow(() -> new UserNotFound());
-        return getEmployeesAccessibleToUser(user);
+        return getEmployeesAccessibleToUser(userId);
     }
 
-    private List<EmployeeDto> getEmployeesAccessibleToUser(User user) {
-        List<String> companyIds = user.getCompanies().stream().map(Company::getId).toList();
+    private List<EmployeeDto> getEmployeesAccessibleToUser(String userId) {
+        var companies = companyService.findMinimalCompanyByEmployeesId(userId);
+        List<String> companyIds = companies.stream().map(MinimalCompany::getId).toList();
         return userService.findByCompaniesIdIn(companyIds).stream().map(this::convertUserToEmployeeDto).toList();
     }
 
-    private EmployeeDto convertUserToEmployeeDto(User user) {
+    private EmployeeDto convertUserToEmployeeDto(Employee user) {
         return new EmployeeDto()
             .id(user.getId())
-            .fullname(user.getFullname())
+            .fullname(user.getFullName())
             .role(user.getUserRole().name());
     }
 

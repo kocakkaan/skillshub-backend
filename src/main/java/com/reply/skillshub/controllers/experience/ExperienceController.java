@@ -29,7 +29,7 @@ public class ExperienceController implements ExperiencesApi {
     }
 
     @Override
-    public ResponseEntity<ExperienceDto> experiencesExperienceIdPut(String experienceId, @Valid ExperienceDto ExperienceDto) {
+    public ResponseEntity<ExperienceDto> experiencesExperienceIdPut(String experienceId, ExperienceDto ExperienceDto) {
         return ResponseEntity.ok(experienceControllerService.updateExperienceById(experienceId, ExperienceDto));
     }
 

@@ -15,6 +15,7 @@ import com.reply.skillshub.BaseRepositoryTest;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.language.Language;
 import com.reply.skillshub.data.speaks.Speaks;
+import com.reply.skillshub.data.user.Employee;
 import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserRepository;
 
@@ -95,7 +96,6 @@ public class UserRepositoryTest extends BaseRepositoryTest {
         userRepository.save(userTwoToSave);
 
         List<User> foundList = userRepository.findByCompaniesId(company.getId());
-        List<User> foundList2 = userRepository.findByCompaniesIdIn(List.of(company.getId()));
         Assertions.assertThat(foundList.size()).isEqualTo(2);
     }
 
@@ -112,7 +112,7 @@ public class UserRepositoryTest extends BaseRepositoryTest {
         userRepository.save(userOneToSave);
         userRepository.save(userTwoToSave);
 
-        List<User> foundList = userRepository.findByCompaniesIdIn(List.of(company.getId(), company2.getId())); 
+        List<Employee> foundList = userRepository.findByCompaniesIdIn(List.of(company.getId(), company2.getId())); 
         Assertions.assertThat(foundList.size()).isEqualTo(2);
     }
 

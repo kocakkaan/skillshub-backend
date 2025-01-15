@@ -102,7 +102,9 @@ public class PowerPointService {
       ResumeExperience experience) {
     PowerPointInformation.PowerPointExperience powerPointExperience = new PowerPointInformation.PowerPointExperience();
     powerPointExperience.setTitle(experience.getBasedOf().get().getTitle());
-    experience.getBasedOf().get().getOccupation().ifPresent((occ) -> powerPointExperience.setPosition(occ.getLabel()));
+    if (experience.getBasedOf().get().getOccupation() != null) {
+      powerPointExperience.setPosition(experience.getBasedOf().get().getOccupation().getLabel());
+    }
     powerPointExperience.setDescriptions(experience.getDescriptions());
     return powerPointExperience;
   }

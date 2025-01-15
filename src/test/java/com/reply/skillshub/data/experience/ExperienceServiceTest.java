@@ -55,19 +55,16 @@ public class ExperienceServiceTest {
     private static Experience returnValidExperience() {
         Experience experience = new Experience();
         experience.setTitle("Test");
-        experience.getEmployees().add(returnUserWithEmail());
         return experience;
     }
 
     private static Experience returnExperienceWithNoUsers() {
         Experience experience = returnValidExperience();
-        experience.getEmployees().clear();; 
         return experience;
     }
 
     private static Experience returnExperienceWithTwoUsers() {
         Experience experience = returnValidExperience();
-        experience.getEmployees().add(returnUserWithEmail()); 
         return experience;
     }
 

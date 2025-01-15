@@ -1,7 +1,13 @@
 package com.reply.skillshub.data.company;
 
-public interface BaseCompany {
-    public String getId();
+import java.util.List;
 
-    public String getLabel();
+import com.reply.skillshub.data.user.BaseUser;
+
+public interface BaseCompany {
+  public String getId();
+
+  public String getLabel();
+
+  public List<BaseUser> getEmployees();
 }

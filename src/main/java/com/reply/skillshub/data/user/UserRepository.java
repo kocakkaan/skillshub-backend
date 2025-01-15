@@ -15,6 +15,8 @@ public interface UserRepository extends Neo4jRepository<User, String> {
 
     <T> Optional<T> findByEmail(String email, Class<T> type);
 
+    <T> Optional<T> findById(String id, Class<T> type);
+
     Optional<User> findByConfirmationToken(String confirmationToken);
 
     boolean existsByEmail(String email);
@@ -23,6 +25,7 @@ public interface UserRepository extends Neo4jRepository<User, String> {
 
     List<User> findByCompaniesId(String company);
 
-    List<User> findByCompaniesIdIn(List<String> company);
+    List<Employee> findByCompaniesIdIn(List<String> company);
+
     
 }

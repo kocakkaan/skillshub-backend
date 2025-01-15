@@ -18,17 +18,8 @@ public class SkillRepositoryTest extends BaseRepositoryTest {
     void succesfullySaveCompany() {
         Skill skill = new Skill();
         skill.setLabel("tester");
-        skill.getEmployees().add(returnUserWithEmail());
         Skill savedSkill = skillRepository.save(skill);
         Assertions.assertNotNull(savedSkill.getId());
-    }
-
-    User returnUserWithEmail() {
-        User personToSave1 = new User();
-        personToSave1.setFirstName("FirstName");
-        personToSave1.setLastName("LastName");
-        personToSave1.setEmail("maurits.de.roover@reply.com");
-        return personToSave1;
     }
     
 }
