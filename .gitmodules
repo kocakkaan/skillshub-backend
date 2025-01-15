@@ -1,0 +1,3 @@
+[submodule "skillshub_api_definition"]
+	path = skillshub_api_definition
+	url = https://github.com/MachineLearningReply/skillshub_api_definition.git

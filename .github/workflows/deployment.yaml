@@ -1,0 +1,71 @@
+name: Backend End Deployment
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - ./**
+      - .github/workflows/deployment.yml
+
+
+jobs:
+
+  build:
+
+    name: Build Image
+    runs-on: ubuntu-latest
+    env:
+      ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+      IMAGE_TAG: backend_${{ github.sha }}
+
+    steps:
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-3
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Deploy to Backend EC2
+        uses: appleboy/ssh-action@master
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: eu-west-3
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          BACKEND_EC2_DATASTORAGE: ${{ vars.DATASTORAGE_EC2_HOST }} #check this out
+        with:
+          envs: ECR_REGISTRY,ECR_REPOSITORY,IMAGE_TAG,AWS_ACCOUNT_ID,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY
+          host: ${{ secrets.FRONTEND_EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            docker stop backend || true
+            docker rm backend || true
+            aws configure set aws_access_key_id > echo $AWS_ACCESS_KEY_ID
+            aws configure set aws_secret_access_key > echo $AWS_SECRET_ACCESS_KEY
+            aws configure set default.region > echo $AWS_REGION
+            aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+            docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+            docker run -d \
+              --name backend \
+              -p 8080:8080 \
+              --env DATASTORAGE_HOST=$BACKEND_EC2_DATASTORAGE \
+              --restart always \
+              $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
