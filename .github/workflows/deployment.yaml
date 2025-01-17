@@ -6,7 +6,7 @@ on:
       - '**'
     paths:
       - ./**
-      - .github/workflows/deployment.yml
+      - .github/workflows/deployment.yaml
 
 jobs:
 
