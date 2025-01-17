@@ -6,7 +6,6 @@ on:
       - ./**
       - .github/workflows/deployment.yml
 
-
 jobs:
 
   build:
