@@ -2,6 +2,8 @@ name: Backend Deployment
 
 on:
   push:
+    branches:
+      - '**'
     paths:
       - ./**
       - .github/workflows/deployment.yml
@@ -10,7 +12,7 @@ jobs:
 
   build:
 
-    name: Build Image
+    name: Build Image #test
     runs-on: ubuntu-latest
     env:
       ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
