@@ -1,8 +1,7 @@
-name: Backend End Deployment
+name: Backend Deployment
 
 on:
   push:
-    branches: [ "main" ]
     paths:
       - ./**
       - .github/workflows/deployment.yml
@@ -22,6 +21,9 @@ jobs:
 
       - name: Check out code
         uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+          token: ${{ secrets.DEPLOYMENT_PAT }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -49,10 +51,17 @@ jobs:
           AWS_REGION: eu-west-3
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          BACKEND_EC2_DATASTORAGE: ${{ vars.DATASTORAGE_EC2_HOST }} #check this out
+          BACKEND_NEO4J_USER: ${{ secrets.NEO4J_USER }}
+          BACKEND_NEO4J_PASS: ${{ secrets.NEO4J_PASS }}
+          BACKEND_NEO4J_URI: ${{ secrets.NEO4J_URI }}
+          BACKEND_OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
+          BACKEND_OAUTH_CLIENT_SECRET: ${{ secrets.OAUTH_CLIENT_SECRET }}
+          BACKEND_AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+
         with:
           envs: ECR_REGISTRY,ECR_REPOSITORY,IMAGE_TAG,AWS_ACCOUNT_ID,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY
-          host: ${{ secrets.FRONTEND_EC2_HOST }}
+          host: ${{ secrets.BACKEND_EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
@@ -65,7 +74,12 @@ jobs:
             docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
             docker run -d \
               --name backend \
-              -p 8080:8080 \
-              --env DATASTORAGE_HOST=$BACKEND_EC2_DATASTORAGE \
+              -p 3080:8080 \
+              --env NEO4J_USER=$BACKEND_NEO4J_USER \
+              --env NEO4J_PASS=$BACKEND_NEO4J_PASS \
+              --env NEO4J_URI=$BACKEND_NEO4J_URI \
+              --env OAUTH_CLIENT_ID=$BACKEND_OAUTH_CLIENT_ID \
+              --env OAUTH_CLIENT_SECRET=$BACKEND_OAUTH_CLIENT_SECRET \
+              --env AZURE_TENANT_ID=$BACKEND_AZURE_TENANT_ID \
               --restart always \
               $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
