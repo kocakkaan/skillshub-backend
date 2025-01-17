@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - ./**
-      - .github/workflows/deployment.yml
+      - .github/workflows/deployment.yaml
 
 jobs:
 
@@ -63,6 +63,9 @@ jobs:
           host: ${{ secrets.BACKEND_EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
+          proxy_host: ${{ secrets.FRONTEND_EC2_HOST }}
+          proxy_username: ${{ secrets.EC2_USERNAME }}
+          proxy_key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             docker stop backend || true
             docker rm backend || true
