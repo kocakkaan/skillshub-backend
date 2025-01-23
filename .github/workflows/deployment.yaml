@@ -2,8 +2,7 @@ name: Backend Deployment
 
 on:
   push:
-    branches:
-      - '**'
+    branches: [ "main" ]
     paths:
       - ./**
       - .github/workflows/deployment.yaml
@@ -61,7 +60,7 @@ jobs:
 
 
         with:
-          envs: ECR_REGISTRY,ECR_REPOSITORY,IMAGE_TAG,AWS_ACCOUNT_ID,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY
+          envs: ECR_REGISTRY,ECR_REPOSITORY,IMAGE_TAG,AWS_ACCOUNT_ID,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,BACKEND_NEO4J_USER,BACKEND_NEO4J_PASS,BACKEND_NEO4J_URI,BACKEND_OAUTH_CLIENT_ID,BACKEND_OAUTH_CLIENT_SECRET,BACKEND_AZURE_TENANT_ID
           host: ${{ secrets.BACKEND_EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
