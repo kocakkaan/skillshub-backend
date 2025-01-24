@@ -50,7 +50,7 @@ public class SecurityConfig {
             .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(expressionInterceptUrlRegistry ->
                         expressionInterceptUrlRegistry
-                                .requestMatchers("/api/auth/login", "/api/error", "/api/auth/signup", "/api/auth/confirmation/*").permitAll()
+                                .requestMatchers("/auth/login", "/error", "/auth/signup", "/auth/confirmation/*").permitAll()
                                 .anyRequest().authenticated()
                                 )
                 .csrf(AbstractHttpConfigurer::disable)
