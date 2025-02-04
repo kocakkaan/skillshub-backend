@@ -82,4 +82,5 @@ jobs:
               --env OAUTH_CLIENT_SECRET=$BACKEND_OAUTH_CLIENT_SECRET \
               --env AZURE_TENANT_ID=$BACKEND_AZURE_TENANT_ID \
               --restart always \
+              --network skillshub_backend_network \
               $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
