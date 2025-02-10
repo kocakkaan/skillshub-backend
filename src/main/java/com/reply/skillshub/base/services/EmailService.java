@@ -21,13 +21,19 @@ import com.microsoft.graph.models.UserSendMailParameterSet;
 import com.microsoft.graph.requests.GraphServiceClient;
 import com.reply.skillshub.data.EmailRequest;
 
+import lombok.RequiredArgsConstructor;
+
+import org.thymeleaf.spring6.SpringTemplateEngine;
+
 import okhttp3.Request;
 
 @Service
+@RequiredArgsConstructor
 public class EmailService {
 
 	private static ClientSecretCredential clientSecretCredential;
 	private static GraphServiceClient<Request> appClient;
+	private final SpringTemplateEngine templateEngine;
 
 	@Value("${spring.security.oauth2.client.registration.azure.client-id}")
 	private String clientId;
@@ -95,7 +101,8 @@ public class EmailService {
 		
 		ItemBody body = new ItemBody();
 		body.contentType = BodyType.HTML;
-		body.content = emailRequest.getMessage();
+		String htmlContent = templateEngine.process(emailRequest.getTemplate(), emailRequest.getContext());
+		body.content = htmlContent;
 		message.body = body;
 		
 		LinkedList<Recipient> toRecipientsList = new LinkedList<Recipient>();
