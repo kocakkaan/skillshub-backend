@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
 
 import com.reply.skillshub.base.exceptionhandling.exeptions.UnconfirmedUser;
 import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
@@ -100,30 +101,18 @@ public class AuthentificationService {
         EmailRequest emailRequest = new EmailRequest();
         emailRequest.setRecipient(user.getEmail());
         emailRequest.setSubject("Please verify your email address for your account");
-        emailRequest.setMessage(getEmailBody(user));
+        emailRequest.setTemplate("confirmation");
+        Context context = new Context();
+        context.setVariable("link", getConfirmationLink(user));
+        context.setVariable("username", user.getFullname());
+        emailRequest.setContext(context);
         return emailRequest;
-    }
-
-    private String getEmailBody(User user) {
-        StringBuilder emailBody = new StringBuilder();
-        emailBody.append("Please verify your email address for your account");
-        emailBody.append("\n\n");
-        emailBody.append("Thank you for signing up. To ensure the security of your account, we need to verify your email address.");
-        emailBody.append("\n\n");
-        emailBody.append("Please click on the following link:");
-        emailBody.append("\n\n");
-        emailBody.append(getConfirmationLink(user));
-        emailBody.append("\n\n");
-        emailBody.append("If you did not request this, you can ignore this email. Someone else might have entered your email address by mistake.");
-        emailBody.append("\n\n");
-        emailBody.append("Thank you");
-        return emailBody.toString();
     }
 
     private String getConfirmationLink(User user) {
         StringBuilder emailLink = new StringBuilder();
         emailLink.append(server);
-        emailLink.append("/auth/confirmation/");
+        emailLink.append("/api/auth/confirmation/");
         emailLink.append(user.getConfirmationToken());
         return emailLink.toString();     
     }

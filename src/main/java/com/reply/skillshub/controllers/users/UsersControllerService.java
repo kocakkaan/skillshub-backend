@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
 
 import com.reply.skillshub.base.exceptionhandling.exeptions.InsufficientRights;
 import com.reply.skillshub.base.exceptionhandling.exeptions.InvalidConfirmationToken;
@@ -107,7 +108,7 @@ public class UsersControllerService {
 
         User savedUser = userService.save(userToSave);
 
-        emailService.sendEmail(createNewUserEmailRequest(savedUser.getEmail()));
+        emailService.sendEmail(createNewUserEmailRequest(savedUser));
 
         return createUserResponse(savedUser, company);
     }
@@ -243,21 +244,16 @@ public class UsersControllerService {
         return response;
     }
 
-    private EmailRequest createNewUserEmailRequest(String userEmail) {
+    private EmailRequest createNewUserEmailRequest(User user) {
         EmailRequest email = new EmailRequest();
-        email.setRecipient(userEmail);
-        email.setMessage(createNewUserMessage());
+        email.setRecipient(user.getEmail());
+        // email.setMessage(createNewUserMessage());
+        email.setTemplate("new-user");
+        Context context = new Context();
+        context.setVariable("link", "someLink");
+        context.setVariable("username", user.getFullname());
         email.setSubject("An account has been created for you");
         return email;
-    }
-
-    private String createNewUserMessage() {
-        StringBuilder message = new StringBuilder();
-        message.append("An account has been created for you.");
-        message.append("Please use this link to set your password");
-        message.append("someLink");
-
-        return message.toString();
     }
     
 }
