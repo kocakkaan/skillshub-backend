@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.data.neo4j.core.Neo4jTemplate;
 import org.springframework.stereotype.Service;
 
 import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
@@ -19,6 +20,7 @@ public class UserService {
     
     private final UserRepository userRepository;
     private final Validator validator;
+    private final Neo4jTemplate neo4jTemplate;
 
     public User save(User user) {
         Set<ConstraintViolation<User>> violations = validator.validate(user);
@@ -64,5 +66,14 @@ public class UserService {
 
     public List<Employee> findByCompaniesIdIn(List<String> company) {
         return userRepository.findByCompaniesIdIn(company);
+    }
+
+    public <T> T findById(String id, Class<T> userType) {
+        return userRepository.findById(id, userType).orElseThrow(() -> new UserNotFound());
+    }
+
+    // T needs to have something in common with User.class
+    public <T> T save(T user) {
+        return neo4jTemplate.save(User.class).one(user);
     }
 }
