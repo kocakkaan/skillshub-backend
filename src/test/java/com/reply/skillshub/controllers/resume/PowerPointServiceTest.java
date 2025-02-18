@@ -24,6 +24,24 @@ import com.reply.skillshub.data.user.User;
 
 class PowerPointServiceTest {
 
+    @Test 
+    void testCreatePowerPointFromTemplate() {
+        User user = Instancio.create(User.class);
+        user.setProfilePictureLocation("pictures/test.jpg");
+        Resume resume = Instancio.of(Resume.class)
+            .generate(field(Resume::getBackground), gen -> gen.string().length(300))
+            .generate(field(ResumeSkill::getSkills), gen -> gen.collection().size(10))
+            .generate(all(String.class).within(field(ResumeExperience::getDescriptions).toScope()), gen -> gen.string().length(200).lowerCase())
+            .generate(field(Resume::getExperiences),  gen -> gen.collection().maxSize(4).minSize(2))
+            .generate(field(ResumeExperience::getDescriptions), gen -> gen.collection().minSize(2).maxSize(4))
+            .create();
+        resume.setUser(user);
+        var service = new PowerPointService();
+        var information = service.createPowerPointDto(resume, "en", "Reply");
+        var ppt = service.createPowerPointFromTemplate(information);
+        savePowerPoint(ppt);
+    }
+
     @Test
     void testPowerPoint() {
         User user = Instancio.create(User.class);

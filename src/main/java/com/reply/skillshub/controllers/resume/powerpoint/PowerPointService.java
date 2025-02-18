@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -133,6 +134,22 @@ public class PowerPointService {
     new ProjectExperience(pointInformation).addShapes(slide);
 
     return ppt;
+  }
+
+  public XMLSlideShow createPowerPointFromTemplate(PowerPointInformation pointInformation) {
+    try (FileInputStream fis = new FileInputStream("src/main/resources/template.pptx")) {
+      XMLSlideShow slideShow = new XMLSlideShow(fis);
+        for (var slide : slideShow.getSlides()) {
+          for (var shape : slide.getShapes()) {
+            FieldHandler
+              .findByLabel(shape.getShapeName())
+              .ifPresent((handler) -> handler.handleShape(shape, pointInformation));
+          }
+        }
+        return slideShow;
+    } catch (IOException e) {
+      return null;
+    }
   }
 
   private PictureType getPictureDataFromString(String type) {
