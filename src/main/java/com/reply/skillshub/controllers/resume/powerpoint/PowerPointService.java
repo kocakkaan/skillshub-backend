@@ -1,6 +1,5 @@
 package com.reply.skillshub.controllers.resume.powerpoint;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -8,19 +7,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-
 import javax.imageio.ImageIO;
 
-import org.apache.poi.sl.usermodel.PictureData;
-import org.apache.poi.sl.usermodel.PictureData.PictureType;
-import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFPictureData;
-import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
-import org.apache.poi.xslf.usermodel.XSLFTextRun;
-import org.apache.poi.xslf.usermodel.XSLFTextShape;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -28,7 +18,6 @@ import org.springframework.stereotype.Service;
 import com.reply.skillshub.data.resume.Resume;
 import com.reply.skillshub.data.resumeexperience.ResumeExperience;
 import com.reply.skillshub.data.resumeskill.ResumeSkill;
-import static com.reply.skillshub.controllers.resume.powerpoint.SharedValues.*;
 
 @Service
 public class PowerPointService {
@@ -117,25 +106,6 @@ public class PowerPointService {
     return powerPointSkill;
   }
 
-  public XMLSlideShow createPowerPoint(PowerPointInformation pointInformation) {
-    XMLSlideShow ppt = new XMLSlideShow();
-
-    ppt.setPageSize(new Dimension(16 * 60, 9 * 60));
-
-    XSLFSlide slide = ppt.createSlide();
-
-    addSlideTitle(slide);
-    addLogo(ppt, slide, pointInformation);
-    addFootText(slide);
-    new BasicInfo(ppt, pointInformation).addShapes(slide);
-    new FunctionalExperience(pointInformation).addShapes(slide);
-    new IndustryExperience(pointInformation).addShapes(slide);
-    new ProfessionalBackground(pointInformation).addShapes(slide);
-    new ProjectExperience(pointInformation).addShapes(slide);
-
-    return ppt;
-  }
-
   public XMLSlideShow createPowerPointFromTemplate(PowerPointInformation pointInformation) {
     try (FileInputStream fis = new FileInputStream("src/main/resources/template.pptx")) {
       XMLSlideShow slideShow = new XMLSlideShow(fis);
@@ -152,61 +122,4 @@ public class PowerPointService {
     }
   }
 
-  private PictureType getPictureDataFromString(String type) {
-    switch (type) {
-      case "PNG":
-        return PictureData.PictureType.PNG;
-      case "jpg":
-      case "jpeg":
-        return PictureData.PictureType.JPEG;
-      default:
-        return PictureData.PictureType.PNG; // TODO Do I really want to do it like this
-    }
-
-  }
-
-  private void addSlideTitle(XSLFSlide slide) {
-    XSLFTextShape title = slide.createTextBox();
-    XSLFTextRun text = title.setText(getSlideTitle("en"));
-    text.setFontSize(28.0);
-    text.setFontFamily(TITLE_FONT_FACE);
-    text.setFontColor(Color.decode("#00444C"));
-    text.setBold(true);
-    Util.setSizeAndPosition(title, 1.01, 1.11, 27.61, 1.45);
-  }
-
-  private String getSlideTitle(String language) {
-    switch (language) {
-      case "en":
-        return "SHORT SUMMARY AND PROJECT EXPERIENCE";
-      case "de":
-        return "PROFILÜBERSICHT UND PROJEKTERFAHRUNG";
-      default:
-        return "SHORT SUMMARY AND PROJECT EXPERIENCE";
-    }
-  }
-
-  private void addLogo(XMLSlideShow ppt, XSLFSlide slide, PowerPointInformation pointInformation) {
-    ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-
-    InputStream is = classloader.getResourceAsStream("static/logo/ml_reply_logo_white.png");
-    try {
-      XSLFPictureData test = ppt.addPicture(is.readAllBytes(), PictureData.PictureType.PNG);
-      XSLFPictureShape logo = slide.createPicture(test);
-      Util.setSizeAndPosition(logo, 28.63, 0, 5.24, 2.62);
-      logo.setFillColor(Color.decode(getTitleBackgroundColor(pointInformation.getCompany())));
-    } catch (IOException e) {
-
-    }
-  }
-
-  private void addFootText(XSLFSlide slide) {
-    XSLFTextShape text = slide.createTextBox();
-    XSLFTextRun run = text.setText("Machine Learning Reply | Short CV");
-    run.setFontSize(12.0);
-    run.setFontFamily(SharedValues.TEXT_FONT_FACE);
-    run.setFontColor(Color.decode("#7F7F7F"));
-    text.setVerticalAlignment(VerticalAlignment.TOP);
-    Util.setSizeAndPosition(text, 0.8, 17.88, 20, 0.77);
-  }
 }
