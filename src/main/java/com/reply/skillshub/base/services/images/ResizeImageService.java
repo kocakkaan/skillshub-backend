@@ -16,12 +16,12 @@ public class ResizeImageService {
      * Resize an image to a target width and height
      * width and height are in pixels
      */
-    public static byte[] resizeImage(InputStream originalImage, int targetWidth, int targetHeight) {
+    public static byte[] resizeImage(InputStream originalImage, int targetWidth, int targetHeight, String formatName) {
         try {
             BufferedImage originalBufferedImage = ImageIO.read(originalImage);
             BufferedImage resizedBufferedImage = resizeImage(originalBufferedImage, targetWidth, targetHeight);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(resizedBufferedImage, "png", baos);
+            ImageIO.write(resizedBufferedImage, formatName, baos);
             return baos.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();
