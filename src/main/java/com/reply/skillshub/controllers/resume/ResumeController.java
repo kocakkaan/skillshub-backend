@@ -32,7 +32,7 @@ public class ResumeController implements ResumesApi {
   public ResponseEntity<Void> exportToPptx(String resumeId, String language, String company) {
     var resume = resumeControllerService.findResumeEntityById(resumeId);
     var pptDto = powerPointService.createPowerPointDto(resume, language, company);
-    var ppt = powerPointService.createPowerPoint(pptDto);
+    var ppt = powerPointService.createPowerPointFromTemplate(pptDto);
     var test = new ByteArrayOutputStream();
     try {
       ppt.write(test);
@@ -115,7 +115,7 @@ public class ResumeController implements ResumesApi {
   public ResponseEntity<Resource> resumesResumeIdExportToImgPost(String resumeId, String language, String company) {
     var resume = resumeControllerService.findResumeEntityById(resumeId);
     var pptDto = powerPointService.createPowerPointDto(resume, language, company);
-    var ppt = powerPointService.createPowerPoint(pptDto);
+    var ppt = powerPointService.createPowerPointFromTemplate(pptDto);
     var output = powerPointService.getFirstSlideAsImage(ppt);
     return ResponseEntity.status(200).body(output);
   }
