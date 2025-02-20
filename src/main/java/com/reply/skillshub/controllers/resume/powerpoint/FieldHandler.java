@@ -24,16 +24,15 @@ public enum FieldHandler {
     @Override
     public void handleShape(XSLFShape shape, PowerPointInformation powerPointInformation) {
       if (shape instanceof XSLFPictureShape) {
-        InputStream run_stream = loadFile(powerPointInformation.getProfilePictureLocation());
-        if (run_stream == null) {
+        InputStream runStream = loadFile(powerPointInformation.getProfilePictureLocation());
+        if (runStream == null) {
           return;
         }
         XSLFPictureShape pictureShape = (XSLFPictureShape) shape;
         var pictureData = pictureShape.getPictureData();
-        System.out.println(pictureData.getType());
         var dimensionPixels = pictureData.getImageDimensionInPixels();
         String fileType = FileTypeDetector.detectFileType(powerPointInformation.getProfilePictureLocation()).orElse("PNG");
-        byte[] resizedImageData = ResizeImageService.resizeImage(run_stream, (int) dimensionPixels.getWidth() * 4, (int) dimensionPixels.getHeight() * 4, fileType);
+        byte[] resizedImageData = ResizeImageService.resizeImage(runStream, (int) dimensionPixels.getWidth() * 4, (int) dimensionPixels.getHeight() * 4, fileType);
         try {
           pictureData.setData(resizedImageData);
         } catch (Exception e) {

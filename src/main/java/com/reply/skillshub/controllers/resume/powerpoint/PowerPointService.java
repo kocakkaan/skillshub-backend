@@ -109,14 +109,16 @@ public class PowerPointService {
   public XMLSlideShow createPowerPointFromTemplate(PowerPointInformation pointInformation) {
     try (FileInputStream fis = new FileInputStream("src/main/resources/template.pptx")) {
       XMLSlideShow slideShow = new XMLSlideShow(fis);
-        for (var slide : slideShow.getSlides()) {
-          for (var shape : slide.getShapes()) {
-            FieldHandler
+      int slideToRemove = pointInformation.getLanguage().equals("en") ? 1 : 0;
+      // XSLFSlideLayout relevantLayout = slideShow.findLayout(layoutToFind); At some point we will enable this
+      slideShow.removeSlide(slideToRemove);
+        var slide = slideShow.getSlides().get(0);
+        for (var shape : slide.getShapes()) {
+          FieldHandler
               .findByLabel(shape.getShapeName())
               .ifPresent((handler) -> handler.handleShape(shape, pointInformation));
-          }
         }
-        return slideShow;
+      return slideShow;
     } catch (IOException e) {
       return null;
     }

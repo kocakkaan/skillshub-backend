@@ -37,7 +37,7 @@ class PowerPointServiceTest {
             .create();
         resume.setUser(user);
         var service = new PowerPointService();
-        var information = service.createPowerPointDto(resume, "en", "Reply");
+        var information = service.createPowerPointDto(resume, "de", "Reply");
         var ppt = service.createPowerPointFromTemplate(information);
         savePowerPoint(ppt);
     }
