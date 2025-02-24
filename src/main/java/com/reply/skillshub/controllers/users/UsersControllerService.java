@@ -2,6 +2,7 @@ package com.reply.skillshub.controllers.users;
 
 import java.util.UUID;
 
+import com.reply.skillshub.data.hascertificate.HasCertificate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
@@ -13,7 +14,6 @@ import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
 import com.reply.skillshub.base.services.EmailService;
 import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.data.EmailRequest;
-import com.reply.skillshub.data.certificate.Certificate;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.company.CompanyService;
 import com.reply.skillshub.data.company.MinimalCompany;
@@ -46,6 +46,7 @@ import com.reply.skillshub.openapi.model.ResumeDto;
 import com.reply.skillshub.openapi.model.ResumeSkillDto;
 import com.reply.skillshub.openapi.model.SkillDto;
 import com.reply.skillshub.openapi.model.UserConfirmRequest;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -71,7 +72,7 @@ public class UsersControllerService {
 
     public ConfirmedUserResponse confirmUser(String userId, String confirmationToken, @Valid UserConfirmRequest userConfirmRequest) {
         User user = userService.findUserById(userId).orElseThrow(() -> new UserNotFound());
-        
+
         if (!user.getConfirmationToken().equals(confirmationToken)) {
             throw new InvalidConfirmationToken();
         }
@@ -93,8 +94,8 @@ public class UsersControllerService {
 
     public CreatedUserResponse addNewUserToCompany(@NotEmpty String companyId, CreateUserRequest createUserRequest) {
         Company company = companyService
-                            .findById(companyId)
-                            .orElseThrow(() -> new NoCompanyFound());
+                .findById(companyId)
+                .orElseThrow(() -> new NoCompanyFound());
 
         BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
 
@@ -142,7 +143,8 @@ public class UsersControllerService {
         profile.setFullname(user.getFullName());
         profile.setEmail(user.getEmail());
         profile.setId(user.getId());
-        profile.setCertificates(user.getCertificates().stream().map(this::convertToCertificateDto).toList());
+        //profile.setCertificates(user.getCertificates().stream().map(this::convertToCertificateDto).toList());
+        profile.setCertificates(user.getHasCertificates().stream().map(this::convertToCertificateDto).toList());
         profile.setExperiences(user.getExperiences().stream().map(this::convertToExperienceDto).toList());
         profile.setSkills(user.getSkills().stream().map(this::convertToSkillDto).toList());
         // profile.setLanguages(user.getSpeaks().stream().map(this::convertSpeaksToLanguageDto).toList());
@@ -181,8 +183,15 @@ public class UsersControllerService {
         return skillDto;
     }
 
-    private CertificateDto convertToCertificateDto(EmployeeProfile.Certificate certificate) {
-        return new CertificateDto(certificate.getId(), certificate.getLabel());
+    private CertificateDto convertToCertificateDto(HasCertificate hasCertificate) {
+        var certificateDto = new CertificateDto();
+        certificateDto.setId(hasCertificate.getId());
+        certificateDto.setIssuer(hasCertificate.getCertificate().getIssuer());
+        certificateDto.setName(hasCertificate.getCertificate().getName());
+        certificateDto.setIssuedDate(hasCertificate.getIssuedDate());
+        certificateDto.setExpirationDate(hasCertificate.getExpirationDate());
+        certificateDto.setFile(hasCertificate.getFile());
+        return certificateDto;
     }
 
     private ExperienceDto convertToExperienceDto(EmployeeProfile.Experience experience) {
@@ -255,5 +264,5 @@ public class UsersControllerService {
         email.setSubject("An account has been created for you");
         return email;
     }
-    
+
 }
