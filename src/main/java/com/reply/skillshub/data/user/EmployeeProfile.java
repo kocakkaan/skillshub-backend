@@ -1,6 +1,8 @@
 package com.reply.skillshub.data.user;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface EmployeeProfile extends Employee {
 
@@ -9,7 +11,7 @@ public interface EmployeeProfile extends Employee {
   public List<Skill> getSkills();
   public List<Experience> getExperiences();
   public List<Resume> getResumes();
-  public List<Certificate> getCertificates();
+  public List<HasCertificate> getHasCertificates();
 
 
   interface Skill {
@@ -36,9 +38,18 @@ public interface EmployeeProfile extends Employee {
     public String getTitle();
   }
 
+  interface HasCertificate {
+    public String getId();
+    public Certificate getCertificate();
+    public Optional<LocalDate> getExpirationDate();
+    public Optional<String> getFile();
+    public LocalDate getIssueDate();
+  }
+
   interface Certificate {
     public String getId();
-    public String getLabel();
+    public String getName();
+    public String getIssuer();
   }
   
 }

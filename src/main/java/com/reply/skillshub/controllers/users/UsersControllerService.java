@@ -183,12 +183,12 @@ public class UsersControllerService {
         return skillDto;
     }
 
-    private CertificateDto convertToCertificateDto(HasCertificate hasCertificate) {
+    private CertificateDto convertToCertificateDto(EmployeeProfile.HasCertificate hasCertificate) {
         var certificateDto = new CertificateDto();
         certificateDto.setId(hasCertificate.getId());
         certificateDto.setIssuer(hasCertificate.getCertificate().getIssuer());
         certificateDto.setName(hasCertificate.getCertificate().getName());
-        certificateDto.setIssuedDate(hasCertificate.getIssuedDate());
+        certificateDto.setIssuedDate(hasCertificate.getIssueDate());
         certificateDto.setExpirationDate(hasCertificate.getExpirationDate());
         certificateDto.setFile(hasCertificate.getFile());
         return certificateDto;

@@ -67,10 +67,10 @@ public class CertificateControllerServiceTest {
         Certificate certificate = Instancio.create(Certificate.class);
         HasCertificate hasCertificate = new HasCertificate();
         CertificateDto certificateDto = Instancio.create(CertificateDto.class);
-        hasCertificate.setFile(certificateDto.getFile());
+        certificateDto.getFile().ifPresent((value) -> hasCertificate.setFile(value));
         hasCertificate.setCertificate(certificate);
         hasCertificate.setIssuedDate(certificateDto.getIssuedDate());
-        hasCertificate.setExpirationDate(certificateDto.getExpirationDate());
+        certificateDto.getExpirationDate().ifPresent((value) -> hasCertificate.setExpirationDate(value));
 
         doReturn(Optional.of(certificate)).when(certificateService).findByName(any(String.class));
         doReturn(Optional.of(user)).when(userService).findUserById(any(String.class));
