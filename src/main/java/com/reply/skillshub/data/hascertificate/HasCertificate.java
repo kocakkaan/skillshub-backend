@@ -1,9 +1,6 @@
 package com.reply.skillshub.data.hascertificate;
 
 import com.reply.skillshub.data.certificate.Certificate;
-import com.reply.skillshub.data.language.Language;
-import com.reply.skillshub.data.speaks.LanguageLevel;
-import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.data.neo4j.core.schema.RelationshipId;

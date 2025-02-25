@@ -183,7 +183,7 @@ public class UsersControllerService {
         return skillDto;
     }
 
-    private CertificateDto convertToCertificateDto(HasCertificate hasCertificate) {
+    private CertificateDto convertToCertificateDto(EmployeeProfile.HasCertificate hasCertificate) {
         var certificateDto = new CertificateDto();
         certificateDto.setId(hasCertificate.getId());
         certificateDto.setIssuer(hasCertificate.getCertificate().getIssuer());
