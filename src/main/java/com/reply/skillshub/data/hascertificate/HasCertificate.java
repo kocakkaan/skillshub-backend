@@ -26,7 +26,6 @@ public class HasCertificate {
 
     private LocalDate expirationDate;
 
-    @NotNull
     private String file;
 
 }
