@@ -38,9 +38,9 @@ public class CertificateControllerService {
 
         HasCertificate hasCertificate = new HasCertificate();
         hasCertificate.setCertificate(certificate);
-        hasCertificate.setFile(certificateDto.getFile());
+        hasCertificate.setFile(certificateDto.getFile().orElse(null));
         hasCertificate.setIssuedDate(certificateDto.getIssuedDate());
-        hasCertificate.setExpirationDate(certificateDto.getExpirationDate());
+        hasCertificate.setExpirationDate(certificateDto.getExpirationDate().orElse(null));
 
         HasCertificate savedHasCertificate = hasCertificateService.save(hasCertificate);
         user.getHasCertificates().add(savedHasCertificate);

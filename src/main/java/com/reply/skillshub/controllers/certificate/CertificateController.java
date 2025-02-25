@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.reply.skillshub.openapi.api.CertificatesApi;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,9 +42,9 @@ public class CertificateController implements CertificatesApi {
         CertificateDto certificateDto = new CertificateDto();
         certificateDto.setId(hasCertificate.getCertificate().getId());
         certificateDto.setIssuer(hasCertificate.getCertificate().getIssuer());
-        certificateDto.setExpirationDate(hasCertificate.getExpirationDate());
+        certificateDto.setExpirationDate(Optional.ofNullable(hasCertificate.getExpirationDate()));
         certificateDto.setIssuedDate(hasCertificate.getIssuedDate());
-        certificateDto.setFile(hasCertificate.getFile());
+        certificateDto.setFile(Optional.ofNullable(hasCertificate.getFile()));
         return certificateDto;
     }
 }
