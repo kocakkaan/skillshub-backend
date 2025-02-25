@@ -43,7 +43,7 @@ public interface EmployeeProfile extends Employee {
     public Certificate getCertificate();
     public Optional<LocalDate> getExpirationDate();
     public Optional<String> getFile();
-    public LocalDate getIssueDate();
+    public LocalDate getIssuedDate();
   }
 
   interface Certificate {

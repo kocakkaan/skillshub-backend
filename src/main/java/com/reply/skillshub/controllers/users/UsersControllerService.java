@@ -188,7 +188,7 @@ public class UsersControllerService {
         certificateDto.setId(hasCertificate.getId());
         certificateDto.setIssuer(hasCertificate.getCertificate().getIssuer());
         certificateDto.setName(hasCertificate.getCertificate().getName());
-        certificateDto.setIssuedDate(hasCertificate.getIssueDate());
+        certificateDto.setIssuedDate(hasCertificate.getIssuedDate());
         certificateDto.setExpirationDate(hasCertificate.getExpirationDate());
         certificateDto.setFile(hasCertificate.getFile());
         return certificateDto;
