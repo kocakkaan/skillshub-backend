@@ -23,6 +23,7 @@ public enum FieldHandler {
   PROFILE_PICTURE("ProfilePicture") {
     @Override
     public void handleShape(XSLFShape shape, PowerPointInformation powerPointInformation) {
+      // This handles pictures
       if (shape instanceof XSLFPictureShape) {
         InputStream runStream = loadFile(powerPointInformation.getProfilePictureLocation());
         if (runStream == null) {
