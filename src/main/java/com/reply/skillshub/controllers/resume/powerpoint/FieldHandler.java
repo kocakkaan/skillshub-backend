@@ -66,7 +66,7 @@ public enum FieldHandler {
       }
     }
   },
-  FunctionExpertise("FunctionExpertiseText") {
+  FUNCTION_EXPERTISE("FunctionExpertiseText") {
     @Override
     public void handleShape(XSLFShape shape, PowerPointInformation powerPointInformation) {
       if (shape instanceof XSLFTextShape) {
@@ -90,7 +90,7 @@ public enum FieldHandler {
       }
     }
   },
-  ProfessionalBackground("ProfessionalBackgroundText") {
+  PROFESSIONAL_BACKGROUND("ProfessionalBackgroundText") {
     @Override
     public void handleShape(XSLFShape shape, PowerPointInformation powerPointInformation) {
       if (shape instanceof XSLFTextShape) {
@@ -99,7 +99,7 @@ public enum FieldHandler {
       }
     }
   },
-  NameText("NameText") {
+  NAME_TEXT("NameText") {
     @Override
     public void handleShape(XSLFShape shape, PowerPointInformation powerPointInformation) {
       if (shape instanceof XSLFTextShape) {
@@ -108,7 +108,7 @@ public enum FieldHandler {
       }
     }
   },
-  RoleText("RoleText") {
+  ROLE_TEXT("RoleText") {
     @Override
     public void handleShape(XSLFShape shape, PowerPointInformation powerPointInformation) {
       if (shape instanceof XSLFTextShape) {
@@ -117,7 +117,7 @@ public enum FieldHandler {
       }
     }
   },
-  emailText("emailText") {
+  EMAIL_TEXT("emailText") {
     @Override
     public void handleShape(XSLFShape shape, PowerPointInformation powerPointInformation) {
       if (shape instanceof XSLFTextShape) {
@@ -126,7 +126,7 @@ public enum FieldHandler {
       }
     }
   },
-  phoneText("phoneText") {
+  PHONE_TEXT("phoneText") {
     @Override
     public void handleShape(XSLFShape shape, PowerPointInformation powerPointInformation) {
       if (shape instanceof XSLFTextShape) {
@@ -135,7 +135,7 @@ public enum FieldHandler {
       }
     }
   },
-  ProjectText("ProjectText") {
+  PROJECT_TEXT("ProjectText") {
     @Override
     public void handleShape(XSLFShape shape, PowerPointInformation powerPointInformation) {
       if (shape instanceof XSLFTextShape) {
