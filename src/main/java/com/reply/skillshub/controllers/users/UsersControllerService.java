@@ -42,7 +42,6 @@ import com.reply.skillshub.openapi.model.LanguageDto;
 import com.reply.skillshub.openapi.model.OccupationalCategoryDto;
 import com.reply.skillshub.openapi.model.ProfileDto;
 import com.reply.skillshub.openapi.model.ProfileDtoResumesInner;
-import com.reply.skillshub.openapi.model.ResumeDto;
 import com.reply.skillshub.openapi.model.ResumeSkillDto;
 import com.reply.skillshub.openapi.model.SkillDto;
 import com.reply.skillshub.openapi.model.UserConfirmRequest;
@@ -189,8 +188,8 @@ public class UsersControllerService {
         certificateDto.setIssuer(hasCertificate.getCertificate().getIssuer());
         certificateDto.setName(hasCertificate.getCertificate().getName());
         certificateDto.setIssuedDate(hasCertificate.getIssuedDate());
-        certificateDto.setExpirationDate(hasCertificate.getExpirationDate());
-        certificateDto.setFile(hasCertificate.getFile());
+        certificateDto.setExpirationDate(Optional.ofNullable(hasCertificate.getExpirationDate()));
+        certificateDto.setFile(Optional.ofNullable(hasCertificate.getFile()));
         return certificateDto;
     }
 

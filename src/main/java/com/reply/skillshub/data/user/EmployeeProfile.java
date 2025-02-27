@@ -41,8 +41,8 @@ public interface EmployeeProfile extends Employee {
   interface HasCertificate {
     public String getId();
     public Certificate getCertificate();
-    public Optional<LocalDate> getExpirationDate();
-    public Optional<String> getFile();
+    public LocalDate getExpirationDate();
+    public String getFile();
     public LocalDate getIssuedDate();
   }
 
