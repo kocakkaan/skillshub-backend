@@ -85,10 +85,10 @@ public class AuthentificationService {
 
     public void confirmUser(String token) {
 
-        Optional<User> potentialUser = userService.findUserByConfirmationToken(token);
+        var potentialUser = userService.findUserByConfirmationToken(token, UserToConfirm.class);
 
         if (potentialUser.isPresent()) {
-            User user = potentialUser.get();
+            var user = potentialUser.get();
             user.setConfirmed(true);
             userService.save(user);
         } else {

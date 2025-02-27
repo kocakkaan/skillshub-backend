@@ -45,7 +45,7 @@ public class AuthentificationServiceTest {
 
     @Test
     void userNotFound_authentificationService() {
-        doReturn(Optional.empty()).when(userService).findUserByEmail(anyString());
+        doReturn(Optional.empty()).when(userService).findBaseUserByEmail(anyString());
         Assertions.assertThrows(UserNotFound.class, () -> authentificationService.loginUser(Instancio.create(LoginRequest.class)));
     }
 
@@ -53,7 +53,7 @@ public class AuthentificationServiceTest {
     void unconfirmedUser_authentificationService() {
         User user = Instancio.create(User.class);
         user.setConfirmed(false);
-        doReturn(Optional.of(user)).when(userService).findUserByEmail(anyString());
+        doReturn(Optional.of(user)).when(userService).findBaseUserByEmail(anyString());
         Assertions.assertThrows(UnconfirmedUser.class, () -> authentificationService.loginUser(Instancio.create(LoginRequest.class)));
     }
 
