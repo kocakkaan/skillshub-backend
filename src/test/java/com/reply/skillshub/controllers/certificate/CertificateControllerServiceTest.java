@@ -73,7 +73,7 @@ public class CertificateControllerServiceTest {
         certificateDto.getExpirationDate().ifPresent((value) -> hasCertificate.setExpirationDate(value));
 
         doReturn(Optional.of(certificate)).when(certificateService).findByName(any(String.class));
-        doReturn(Optional.of(user)).when(userService).findUserById(any(String.class));
+        doReturn(user).when(userService).findById(any(String.class));
         doReturn(hasCertificate).when(hasCertificateService).save(any(HasCertificate.class));
 
         HasCertificate hasCertificateOutput = certificateControllerService.saveCertificateForUser(user.getId(), certificateDto);
