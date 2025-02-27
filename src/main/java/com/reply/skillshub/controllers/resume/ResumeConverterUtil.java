@@ -76,7 +76,7 @@ public class ResumeConverterUtil {
         return skill;
     }
 
-    public static BaseResumeDto convertBaseResumeToDto(UserWithResumes.BaseResume resume) {
+    public static BaseResumeDto convertBaseResumeToDto(UserWithResumes.Resume resume) {
         var resumeDto = new BaseResumeDto();
         resumeDto.setTitle(resume.getTitle());
         resumeDto.setId(resume.getId());

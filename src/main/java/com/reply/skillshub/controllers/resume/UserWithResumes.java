@@ -2,19 +2,15 @@ package com.reply.skillshub.controllers.resume;
 
 import java.util.List;
 
+public interface UserWithResumes {
 
-import lombok.Data;
+  String getId();
 
-@Data
-public class UserWithResumes {
+  List<Resume> getResumes();
 
-  private String id;
-  private List<BaseResume> resumes;
+  public interface Resume {
+    String getId();
 
-  @Data
-  public static class BaseResume {
-    private String id;
-    private String title;
+    String getTitle();
   }
-
 }

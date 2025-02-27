@@ -92,16 +92,16 @@ public class ResumeControllerService {
     }
 
     public ResumeDto createResumeForCurrentUser(ResumeDto resumeDto) {
-        return createResume(userService.findById(loadCurrentUser.loadSkillhubUserFromContext().getId(), UserWithResumes.class), resumeDto);
+        return createResume(userService.findById(loadCurrentUser.loadSkillhubUserFromContext().getId(), UserWithResumesToSave.class), resumeDto);
     }
 
     public ResumeDto createInitialResumeForUser(String userId, CreateInitialResumeDto createInitialResumeDto) {
-        var userWithResumes = userService.findById(userId, UserWithResumes.class);
+        var userWithResumes = userService.findById(userId, UserWithResumesToSave.class);
         return createInitialResumeDto(userWithResumes, createInitialResumeDto);
     }
 
     public ResumeDto createResumeForUser(String userId, ResumeDto resumeDto) {
-        var userWithResumes = userService.findById(userId, UserWithResumes.class);
+        var userWithResumes = userService.findById(userId, UserWithResumesToSave.class);
         return createResume(userWithResumes, resumeDto);
     }
 
@@ -120,7 +120,7 @@ public class ResumeControllerService {
         return resume;
     }
 
-    private ResumeDto createInitialResumeDto(UserWithResumes user, CreateInitialResumeDto createInitialResumeDto) {
+    private ResumeDto createInitialResumeDto(UserWithResumesToSave user, CreateInitialResumeDto createInitialResumeDto) {
         Resume resume = new Resume();
         if (createInitialResumeDto.getBaseResumeId().isPresent()) {
             Resume baseResume = resumeService.findById(createInitialResumeDto.getBaseResumeId().get());
@@ -131,7 +131,7 @@ public class ResumeControllerService {
         }
         resume.setTitle(createInitialResumeDto.getTitle());
         var savedResume = resumeService.save(resume);
-        var resumeToAddToUser = new UserWithResumes.BaseResume();
+        var resumeToAddToUser = new BaseResume();
         resumeToAddToUser.setId(savedResume.getId());
         resumeToAddToUser.setTitle(savedResume.getTitle());
         user.getResumes().add(resumeToAddToUser);
@@ -140,11 +140,11 @@ public class ResumeControllerService {
     }
 
 
-    private ResumeDto createResume(UserWithResumes user, ResumeDto resumeDto) {
+    private ResumeDto createResume(UserWithResumesToSave user, ResumeDto resumeDto) {
         Resume resume = new Resume();
         updateResumeWithDto(resume, resumeDto);
         var savedResume = resumeService.save(resume);
-        var resumeToAddToUser = new UserWithResumes.BaseResume();
+        var resumeToAddToUser = new BaseResume();
         resumeToAddToUser.setId(savedResume.getId());
         resumeToAddToUser.setTitle(savedResume.getTitle());
         user.getResumes().add(resumeToAddToUser);
