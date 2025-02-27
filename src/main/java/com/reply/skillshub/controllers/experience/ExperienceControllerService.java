@@ -49,7 +49,7 @@ public class ExperienceControllerService {
     }
 
     public ExperienceDto createExperienceForUser(String userId, ExperienceDto ExperienceDto) {
-        User user = userService.findUserById(userId).orElseThrow(() -> new UserNotFound());
+        var user = userService.findById(userId, UserWithExperiences.class);
         Experience experience = new Experience();
         var savedExperience = experienceService.save(updateExperienceWithBaseExperience(experience, ExperienceDto));
         user.getExperiences().add(savedExperience);
