@@ -17,13 +17,13 @@ public interface UserRepository extends Neo4jRepository<User, String> {
 
     <T> Optional<T> findById(String id, Class<T> type);
 
-    Optional<User> findByConfirmationToken(String confirmationToken);
+    <T> Optional<T> findByConfirmationToken(String confirmationToken);
 
     boolean existsByEmail(String email);
 
     List<User> findBySpeaksLanguageLanguageCode(LanguageCode languageCode);
 
-    List<User> findByCompaniesId(String company);
+    <T> List<T> findByCompaniesId(String company);
 
     List<Employee> findByCompaniesIdIn(List<String> company);
 

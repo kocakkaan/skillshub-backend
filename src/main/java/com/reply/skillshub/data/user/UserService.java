@@ -36,20 +36,12 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public Optional<User> findUserByConfirmationToken(String token) {
+    public <T> Optional<T> findUserByConfirmationToken(String token, Class<T> userType) {
         return userRepository.findByConfirmationToken(token);
-    }
-
-    public Optional<User> findUserByEmail(String email) {
-        return userRepository.findByEmail(email, User.class);
     }
 
     public Optional<BaseUser> findBaseUserByEmail(String email) {
         return userRepository.findByEmail(email, BaseUser.class);
-    }
-
-    public Optional<User> findUserById(String id) {
-        return userRepository.findById(id);
     }
 
     public User findById(String id) {
@@ -59,11 +51,7 @@ public class UserService {
     public EmployeeProfile findEmployeeProfileById(String id) {
         return userRepository.findById(id, EmployeeProfile.class).orElseThrow(() -> new UserNotFound());
     }
-
-    public List<User> findByCompaniesId(String company) {
-        return userRepository.findByCompaniesId(company);
-    }
-
+    
     public List<Employee> findByCompaniesIdIn(List<String> company) {
         return userRepository.findByCompaniesIdIn(company);
     }
