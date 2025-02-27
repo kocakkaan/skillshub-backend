@@ -14,8 +14,8 @@ import com.reply.skillshub.data.resumeexperience.ResumeExperience;
 import com.reply.skillshub.data.resumeexperience.ResumeExperienceService;
 import com.reply.skillshub.data.resumeskill.ResumeSkill;
 import com.reply.skillshub.data.resumeskill.ResumeSkillService;
-import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserService;
+import com.reply.skillshub.openapi.model.BaseResumeDto;
 import com.reply.skillshub.openapi.model.CreateInitialResumeDto;
 import com.reply.skillshub.openapi.model.IndustryDto;
 import com.reply.skillshub.openapi.model.ResumeDto;
@@ -32,28 +32,31 @@ import lombok.RequiredArgsConstructor;
 public class ResumeControllerService {
 
     private final ResumeService resumeService;
-    private final ResumeSkillService resumeSkillService;
     private final IndustryService industryService;
     private final ResumeExperienceService resumeExperienceService;
     private final ExperienceService experienceService;
     private final UserService userService;
     private final LoadCurrentUser loadCurrentUser;
 
-    public List<ResumeDto> findResumesForCurrentUser() {
+    public List<BaseResumeDto> findResumesForCurrentUser() {
         var currentUser = loadCurrentUser.loadSkillhubUserFromContext();
-        return resumeService.findByUserId(currentUser.getId()).stream().map(ResumeConverterUtil::convertResumeToDto).toList();
+        var user = userService.findById(currentUser.getId(), UserWithResumes.class);
+        return user.getResumes().stream().map(ResumeConverterUtil::convertBaseResumeToDto).toList();
     }
 
-    public List<ResumeDto> findResumesForUser(String userId) {
-        return resumeService.findByUserId(userId).stream().map(ResumeConverterUtil::convertResumeToDto).toList();
+    public List<BaseResumeDto> findResumesForUser(String userId) {
+        var user = userService.findById(userId, UserWithResumes.class);
+        return user.getResumes().stream().map(ResumeConverterUtil::convertBaseResumeToDto).toList();
     }
 
     public List<ResumeSkillDto> findResumeSkills(String id) {
-        return resumeSkillService.findAllByResumesId(id).stream().map(ResumeConverterUtil::convertSkillToDto).toList();
+        var resumeSkills = resumeService.findById(id, ResumeWithResumeSkills.class).getSkills();
+        return resumeSkills.stream().map(ResumeConverterUtil::convertSkillToDto).toList();
     }
 
     public List<ResumeExperienceDto> findResumeExperiences(String id) {
-        return resumeExperienceService.findAllByResumesId(id).stream().map(ResumeConverterUtil::convertResumeExperienceToDto).toList();
+        var resumeExperiences = resumeService.findById(id, ResumeWithResumeExperience.class).getExperiences();
+        return resumeExperiences.stream().map(ResumeConverterUtil::convertResumeExperienceToDto).toList();
     }
 
     public List<IndustryDto> findResumeIndustries(String id) {
@@ -89,15 +92,17 @@ public class ResumeControllerService {
     }
 
     public ResumeDto createResumeForCurrentUser(ResumeDto resumeDto) {
-        return createResumeDto(userService.findById(loadCurrentUser.loadSkillhubUserFromContext().getId()), resumeDto);
+        return createResume(userService.findById(loadCurrentUser.loadSkillhubUserFromContext().getId(), UserWithResumes.class), resumeDto);
     }
 
     public ResumeDto createInitialResumeForUser(String userId, CreateInitialResumeDto createInitialResumeDto) {
-        return createInitialResumeDto(userService.findById(userId), createInitialResumeDto);
+        var userWithResumes = userService.findById(userId, UserWithResumes.class);
+        return createInitialResumeDto(userWithResumes, createInitialResumeDto);
     }
 
     public ResumeDto createResumeForUser(String userId, ResumeDto resumeDto) {
-        return createResumeDto(userService.findById(userId), resumeDto);
+        var userWithResumes = userService.findById(userId, UserWithResumes.class);
+        return createResume(userWithResumes, resumeDto);
     }
 
     public ResumeDto updateResume(String resumeId, ResumeDto resumeDto) {
@@ -115,7 +120,7 @@ public class ResumeControllerService {
         return resume;
     }
 
-    private ResumeDto createInitialResumeDto(User user, CreateInitialResumeDto createInitialResumeDto) {
+    private ResumeDto createInitialResumeDto(UserWithResumes user, CreateInitialResumeDto createInitialResumeDto) {
         Resume resume = new Resume();
         if (createInitialResumeDto.getBaseResumeId().isPresent()) {
             Resume baseResume = resumeService.findById(createInitialResumeDto.getBaseResumeId().get());
@@ -124,19 +129,27 @@ public class ResumeControllerService {
             resume.setSkills(baseResume.getSkills());
             resume.setExperiences(baseResume.getExperiences());
         }
-        resume.getUsers().add(user);
         resume.setTitle(createInitialResumeDto.getTitle());
-        resumeService.save(resume);
+        var savedResume = resumeService.save(resume);
+        var resumeToAddToUser = new UserWithResumes.BaseResume();
+        resumeToAddToUser.setId(savedResume.getId());
+        resumeToAddToUser.setTitle(savedResume.getTitle());
+        user.getResumes().add(resumeToAddToUser);
+        userService.save(user);
         return ResumeConverterUtil.convertResumeToDto(resume);
     }
 
 
-    private ResumeDto createResumeDto(User user, ResumeDto resumeDto) {
+    private ResumeDto createResume(UserWithResumes user, ResumeDto resumeDto) {
         Resume resume = new Resume();
         updateResumeWithDto(resume, resumeDto);
-        resume.getUsers().add(user);
-        resumeService.save(resume);
-        return ResumeConverterUtil.convertResumeToDto(resume);
+        var savedResume = resumeService.save(resume);
+        var resumeToAddToUser = new UserWithResumes.BaseResume();
+        resumeToAddToUser.setId(savedResume.getId());
+        resumeToAddToUser.setTitle(savedResume.getTitle());
+        user.getResumes().add(resumeToAddToUser);
+        userService.save(user);
+        return ResumeConverterUtil.convertResumeToDto(savedResume);
     }
 
     public ResumeDto updateExperiencesListForResume(String id, List<ResumeExperienceDto> experience) {

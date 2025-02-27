@@ -47,9 +47,6 @@ public class Resume {
     @Relationship(type = "GAINED_EXPERIENCE", direction = Direction.OUTGOING)
     private List<ResumeExperience> experiences = new ArrayList<>();
 
-    @Relationship(type = "HAS_RESUME", direction = Direction.INCOMING)
-    private List<User> users = new ArrayList<>();
-
     @AssertTrue(message = "A resume can have at most five industries assigned")
     private boolean isIndustryCountLowerAsFive() {
         return industries.size() < 5;
@@ -58,24 +55,6 @@ public class Resume {
     @AssertTrue(message = "A resume can have at most one role")
     private boolean isRoleCountLowerAsTwo() {
         return role.size() < 2;
-    }
-
-    @AssertTrue(message = "A resume must have at least one user")
-    private boolean isUserSizeExactlyOne() {
-        return users.size() == 1;
-    }
-
-    public User getUser() {
-        if (users.isEmpty()) {
-            return null;
-        }
-        return users.get(0);
-    }
-
-    public Resume setUser(User user) {
-        users.clear();
-        users.add(user);
-        return this;
     }
 
     public Optional<Occupation> getOptionalRole() {

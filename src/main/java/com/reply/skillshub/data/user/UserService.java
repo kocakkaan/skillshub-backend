@@ -56,6 +56,10 @@ public class UserService {
         return userRepository.findByCompaniesIdIn(company);
     }
 
+    public BaseUser findByResumeId(String id) {
+        return userRepository.findByResumesId(id, BaseUser.class);
+    }
+
     public <T> T findById(String id, Class<T> userType) {
         return userRepository.findById(id, userType).orElseThrow(() -> new UserNotFound());
     }

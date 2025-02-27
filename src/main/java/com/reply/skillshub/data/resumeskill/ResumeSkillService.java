@@ -22,10 +22,6 @@ public class ResumeSkillService {
     return repository.findById(id).orElseThrow(ResumeSkillNotFound::new);
   }
 
-  public List<ResumeSkill> findAllByResumesId(String resumeId) {
-    return repository.findAllByResumesId(resumeId);
-  }
-
   public ResumeSkill save(ResumeSkill resumeSkill) {
     return repository.save(resumeSkill);
   }

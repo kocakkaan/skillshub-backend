@@ -20,13 +20,12 @@ import com.reply.skillshub.controllers.resume.powerpoint.PowerPointService;
 import com.reply.skillshub.data.resume.Resume;
 import com.reply.skillshub.data.resumeexperience.ResumeExperience;
 import com.reply.skillshub.data.resumeskill.ResumeSkill;
-import com.reply.skillshub.data.user.User;
 
 class PowerPointServiceTest {
 
     @Test 
     void testCreatePowerPointFromTemplate() {
-        User user = Instancio.create(User.class);
+        var user = Instancio.create(BaseUserTest.class);
         user.setProfilePictureLocation("pictures/test.jpg");
         Resume resume = Instancio.of(Resume.class)
             .generate(field(Resume::getBackground), gen -> gen.string().length(300))
@@ -35,9 +34,8 @@ class PowerPointServiceTest {
             .generate(field(Resume::getExperiences),  gen -> gen.collection().maxSize(4).minSize(2))
             .generate(field(ResumeExperience::getDescriptions), gen -> gen.collection().minSize(2).maxSize(4))
             .create();
-        resume.setUser(user);
         var service = new PowerPointService();
-        var information = service.createPowerPointDto(resume, "de", "Reply");
+        var information = service.createPowerPointDto(user, resume, "de", "Reply");
         var ppt = service.createPowerPointFromTemplate(information);
         savePowerPoint(ppt);
     }
@@ -55,16 +53,16 @@ class PowerPointServiceTest {
     @Test
     void testPowerPointNoResume() {
         var service = new PowerPointService();
-        var information = service.createPowerPointDto(null, "en", "ML_REPLY");
+        var information = service.createPowerPointDto(null, null, "en", "ML_REPLY");
         service.createPowerPointFromTemplate(information);
     }
 
     @ParameterizedTest
     @MethodSource("provideIncompleteResumes")
-    void testPowerPointIncompleteResume() {
+    void testPowerPointIncompleteResume(Resume resume) {
         var service = new PowerPointService();
-        var resume = Instancio.create(Resume.class);
-        var information = service.createPowerPointDto(resume, "en", "ML_REPLY");
+        var user = Instancio.create(BaseUserTest.class);
+        var information = service.createPowerPointDto(user, resume, "en", "ML_REPLY");
         service.createPowerPointFromTemplate(information);
     }
 

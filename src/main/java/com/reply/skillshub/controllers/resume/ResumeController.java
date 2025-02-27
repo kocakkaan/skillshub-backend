@@ -12,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.reply.skillshub.controllers.resume.powerpoint.PowerPointService;
+import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.openapi.api.ResumesApi;
+import com.reply.skillshub.openapi.model.BaseResumeDto;
 import com.reply.skillshub.openapi.model.CreateInitialResumeDto;
 import com.reply.skillshub.openapi.model.IndustryDto;
 import com.reply.skillshub.openapi.model.ResumeDto;
@@ -30,11 +32,13 @@ public class ResumeController implements ResumesApi {
 
   private final ResumeControllerService resumeControllerService;
   private final PowerPointService powerPointService;
+  private final UserService userService;
 
   @Override
   public ResponseEntity<Resource> exportToPptx(String resumeId, String language, String company) {
     var resume = resumeControllerService.findResumeEntityById(resumeId);
-    var pptDto = powerPointService.createPowerPointDto(resume, language, company);
+    var user = userService.findByResumeId(resumeId);
+    var pptDto = powerPointService.createPowerPointDto(user, resume, language, company);
     var ppt = powerPointService.createPowerPointFromTemplate(pptDto);
     var test = new ByteArrayOutputStream();
     try {
@@ -102,7 +106,7 @@ public class ResumeController implements ResumesApi {
   }
 
   @Override
-  public ResponseEntity<List<ResumeDto>> userMeResumesGet() {
+  public ResponseEntity<List<BaseResumeDto>> userMeResumesGet() {
     return ResponseEntity.ok(resumeControllerService.findResumesForCurrentUser());
   }
 
@@ -112,7 +116,7 @@ public class ResumeController implements ResumesApi {
   }
 
   @Override
-  public ResponseEntity<List<ResumeDto>> usersUserIdResumesGet(String userId) {
+  public ResponseEntity<List<BaseResumeDto>> usersUserIdResumesGet(String userId) {
     return ResponseEntity.ok(resumeControllerService.findResumesForUser(userId));
   }
 
@@ -125,7 +129,8 @@ public class ResumeController implements ResumesApi {
   @Override
   public ResponseEntity<Resource> resumesResumeIdExportToImgPost(String resumeId, String language, String company) {
     var resume = resumeControllerService.findResumeEntityById(resumeId);
-    var pptDto = powerPointService.createPowerPointDto(resume, language, company);
+    var user = userService.findByResumeId(resumeId);
+    var pptDto = powerPointService.createPowerPointDto(user, resume, language, company);
     var ppt = powerPointService.createPowerPointFromTemplate(pptDto);
     var output = powerPointService.getFirstSlideAsImage(ppt);
     return ResponseEntity.status(200).body(output);

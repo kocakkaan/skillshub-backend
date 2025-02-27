@@ -11,6 +11,7 @@ import com.reply.skillshub.data.resume.Resume;
 import com.reply.skillshub.data.resumeexperience.ResumeExperience;
 import com.reply.skillshub.data.resumeskill.ResumeSkill;
 import com.reply.skillshub.data.skill.Skill;
+import com.reply.skillshub.openapi.model.BaseResumeDto;
 import com.reply.skillshub.openapi.model.IndustryDto;
 import com.reply.skillshub.openapi.model.OccupationalCategoryDto;
 import com.reply.skillshub.openapi.model.ResumeDto;
@@ -73,6 +74,13 @@ public class ResumeConverterUtil {
         skill.setId(dto.getId());
         skill.setLabel(dto.getLabel());
         return skill;
+    }
+
+    public static BaseResumeDto convertBaseResumeToDto(UserWithResumes.BaseResume resume) {
+        var resumeDto = new BaseResumeDto();
+        resumeDto.setTitle(resume.getTitle());
+        resumeDto.setId(resume.getId());
+        return resumeDto;
     }
 
     public static ResumeDto convertResumeToDto(Resume resume) {

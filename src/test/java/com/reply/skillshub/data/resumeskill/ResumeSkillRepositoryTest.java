@@ -21,17 +21,4 @@ public class ResumeSkillRepositoryTest extends BaseRepositoryTest {
     Assertions.assertNotNull(savedResumeSkill.getId());
   }
 
-  @Test
-  void test_findAllByResumesId() {
-    ResumeSkill resumeSkill = new ResumeSkill();
-    ResumeSkill secondResumeSkill = new ResumeSkill();
-    Resume resume = new Resume();
-    resumeSkill.getResumes().add(resume);
-    secondResumeSkill.getResumes().add(resume);
-    resumeSkillRepository.save(resumeSkill);
-    resumeSkillRepository.save(secondResumeSkill);
-    var resultingSkills = resumeSkillRepository.findAllByResumesId(resume.getId());
-    Assertions.assertEquals(2, resultingSkills.size());
-  }
-  
 }

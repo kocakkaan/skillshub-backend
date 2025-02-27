@@ -54,19 +54,6 @@ public class Experience {
     @Relationship(type = "IN_ROLE", direction = Direction.OUTGOING, cascadeUpdates = false)
     private Occupation occupation;
 
-    // @Relationship(type = "BASED_OF", direction = Direction.INCOMING, cascadeUpdates = false)
-    // private List<ResumeExperience> dependentResumeExperiences = new ArrayList<>();
-    
-    // @AssertTrue(message = "An experience must be assigned exactly one employee")
-    // private boolean isCountEmployeesEqualToOne() {
-    //     return employees.size() == 1;
-    // }
-
-    // @AssertTrue(message = "An experience must have one occupation")
-    // private boolean isOccupationSizeEqualToOne() {
-    //     return occupation.size() == 1;
-    // }
-
     @AssertTrue(message = "An experience can have at most one industry")
     private boolean isIndustrySmallerAsTwo() {
         return industries.size() < 2;
@@ -83,9 +70,5 @@ public class Experience {
         }
         return Optional.of(industries.get(0));
     }
-
-    // public User getEmployee() {
-    //     return employees.get(0);
-    // }
 
 }

@@ -31,9 +31,6 @@ public class ResumeExperience {
     @Relationship(type = "BASED_OF", direction = Direction.OUTGOING)
     private List<Experience> basedOfExperience = new ArrayList<>();
 
-    @Relationship(type = "GAINED_EXPERIENCE", direction = Direction.INCOMING)
-    private List<Resume> resumes = new ArrayList<>();
-
     @AssertTrue
     private boolean isBasedOfExperienceEqualToOne() {
         return basedOfExperience.size() == 1;
