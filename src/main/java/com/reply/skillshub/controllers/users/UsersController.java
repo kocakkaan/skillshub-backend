@@ -1,6 +1,7 @@
 package com.reply.skillshub.controllers.users;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,8 +45,8 @@ public class UsersController implements UsersApi {
     }
 
     @Override
-    public ResponseEntity<List<EmployeeDto>> userMeEmployeesGet() {
-        return ResponseEntity.ok(usersControllerService.getEmployeesAccessibleToCurrentUser());
+    public ResponseEntity<List<EmployeeDto>> userMeEmployeesGet(Optional<String> searchString) {
+        return ResponseEntity.ok(usersControllerService.getEmployeesAccessibleToCurrentUser(searchString));
     }
 
     @Override

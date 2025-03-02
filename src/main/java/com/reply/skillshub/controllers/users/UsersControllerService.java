@@ -2,7 +2,6 @@ package com.reply.skillshub.controllers.users;
 
 import java.util.UUID;
 
-import com.reply.skillshub.data.hascertificate.HasCertificate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
@@ -10,17 +9,13 @@ import org.thymeleaf.context.Context;
 import com.reply.skillshub.base.exceptionhandling.exeptions.InsufficientRights;
 import com.reply.skillshub.base.exceptionhandling.exeptions.InvalidConfirmationToken;
 import com.reply.skillshub.base.exceptionhandling.exeptions.NoCompanyFound;
-import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
 import com.reply.skillshub.base.services.EmailService;
 import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.data.EmailRequest;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.company.CompanyService;
 import com.reply.skillshub.data.company.MinimalCompany;
-import com.reply.skillshub.data.experience.Experience;
 import com.reply.skillshub.data.industry.Industry;
-import com.reply.skillshub.data.occupation.Occupation;
-import com.reply.skillshub.data.resume.Resume;
 import com.reply.skillshub.data.resumeskill.ResumeSkill;
 import com.reply.skillshub.data.skill.Skill;
 import com.reply.skillshub.data.skill.SkillService;
@@ -45,6 +40,7 @@ import com.reply.skillshub.openapi.model.ProfileDtoResumesInner;
 import com.reply.skillshub.openapi.model.ResumeSkillDto;
 import com.reply.skillshub.openapi.model.SkillDto;
 import com.reply.skillshub.openapi.model.UserConfirmRequest;
+import com.reply.skillshub.services.SkillsAgentService;
 
 import java.util.List;
 import java.util.Optional;
@@ -64,6 +60,8 @@ public class UsersControllerService {
     private final SkillService skillService;
 
     private final LoadCurrentUser loadCurrentUser;
+
+    private final SkillsAgentService skillsAgentService;
 
     private final EmailService emailService;
 
@@ -113,8 +111,12 @@ public class UsersControllerService {
         return createUserResponse(savedUser, company);
     }
 
-    public List<EmployeeDto> getEmployeesAccessibleToCurrentUser() {
+    public List<EmployeeDto> getEmployeesAccessibleToCurrentUser(Optional<String> searchString) {
         BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
+        if (searchString.isPresent()) {
+            var keywords = skillsAgentService.getKeywordsFromSearchString(searchString.get());
+            return getEmployeesAccessibleToUserBySearchString(currentUser.getId(), keywords);
+        }
         return getEmployeesAccessibleToUser(currentUser.getId());
     }
 
@@ -222,6 +224,12 @@ public class UsersControllerService {
         var companies = companyService.findMinimalCompanyByEmployeesId(userId);
         List<String> companyIds = companies.stream().map(MinimalCompany::getId).toList();
         return userService.findByCompaniesIdIn(companyIds).stream().map(this::convertUserToEmployeeDto).toList();
+    }
+
+    private List<EmployeeDto> getEmployeesAccessibleToUserBySearchString(String userId, List<String> keywords) {
+        var companies = companyService.findMinimalCompanyByEmployeesId(userId);
+        List<String> companyIds = companies.stream().map(MinimalCompany::getId).toList();
+        return userService.findByCompaniesAndKeyWords(companyIds, keywords).stream().map(this::convertUserToEmployeeDto).toList();
     }
 
     private EmployeeDto convertUserToEmployeeDto(Employee user) {

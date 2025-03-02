@@ -1,6 +1,7 @@
 package com.reply.skillshub.controllers.company;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -10,11 +11,13 @@ import com.reply.skillshub.data.company.BaseCompany;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.company.CompanyService;
 import com.reply.skillshub.data.user.BaseUser;
+import com.reply.skillshub.data.user.Employee;
 import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.openapi.model.CompanyDto;
 import com.reply.skillshub.openapi.model.CompanyInformationDto;
 import com.reply.skillshub.openapi.model.CreateCompanyRequest;
 import com.reply.skillshub.openapi.model.EmployeeDto;
+import com.reply.skillshub.services.SkillsAgentService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +30,8 @@ public class CompanyControllerService {
     private final CompanyService companyService;
 
     private final UserService userService;
+
+    private final SkillsAgentService skillsAgentService;
 
     public List<CompanyDto> getCompaniesForCurrentUser() {
         var user = loadCurrentUser.loadSkillhubUserFromContext();
@@ -69,7 +74,26 @@ public class CompanyControllerService {
             .employees(company.getEmployees().stream().map(this::convertEmployeeToApiDto).toList());
     }
 
+    public List<EmployeeDto> getCompanyEmployees(String companyId, Optional<String> searchString) {
+        var company = companyService.findBaseCompanyById(companyId).orElseThrow(NoCompanyFound::new);
+        userService.findByCompaniesIdIn(List.of(companyId));
+        if (searchString.isPresent()) {
+            var keywords = skillsAgentService.getKeywordsFromSearchString(searchString.get());
+            return userService.findByCompanyAndKeyWords(companyId, keywords).stream()
+                .map(this::convertEmployeeToApiDto)
+                .toList();
+        }
+        return company.getEmployees().stream().map(this::convertEmployeeToApiDto).toList();
+    }
+
     private EmployeeDto convertEmployeeToApiDto(BaseUser employee) {
+        return new EmployeeDto()
+            .id(employee.getId())
+            .fullname(employee.getFullName())
+            .company("TODO: Implement company name");
+    }
+
+    private EmployeeDto convertEmployeeToApiDto(Employee employee) {
         return new EmployeeDto()
             .id(employee.getId())
             .fullname(employee.getFullName())
