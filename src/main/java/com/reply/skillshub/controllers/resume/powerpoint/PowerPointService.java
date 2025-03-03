@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
+import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.springframework.core.io.ByteArrayResource;
@@ -67,15 +68,14 @@ public class PowerPointService {
     Graphics2D graphics = img.createGraphics();
 
     // Apply scaling
-    graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-    graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+    // default rendering options
     graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+    graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+    graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+    graphics.setRenderingHint(Drawable.BUFFERED_IMAGE, new WeakReference<>(img));
+    
     graphics.scale(scale, scale);
-
-    var font = graphics.getFont();
-
-    graphics.setPaint(java.awt.Color.white);
-    graphics.fill(new java.awt.Rectangle(0, 0, width, height));
     
     slide.draw(graphics);
 
@@ -86,6 +86,8 @@ public class PowerPointService {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+    img.flush();
+    graphics.dispose();
     return new ByteArrayResource(baos.toByteArray());
   }
 
