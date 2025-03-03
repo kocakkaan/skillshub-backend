@@ -90,14 +90,14 @@ public class UsersControllerServiceTest {
 
     @Test
     void userNotFound_confirmUser() {
-        doReturn(Optional.empty()).when(userService).findUserById(anyString());
+        doReturn(Optional.empty()).when(userService).findById(anyString());
         Assertions.assertThrows(UserNotFound.class, () -> usersControllerService.confirmUser("someId", null, null));
     }
 
     @Test
     void invalidToken_confirmUser() {
         User user = Instancio.create(User.class);
-        doReturn(Optional.of(user)).when(userService).findUserById(user.getId());
+        doReturn(Optional.of(user)).when(userService).findById(user.getId());
         Assertions.assertThrows(InvalidConfirmationToken.class, () -> usersControllerService.confirmUser(user.getId(), "false", null));
     }
 
@@ -106,7 +106,7 @@ public class UsersControllerServiceTest {
         User user = Instancio.create(User.class);
         UserConfirmRequest request = Instancio.create(UserConfirmRequest.class);
 
-        doReturn(Optional.of(user)).when(userService).findUserById(user.getId());
+        doReturn(Optional.of(user)).when(userService).findById(user.getId());
         doAnswer(invocation -> invocation.getArgument(0)).when(userService).save(any(User.class));
 
         ConfirmedUserResponse response = usersControllerService.confirmUser(user.getId(), user.getConfirmationToken(), request);

@@ -5,7 +5,6 @@ import com.reply.skillshub.data.certificate.Certificate;
 import com.reply.skillshub.data.certificate.CertificateService;
 import com.reply.skillshub.data.hascertificate.HasCertificate;
 import com.reply.skillshub.data.hascertificate.HasCertificateService;
-import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.openapi.model.CertificateDto;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,7 @@ public class CertificateControllerService {
 
     public HasCertificate saveCertificateForUser(String userId, CertificateDto certificateDto) throws UserNotFound {
         Certificate certificate = certificateService.findByName(certificateDto.getName()).orElse(convertToCertificateAndSave(certificateDto));
-        User user = userService.findUserById(userId).orElseThrow(UserNotFound::new);
+        var user = userService.findById(userId, UserWithCertificates.class);
 
         HasCertificate hasCertificate = new HasCertificate();
         hasCertificate.setCertificate(certificate);

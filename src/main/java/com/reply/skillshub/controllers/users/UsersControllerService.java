@@ -71,7 +71,7 @@ public class UsersControllerService {
     private final PasswordEncoder passwordEncoder;
 
     public ConfirmedUserResponse confirmUser(String userId, String confirmationToken, @Valid UserConfirmRequest userConfirmRequest) {
-        User user = userService.findUserById(userId).orElseThrow(() -> new UserNotFound());
+        var user = userService.findById(userId, UserToConfirm.class);
 
         if (!user.getConfirmationToken().equals(confirmationToken)) {
             throw new InvalidConfirmationToken();
@@ -83,7 +83,7 @@ public class UsersControllerService {
         return createConfirmedUserResponse(userService.save(user));
     }
 
-    private ConfirmedUserResponse createConfirmedUserResponse(User user) {
+    private ConfirmedUserResponse createConfirmedUserResponse(UserToConfirm user) {
         ConfirmedUserResponse response = new ConfirmedUserResponse();
         response.setEmail(user.getEmail());
         response.setFullName(user.getFullname());
@@ -132,7 +132,7 @@ public class UsersControllerService {
 
     public SkillDto addSkillToUser(String userId, String skillId) {
         var skill = skillService.findById(skillId);
-        var user = userService.findById(userId);
+        var user = userService.findById(userId, UserWithSkills.class);
         user.getSkills().add(skill);
         userService.save(user);
         return new SkillDto(skill.getId(), skill.getLabel());
