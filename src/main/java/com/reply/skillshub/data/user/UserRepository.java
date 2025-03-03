@@ -27,5 +27,8 @@ public interface UserRepository extends Neo4jRepository<User, String> {
 
     <T> T findByResumesId(String resumeId, Class<T> type);
 
-    
+    List<Employee> findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn(String companyId, List<String> skills, List<String> certificates);
+
+    List<Employee> findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(List<String> companyId, List<String> skills, List<String> certificates);
+
 }

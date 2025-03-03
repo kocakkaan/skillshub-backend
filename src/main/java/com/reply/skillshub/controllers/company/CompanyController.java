@@ -1,6 +1,7 @@
 package com.reply.skillshub.controllers.company;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,6 +10,7 @@ import com.reply.skillshub.openapi.api.CompanyApi;
 import com.reply.skillshub.openapi.model.CompanyDto;
 import com.reply.skillshub.openapi.model.CompanyInformationDto;
 import com.reply.skillshub.openapi.model.CreateCompanyRequest;
+import com.reply.skillshub.openapi.model.EmployeeDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +31,12 @@ public class CompanyController implements CompanyApi {
     }
 
     @Override
-    public ResponseEntity<CompanyInformationDto> companyCompanyIdEmployeesGet(String companyId) {
+    public ResponseEntity<List<EmployeeDto>> companyCompanyIdEmployeesGet(String companyId, Optional<String> searchString) {
+        return ResponseEntity.ok(companyControllerService.getCompanyEmployees(companyId, searchString));
+    }
+
+    @Override
+    public ResponseEntity<CompanyInformationDto> companyCompanyIdGet(String companyId) {
         return ResponseEntity.ok(companyControllerService.getCompanyInformation(companyId));
     }
     

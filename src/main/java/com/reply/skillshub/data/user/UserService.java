@@ -56,6 +56,14 @@ public class UserService {
         return userRepository.findByCompaniesIdIn(company);
     }
 
+    public List<Employee> findByCompanyAndKeyWords(String companyId, List<String> keywords) {
+        return userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn(companyId, keywords, keywords);
+    }
+
+    public List<Employee> findByCompaniesAndKeyWords(List<String> companyId, List<String> keywords) {
+        return userRepository.findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(companyId, keywords, keywords);
+    }
+
     public BaseUser findByResumeId(String id) {
         return userRepository.findByResumesId(id, BaseUser.class);
     }
