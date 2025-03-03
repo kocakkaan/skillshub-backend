@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
+
 import javax.imageio.ImageIO;
 
 import org.apache.poi.sl.draw.Drawable;
