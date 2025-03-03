@@ -85,21 +85,6 @@ public class UserRepositoryTest extends BaseRepositoryTest {
     }
 
     @Test
-    void testFindByCompanyId() {
-        Company company = Instancio.of(Company.class).set(field(Company::getEmployees), List.of()).create();
-        User userOneToSave = returnUserWithEmail();
-        userOneToSave.getCompanies().add(company);
-        User userTwoToSave = returnUserWithEmailAndLanguage();
-        userTwoToSave.getCompanies().add(company);
-
-        userRepository.save(userOneToSave);
-        userRepository.save(userTwoToSave);
-
-        List<User> foundList = userRepository.findByCompaniesId(company.getId());
-        Assertions.assertThat(foundList.size()).isEqualTo(2);
-    }
-
-    @Test
     void testFindByCompanyIdInIdList() {
         Company company = Instancio.of(Company.class).set(field(Company::getEmployees), List.of()).create();
         Company company2 = Instancio.of(Company.class).set(field(Company::getEmployees), List.of()).create();

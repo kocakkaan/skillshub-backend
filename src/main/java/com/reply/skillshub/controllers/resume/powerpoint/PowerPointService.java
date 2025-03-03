@@ -18,15 +18,16 @@ import org.springframework.stereotype.Service;
 import com.reply.skillshub.data.resume.Resume;
 import com.reply.skillshub.data.resumeexperience.ResumeExperience;
 import com.reply.skillshub.data.resumeskill.ResumeSkill;
+import com.reply.skillshub.data.user.BaseUser;
 
 @Service
 public class PowerPointService {
 
-  public PowerPointInformation createPowerPointDto(Resume resume, String language, String company) {
-    return createPowerPointDto(resume, language, company, false);
+  public PowerPointInformation createPowerPointDto(BaseUser baseUser, Resume resume, String language, String company) {
+    return createPowerPointDto(baseUser, resume, language, company, false);
   }
 
-  public PowerPointInformation createPowerPointDto(Resume resume, String language, String company, boolean anonymous) {
+  public PowerPointInformation createPowerPointDto(BaseUser baseUser, Resume resume, String language, String company, boolean anonymous) {
     PowerPointInformation powerPointInformation = new PowerPointInformation();
 
     if (resume == null) {
@@ -34,12 +35,12 @@ public class PowerPointService {
     }
 
     resume.getOptionalRole().ifPresent(role -> powerPointInformation.setPosition(role.getLabel()));
-    powerPointInformation.setProfilePictureLocation(resume.getUser().getProfilePictureLocation());
+    powerPointInformation.setProfilePictureLocation(baseUser.getProfilePictureLocation());
     powerPointInformation.setCompany(company);
     powerPointInformation.setLanguage(language);
-    powerPointInformation.setName(resume.getUser().getFullname());
-    powerPointInformation.setEmail(resume.getUser().getEmail());
-    powerPointInformation.setPhone(resume.getUser().getPhoneNumber());
+    powerPointInformation.setName(baseUser.getFullName());
+    powerPointInformation.setEmail(baseUser.getEmail());
+    powerPointInformation.setPhone(baseUser.getPhoneNumber());
     resume.getOptionalRole().ifPresent(role -> powerPointInformation.setRole(role.getLabel()));
     powerPointInformation.setTitle(resume.getTitle());
     powerPointInformation.setSkills(resume.getSkills().stream().map(this::convertSkillToPowerPointSkill).toList());

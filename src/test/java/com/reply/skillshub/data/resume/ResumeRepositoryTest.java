@@ -22,16 +22,4 @@ public class ResumeRepositoryTest extends BaseRepositoryTest {
         Assertions.assertNotNull(savedResume.getId());
     }
 
-    @Test
-    void test_findAllByUsersId() {
-        Resume resume = new Resume();
-        Resume secondResume = new Resume();
-        User user = Instancio.create(User.class);
-        resume.getUsers().add(user);
-        secondResume.getUsers().add(user);
-        resumeRepository.save(resume);
-        resumeRepository.save(secondResume);
-        Assertions.assertEquals(2, resumeRepository.findAllByUsersId(user.getId()).size());
-    }
-    
 }

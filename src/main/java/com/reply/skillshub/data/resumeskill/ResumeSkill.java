@@ -31,9 +31,6 @@ public class ResumeSkill {
     @Relationship(type = "INCLUDES_SKILL", direction = Direction.OUTGOING, cascadeUpdates = false)
     private List<Skill> skills = new ArrayList<>();
 
-    @Relationship(type = "USED_SKILL", direction = Direction.INCOMING, cascadeUpdates = false)
-    private List<Resume> resumes = new ArrayList<>();
-
     @AssertTrue(message = "A resume skill can have at most one parent")
     private boolean isParentSmallerAsTwo() {
         return parent.size() < 2;

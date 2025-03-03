@@ -23,9 +23,9 @@ public interface UserRepository extends Neo4jRepository<User, String> {
 
     List<User> findBySpeaksLanguageLanguageCode(LanguageCode languageCode);
 
-    <T> List<T> findByCompaniesId(String company);
-
     List<Employee> findByCompaniesIdIn(List<String> company);
+
+    <T> T findByResumesId(String resumeId, Class<T> type);
 
     
 }

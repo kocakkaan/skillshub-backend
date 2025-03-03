@@ -18,10 +18,6 @@ public class ResumeExperienceService {
     repository.deleteById(id);
   }
 
-  public List<ResumeExperience> findAllByResumesId(String resumeId) {
-    return repository.findAllByResumesId(resumeId);
-  }
-
   public ResumeExperience findById(String resumeExperienceId) {
     return repository.findById(resumeExperienceId).orElseThrow(ExperienceNotFound::new);
   }
