@@ -24,10 +24,10 @@ import com.reply.skillshub.data.user.User;
 
 class PowerPointServiceTest {
 
-    @Test
-    void testPowerPoint() {
+    @Test 
+    void testCreatePowerPointFromTemplate() {
         User user = Instancio.create(User.class);
-        user.setProfilePictureLocation("pictures/Heepen_Jonas.png");
+        user.setProfilePictureLocation("pictures/test.jpg");
         Resume resume = Instancio.of(Resume.class)
             .generate(field(Resume::getBackground), gen -> gen.string().length(300))
             .generate(field(ResumeSkill::getSkills), gen -> gen.collection().size(10))
@@ -37,8 +37,8 @@ class PowerPointServiceTest {
             .create();
         resume.setUser(user);
         var service = new PowerPointService();
-        var information = service.createPowerPointDto(resume, "en", "Reply");
-        var ppt = service.createPowerPoint(information);
+        var information = service.createPowerPointDto(resume, "de", "Reply");
+        var ppt = service.createPowerPointFromTemplate(information);
         savePowerPoint(ppt);
     }
 
@@ -56,7 +56,7 @@ class PowerPointServiceTest {
     void testPowerPointNoResume() {
         var service = new PowerPointService();
         var information = service.createPowerPointDto(null, "en", "ML_REPLY");
-        service.createPowerPoint(information);
+        service.createPowerPointFromTemplate(information);
     }
 
     @ParameterizedTest
@@ -65,7 +65,7 @@ class PowerPointServiceTest {
         var service = new PowerPointService();
         var resume = Instancio.create(Resume.class);
         var information = service.createPowerPointDto(resume, "en", "ML_REPLY");
-        service.createPowerPoint(information);
+        service.createPowerPointFromTemplate(information);
     }
 
     private static Stream<Arguments> provideIncompleteResumes() {
@@ -91,7 +91,7 @@ class PowerPointServiceTest {
         var service = new PowerPointService();
         var information = new PowerPointInformation();
         information.setProfilePictureLocation("pictures/Heepen_Jonas.png");
-        service.createPowerPoint(information);
+        service.createPowerPointFromTemplate(information);
     }
 
     @Test
@@ -101,7 +101,7 @@ class PowerPointServiceTest {
             .set(all(String.class), null)
             .supply(all(List.class), () -> List.of())
             .create();
-        service.createPowerPoint(information);
+        service.createPowerPointFromTemplate(information);
     }
 
     @Test
@@ -111,7 +111,7 @@ class PowerPointServiceTest {
             .generate(field(PowerPointInformation::getSkills), gen -> gen.collection().size(10))
             .generate(field(PowerPointInformation::getExperiences), gen -> gen.collection().size(4))
             .create();
-        service.createPowerPoint(information);
+        service.createPowerPointFromTemplate(information);
     }
 
 }

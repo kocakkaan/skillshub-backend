@@ -4,7 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,10 +32,10 @@ public class ResumeController implements ResumesApi {
   private final PowerPointService powerPointService;
 
   @Override
-  public ResponseEntity<Void> exportToPptx(String resumeId, String language, String company) {
+  public ResponseEntity<Resource> exportToPptx(String resumeId, String language, String company) {
     var resume = resumeControllerService.findResumeEntityById(resumeId);
     var pptDto = powerPointService.createPowerPointDto(resume, language, company);
-    var ppt = powerPointService.createPowerPoint(pptDto);
+    var ppt = powerPointService.createPowerPointFromTemplate(pptDto);
     var test = new ByteArrayOutputStream();
     try {
       ppt.write(test);
@@ -40,10 +43,18 @@ public class ResumeController implements ResumesApi {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    // powerPointService.createPowerPoint();
-    // TODO Auto-generated method stub
-    // ResponseEntity.
-    return ResponseEntity.status(200).build();
+
+    Resource resource = new ByteArrayResource(test.toByteArray());
+
+         // Set the response headers
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.presentationml.presentation"));
+    headers.setContentDispositionFormData("attachment", "presentation.pptx");
+
+    // Return the presentation as a response entity
+    return ResponseEntity.ok()
+            .headers(headers)
+            .body(resource);
   }
 
   @Override
@@ -115,7 +126,7 @@ public class ResumeController implements ResumesApi {
   public ResponseEntity<Resource> resumesResumeIdExportToImgPost(String resumeId, String language, String company) {
     var resume = resumeControllerService.findResumeEntityById(resumeId);
     var pptDto = powerPointService.createPowerPointDto(resume, language, company);
-    var ppt = powerPointService.createPowerPoint(pptDto);
+    var ppt = powerPointService.createPowerPointFromTemplate(pptDto);
     var output = powerPointService.getFirstSlideAsImage(ppt);
     return ResponseEntity.status(200).body(output);
   }
