@@ -12,7 +12,6 @@ import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
 import com.reply.skillshub.data.speaks.Speaks;
 import com.reply.skillshub.data.userrole.UserRole;
-import com.reply.skillshub.data.certificate.Certificate;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.experience.Experience;
 import com.reply.skillshub.data.resume.Resume;
@@ -59,13 +58,13 @@ public class User {
     @Relationship(type = "SPEAKS")
     private List<Speaks> speaks = new ArrayList<>();
 
-    @Relationship(type = "WORKS_FOR")
+    @Relationship(type = "WORKS_FOR", cascadeUpdates = false)
     private List<Company> companies = new ArrayList<>();
 
-    @Relationship(type = "HAS_EXPERIENCE")
+    @Relationship(type = "HAS_EXPERIENCE", cascadeUpdates = false)
     private List<Experience> experiences = new ArrayList<>();
 
-    @Relationship(type = "HAS_SKILL")
+    @Relationship(type = "HAS_SKILL", cascadeUpdates = false)
     private List<Skill> skills = new ArrayList<>();
 
     @Relationship(type = "HAS_RESUME")
