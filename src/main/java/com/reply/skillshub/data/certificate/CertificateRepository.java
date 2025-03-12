@@ -8,4 +8,6 @@ public interface CertificateRepository extends Neo4jRepository<Certificate, Stri
 
     public Optional<Certificate> findByName(String name);
 
+    public Optional<Certificate> findByNameIgnoreCase(String name);
+
 }

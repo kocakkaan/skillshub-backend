@@ -17,7 +17,6 @@ import lombok.Data;
 public class Speaks {
 
     @RelationshipId
-    @Id
     @GeneratedValue
     private String id;
     

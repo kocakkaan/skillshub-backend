@@ -9,6 +9,8 @@ public interface SkillRepository extends Neo4jRepository<Skill, String> {
 
     Optional<Skill> findByLabel(String label);
 
+    Optional<Skill> findByLabelIgnoreCase(String label);
+
     List<Skill> findAllByLabel(String label);
     
 }

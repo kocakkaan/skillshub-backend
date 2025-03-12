@@ -15,13 +15,11 @@ import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 import com.reply.skillshub.data.industry.Industry;
 import com.reply.skillshub.data.language.Language;
 import com.reply.skillshub.data.occupation.Occupation;
-import com.reply.skillshub.data.resumeexperience.ResumeExperience;
 import com.reply.skillshub.data.skill.Skill;
-import com.reply.skillshub.data.user.User;
-
 import jakarta.validation.constraints.AssertFalse;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Node
@@ -50,7 +48,7 @@ public class Experience {
     @Relationship(type = "IN_INDUSTRY", direction = Direction.OUTGOING, cascadeUpdates = false)
     private List<Industry> industries = new ArrayList<>();
 
-    @NotEmpty
+    @NotNull
     @Relationship(type = "IN_ROLE", direction = Direction.OUTGOING, cascadeUpdates = false)
     private Occupation occupation;
 
@@ -61,7 +59,7 @@ public class Experience {
 
     @AssertFalse(message = "An experience should not have more as four descriptions")
     private boolean isDescriptionSizeSmallerAsFour() {
-        return descriptions.size() > 4;
+        return descriptions.size() > 6;
     }
 
     public Optional<Industry> getIndustry() {

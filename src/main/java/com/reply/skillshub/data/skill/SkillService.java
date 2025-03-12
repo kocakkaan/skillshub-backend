@@ -1,6 +1,7 @@
 package com.reply.skillshub.data.skill;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,10 @@ public class SkillService {
 
     public Skill findByLabel(String label) {
         return skillRepository.findByLabel(label).orElse(null);
+    }
+
+    public Optional<Skill> findByLabelIgnoreCase(String label) {
+        return skillRepository.findByLabelIgnoreCase(label);
     }
 
     public List<Skill> findAll() {
