@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
 
 import com.reply.skillshub.base.exceptionhandling.exeptions.InsufficientRights;
@@ -62,6 +63,8 @@ public class UsersControllerService {
     private final LoadCurrentUser loadCurrentUser;
 
     private final SkillsAgentService skillsAgentService;
+
+    private final UserProfileExtractorService userProfileExtractorService;
 
     private final EmailService emailService;
 
@@ -218,6 +221,10 @@ public class UsersControllerService {
 
     public List<EmployeeDto> getEmployeeAccessibleToUserWithId(String userId) {
         return getEmployeesAccessibleToUser(userId);
+    }
+
+    public void extractInformationFromCvPdf(String userId, MultipartFile cvPdf) {
+        userProfileExtractorService.extractInformationFromCvPdf(userId, cvPdf);
     }
 
     private List<EmployeeDto> getEmployeesAccessibleToUser(String userId) {

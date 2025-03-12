@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.reply.skillshub.openapi.api.UsersApi;
 import com.reply.skillshub.openapi.model.ConfirmedUserResponse;
@@ -62,6 +63,13 @@ public class UsersController implements UsersApi {
     @Override
     public ResponseEntity<SkillDto> usersUserIdSkillsSkillIdPost(String userId, String skillId) {
         return ResponseEntity.ok(usersControllerService.addSkillToUser(userId, skillId));
+    }
+
+    @Override
+    public ResponseEntity<ProfileDto> usersUserIdProfilePost(String userId, MultipartFile body) {
+        usersControllerService.extractInformationFromCvPdf(userId, body);
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'usersUserIdProfilePost'");
     }
     
 }
