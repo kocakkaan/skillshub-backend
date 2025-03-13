@@ -8,7 +8,7 @@ jobs:
 
   build:
 
-    name: Build Image #test
+    name: Build Image
     runs-on: ubuntu-latest
     env:
       ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
@@ -54,10 +54,10 @@ jobs:
           BACKEND_OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
           BACKEND_OAUTH_CLIENT_SECRET: ${{ secrets.OAUTH_CLIENT_SECRET }}
           BACKEND_AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-
+          AGENT_URI: ${{ variables.AGENT_URI }}
 
         with:
-          envs: ECR_REGISTRY,ECR_REPOSITORY,IMAGE_TAG,AWS_ACCOUNT_ID,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,BACKEND_NEO4J_USER,BACKEND_NEO4J_PASS,BACKEND_NEO4J_URI,BACKEND_OAUTH_CLIENT_ID,BACKEND_OAUTH_CLIENT_SECRET,BACKEND_AZURE_TENANT_ID
+          envs: ECR_REGISTRY,ECR_REPOSITORY,IMAGE_TAG,AWS_ACCOUNT_ID,AWS_REGION,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,BACKEND_NEO4J_USER,BACKEND_NEO4J_PASS,BACKEND_NEO4J_URI,BACKEND_OAUTH_CLIENT_ID,BACKEND_OAUTH_CLIENT_SECRET,BACKEND_AZURE_TENANT_ID,AGENT_URI
           host: ${{ secrets.BACKEND_EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
@@ -81,6 +81,7 @@ jobs:
               --env OAUTH_CLIENT_ID=$BACKEND_OAUTH_CLIENT_ID \
               --env OAUTH_CLIENT_SECRET=$BACKEND_OAUTH_CLIENT_SECRET \
               --env AZURE_TENANT_ID=$BACKEND_AZURE_TENANT_ID \
+              --env AGENT_URI=$AGENT_URI \
               --restart always \
               --network skillshub_backend_network \
               $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
