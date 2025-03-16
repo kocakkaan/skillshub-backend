@@ -56,7 +56,8 @@ public class UserService {
         return userRepository.findByCompaniesIdIn(company);
     }
 
-    public List<Employee> findByCompanyAndKeyWords(String companyId, List<String> keywords) {
+    public List<Employee> findByCompanyAndKeyWords(String companyId, List<String> keywordsInput) {
+        var keywords = keywordsInput.stream().map(String::toLowerCase).toList();
         return userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn(companyId, keywords, keywords);
     }
 
