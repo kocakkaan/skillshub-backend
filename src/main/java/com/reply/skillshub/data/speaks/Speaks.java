@@ -17,8 +17,7 @@ import lombok.Data;
 public class Speaks {
 
     @RelationshipId
-    @GeneratedValue
-    private String id;
+    private Long id;
     
     @TargetNode
     private Language language;

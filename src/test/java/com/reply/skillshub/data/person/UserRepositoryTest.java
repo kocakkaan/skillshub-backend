@@ -19,11 +19,12 @@ import org.springframework.util.StreamUtils;
 import com.neovisionaries.i18n.LanguageCode;
 import com.reply.skillshub.BaseRepositoryTest;
 import com.reply.skillshub.data.company.Company;
+import com.reply.skillshub.data.hascertificate.HasCertificate;
 import com.reply.skillshub.data.language.Language;
 import com.reply.skillshub.data.speaks.Speaks;
 import com.reply.skillshub.data.user.Employee;
 import com.reply.skillshub.data.user.User;
-import com.reply.skillshub.data.user.UserRepository;
+import com.reply.skillshub.data.user.UserRepository; 
 
 @DataNeo4jTest
 public class UserRepositoryTest extends BaseRepositoryTest {
@@ -128,6 +129,41 @@ public class UserRepositoryTest extends BaseRepositoryTest {
 
         List<Employee> certAndHibernateList2 = userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", list, list);
         Assertions.assertThat(certAndHibernateList2.size()).isEqualTo(2);
+    }
+
+    @Test
+    void test_multiple_certificates_save() {
+        List<HasCertificate> certificates = Instancio.ofList(HasCertificate.class).size(2).set(field(HasCertificate::getId), null).create();
+        User user = returnUserWithEmail();
+        user.getHasCertificates().add(certificates.get(0));
+
+        userRepository.save(user);
+
+        User foundUser = userRepository.findByEmail(user.getEmail(), User.class).get();
+
+        foundUser.getHasCertificates().add(certificates.get(1));
+        userRepository.save(foundUser);
+
+        User finalFoundUser = userRepository.findByEmail(user.getEmail(), User.class).get();
+        Assertions.assertThat(finalFoundUser.getHasCertificates().size()).isEqualTo(2);
+    }
+
+    @Test
+    void test_multiple_languages_save() {
+        User user = returnUserWithEmail();
+        user.getSpeaks().add(returnSpeaks());
+
+        userRepository.save(user);
+
+        User foundUser = userRepository.findByEmail(user.getEmail(), User.class).get();
+
+        foundUser.setFirstName("maurits2");
+
+        foundUser.getSpeaks().add(returnSpeaks());
+        userRepository.save(foundUser);
+
+        Optional<User> finalFoundUser = userRepository.findByEmail(user.getEmail(), User.class);
+        Assertions.assertThat(finalFoundUser.get().getSpeaks().size()).isEqualTo(2);
     }
 
     User returnUserWithEmail() {
