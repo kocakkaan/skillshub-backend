@@ -67,9 +67,7 @@ public class UsersController implements UsersApi {
 
     @Override
     public ResponseEntity<ProfileDto> usersUserIdProfilePost(String userId, MultipartFile body) {
-        usersControllerService.extractInformationFromCvPdf(userId, body);
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'usersUserIdProfilePost'");
+        return ResponseEntity.ok(usersControllerService.extractInformationFromCvPdf(userId, body));
     }
     
 }

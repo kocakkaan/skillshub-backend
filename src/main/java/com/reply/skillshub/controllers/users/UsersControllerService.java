@@ -147,11 +147,10 @@ public class UsersControllerService {
         profile.setFullname(user.getFullName());
         profile.setEmail(user.getEmail());
         profile.setId(user.getId());
-        //profile.setCertificates(user.getCertificates().stream().map(this::convertToCertificateDto).toList());
         profile.setCertificates(user.getHasCertificates().stream().map(this::convertToCertificateDto).toList());
         profile.setExperiences(user.getExperiences().stream().map(this::convertToExperienceDto).toList());
         profile.setSkills(user.getSkills().stream().map(this::convertToSkillDto).toList());
-        // profile.setLanguages(user.getSpeaks().stream().map(this::convertSpeaksToLanguageDto).toList());
+        profile.setLanguages(user.getSpeaks().stream().map(this::convertSpeaksToLanguageDto).toList());
         profile.setResumes(user.getResumes().stream().map(this::convertToResumeDto).toList());
         return profile;
     }
@@ -164,9 +163,9 @@ public class UsersControllerService {
         return newResume;
     }
 
-    private LanguageDto convertSpeaksToLanguageDto(Speaks speaks) {
+    private LanguageDto convertSpeaksToLanguageDto(EmployeeProfile.Speaks speaks) {
         var language = speaks.getLanguage();
-        return new LanguageDto(language.getLanguageCode().getName(), language.getLanguageAlpha3Code().getName());
+        return new LanguageDto(language.getLanguageName(), language.getLanguageCode().getName());
     }
 
     private ResumeSkillDto convertToResumeSkillDto(ResumeSkill resumeSkill) {
@@ -207,7 +206,7 @@ public class UsersControllerService {
         // experienceDto.setStartDate(Optional.ofNullable(experience.getStartDate()));
         // experienceDto.setEndDate(Optional.ofNullable(experience.getEndDate()));
         // experienceDto.setIndustry(Optional.ofNullable(experience.getIndustries().stream().map(this::convertToIndustryDto).findFirst().orElse(null)));
-        experienceDto.setOccupationalCategory(experience.getOccupation().stream().map(this::convertToOccupationalCategoryDto).findFirst().orElse(null));
+        experienceDto.setOccupationalCategory(convertToOccupationalCategoryDto(experience.getOccupation()));
         return experienceDto;
     }
 
@@ -216,6 +215,9 @@ public class UsersControllerService {
     }
 
     private OccupationalCategoryDto convertToOccupationalCategoryDto(EmployeeProfile.Occupation occupation) {
+        if (occupation == null) {
+            return null;
+        }
         return new OccupationalCategoryDto(occupation.getId(), occupation.getLabel());
     }
 
@@ -223,8 +225,10 @@ public class UsersControllerService {
         return getEmployeesAccessibleToUser(userId);
     }
 
-    public void extractInformationFromCvPdf(String userId, MultipartFile cvPdf) {
+    public ProfileDto extractInformationFromCvPdf(String userId, MultipartFile cvPdf) {
         userProfileExtractorService.extractInformationFromCvPdf(userId, cvPdf);
+        var employeeProfile = userService.findEmployeeProfileById(userId);
+        return getProfileForUser(employeeProfile);
     }
 
     private List<EmployeeDto> getEmployeesAccessibleToUser(String userId) {

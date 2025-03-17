@@ -2,27 +2,14 @@ package com.reply.skillshub.controllers.users;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import org.springframework.web.multipart.MultipartFile;
 
-import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.language.bm.Lang;
-import com.neovisionaries.i18n.LanguageAlpha3Code;
-import com.neovisionaries.i18n.LanguageCode;
 import com.reply.skillshub.controllers.users.profileextractor.CertificateExtractorService;
 import com.reply.skillshub.controllers.users.profileextractor.ExperienceExtractorService;
 import com.reply.skillshub.controllers.users.profileextractor.LanguageExtractorService;
 import com.reply.skillshub.controllers.users.profileextractor.SkillExtractorService;
 import com.reply.skillshub.controllers.users.profileextractor.UserProfile;
-import com.reply.skillshub.data.experience.Experience;
-import com.reply.skillshub.data.language.Language;
-import com.reply.skillshub.data.language.LanguageService;
-import com.reply.skillshub.data.speaks.LanguageLevel;
-import com.reply.skillshub.data.speaks.Speaks;
 import com.reply.skillshub.data.user.UserService;
-import com.reply.skillshub.services.CvInformation;
 import com.reply.skillshub.services.SkillsAgentService;
 
 import lombok.RequiredArgsConstructor;
