@@ -30,9 +30,11 @@ public interface UserRepository extends Neo4jRepository<User, String> {
 
     @Query("""
             match (u:User) - [r:WORKS_FOR] -> (c:Company {id: $companyId})
-            match (u) - [h_s:HAS_SKILL|HAS_CERTIFICATE] -> (s) 
-            where (s:Skill and toLower(s.label) in $skills) or (s:Certificate and toLower(s.name) in $certificates) 
-            return distinct u
+            optional match (u) - [h_s:HAS_SKILL] -> (skill:Skill where toLower(skill.label) in $skills)
+            optional match (u) - [h_c:HAS_CERTIFICATE] -> (cert:Certificate where toLower(cert.name) in $certificates)
+            with u, skill, cert
+            where skill is not null or cert is not null
+            return u
             """)
     List<Employee> findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn(String companyId, List<String> skills, List<String> certificates);
 
