@@ -57,8 +57,8 @@ public class Experience {
         return industries.size() < 2;
     }
 
-    @AssertFalse(message = "An experience should not have more as four descriptions")
-    private boolean isDescriptionSizeSmallerAsFour() {
+    @AssertFalse(message = "An experience should not have more as six descriptions")
+    private boolean isDescriptionSizeSmallerAsSix() {
         return descriptions.size() > 6;
     }
 
