@@ -180,4 +180,10 @@ public class ResumeController implements ResumesApi {
     return ResponseEntity.ok(resumeControllerService.updateResumeExperience(experienceId, resumeExperienceDto));
   }
 
+  @Override
+  public ResponseEntity<ResumeDto> usersUserIdResumesAutoGenerationPost(String resumeId, String requirements) {
+    resumeControllerService.autoGenerateShortCv(resumeId, requirements);
+    return ResponseEntity.status(200).build();
+  }
+
 }

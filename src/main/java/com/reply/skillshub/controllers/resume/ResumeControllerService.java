@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
+import com.reply.skillshub.base.exceptionhandling.exeptions.ValidationException;
 import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.data.experience.ExperienceService;
 import com.reply.skillshub.data.industry.IndustryService;
@@ -24,6 +26,7 @@ import com.reply.skillshub.openapi.model.ResumeSkillDto;
 import com.reply.skillshub.openapi.model.ResumesResumeIdBackgroundPatchRequest;
 import com.reply.skillshub.openapi.model.UpdateResumeRoleRequest;
 import com.reply.skillshub.openapi.model.UpdateResumeTitleRequest;
+import com.reply.skillshub.services.SkillsAgentService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,6 +40,22 @@ public class ResumeControllerService {
     private final ExperienceService experienceService;
     private final UserService userService;
     private final LoadCurrentUser loadCurrentUser;
+    private final SkillsAgentService skillsAgentService;
+
+    public ResumeDto autoGenerateShortCv(String userId, String requirements) {
+        if (userService.existsById(userId) == false) {
+            throw new UserNotFound();
+        }
+
+        if (requirements == null || requirements.isBlank()) {
+            throw new ValidationException("Requirements must not be empty");
+        }
+
+        
+        
+        userService.existsById(userId);
+        return null;
+    }
 
     public List<BaseResumeDto> findResumesForCurrentUser() {
         var currentUser = loadCurrentUser.loadSkillhubUserFromContext();
