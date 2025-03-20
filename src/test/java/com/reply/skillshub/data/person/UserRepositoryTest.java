@@ -1,5 +1,7 @@
 package com.reply.skillshub.data.person;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,7 +11,11 @@ import static org.instancio.Select.field;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.neo4j.core.Neo4jClient;
+import org.springframework.util.StreamUtils;
+
 import com.neovisionaries.i18n.LanguageCode;
 import com.reply.skillshub.BaseRepositoryTest;
 import com.reply.skillshub.data.company.Company;
@@ -99,6 +105,29 @@ public class UserRepositoryTest extends BaseRepositoryTest {
 
         List<Employee> foundList = userRepository.findByCompaniesIdIn(List.of(company.getId(), company2.getId())); 
         Assertions.assertThat(foundList.size()).isEqualTo(2);
+    }
+
+    @Test
+    void testFindByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn(@Autowired Neo4jClient client) throws IOException {
+        ClassPathResource resource = new ClassPathResource("person/userbycertificateorskill.cypher");
+        String cypherQuery = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
+        client.query(cypherQuery).run();
+
+        List<Employee> javaList = userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", List.of("java"), List.of("java"));
+        Assertions.assertThat(javaList.size()).isEqualTo(3);
+
+        List<Employee> hibernateList = userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", List.of("hibernate"), List.of("hibernate"));
+        Assertions.assertThat(hibernateList.size()).isEqualTo(2);
+
+        var list = List.of("hibernate", "certificate 2");
+
+        List<Employee> certAndHibernateList = userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", list, list);
+        Assertions.assertThat(certAndHibernateList.size()).isEqualTo(3);
+
+        list = List.of("hibernate", "certificate 1");
+
+        List<Employee> certAndHibernateList2 = userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", list, list);
+        Assertions.assertThat(certAndHibernateList2.size()).isEqualTo(2);
     }
 
     User returnUserWithEmail() {
