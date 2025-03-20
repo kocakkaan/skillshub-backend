@@ -2,7 +2,8 @@ package com.reply.skillshub.data.user;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+
+import com.neovisionaries.i18n.LanguageCode;
 
 public interface EmployeeProfile extends Employee {
 
@@ -12,7 +13,19 @@ public interface EmployeeProfile extends Employee {
   public List<Experience> getExperiences();
   public List<Resume> getResumes();
   public List<HasCertificate> getHasCertificates();
+  public List<Speaks> getSpeaks();
 
+
+  interface Speaks {
+    public String getId();
+    public Language getLanguage();
+    public boolean isNative();
+  }
+
+  interface Language {
+    public String getLanguageName();
+    public LanguageCode getLanguageCode();
+  }
 
   interface Skill {
     public String getId();
@@ -23,7 +36,7 @@ public interface EmployeeProfile extends Employee {
     public String getId();
     public String getTitle();
     public List<String> getDescriptions();
-    public List<Occupation> getOccupation();
+    public Occupation getOccupation();
     public List<Skill> getSkills();
 
   }

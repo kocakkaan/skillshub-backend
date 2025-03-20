@@ -27,6 +27,10 @@ public class CertificateService {
         return certificateRepository.findByName(name);
     }
 
+    public Optional<Certificate> findByNameIgnoreCase(String name) {
+        return certificateRepository.findByNameIgnoreCase(name);
+    }
+
 }
 
 

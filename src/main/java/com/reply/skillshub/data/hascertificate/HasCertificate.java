@@ -11,9 +11,10 @@ import java.time.LocalDate;
 
 @RelationshipProperties
 @Data
-public class HasCertificate {
+public class HasCertificate {  
+    
     @RelationshipId
-    private String id;
+    private Long id;
 
     @TargetNode
     private Certificate certificate;

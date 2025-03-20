@@ -17,5 +17,7 @@ public class Language {
 
     // ISO 639-2 language code.
     private LanguageAlpha3Code languageAlpha3Code;
+
+    private String languageName;
     
 }

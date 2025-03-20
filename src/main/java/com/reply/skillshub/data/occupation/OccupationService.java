@@ -1,6 +1,7 @@
 package com.reply.skillshub.data.occupation;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,10 @@ public class OccupationService {
 
     public List<Occupation> findAllByLabel(String label) {
         return occupationRepository.findAllByLabel(label);
+    }
+
+    public Optional<Occupation> findByLabelIgnoreCase(String label) {
+        return occupationRepository.findByLabelIgnoreCase(label);
     }
     
 }
