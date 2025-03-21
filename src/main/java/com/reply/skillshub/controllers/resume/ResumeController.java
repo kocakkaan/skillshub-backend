@@ -17,10 +17,10 @@ import com.reply.skillshub.openapi.api.ResumesApi;
 import com.reply.skillshub.openapi.model.BaseResumeDto;
 import com.reply.skillshub.openapi.model.CreateInitialResumeDto;
 import com.reply.skillshub.openapi.model.IndustryDto;
-import com.reply.skillshub.openapi.model.ResumeDto;
 import com.reply.skillshub.openapi.model.ResumeExperienceDto;
 import com.reply.skillshub.openapi.model.ResumeSkillDto;
 import com.reply.skillshub.openapi.model.ResumesResumeIdBackgroundPatchRequest;
+import com.reply.skillshub.openapi.model.ShortCvDto;
 import com.reply.skillshub.openapi.model.UpdateResumeRoleRequest;
 import com.reply.skillshub.openapi.model.UpdateResumeTitleRequest;
 
@@ -50,15 +50,16 @@ public class ResumeController implements ResumesApi {
 
     Resource resource = new ByteArrayResource(test.toByteArray());
 
-         // Set the response headers
+    // Set the response headers
     HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.presentationml.presentation"));
+    headers.setContentType(
+        MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.presentationml.presentation"));
     headers.setContentDispositionFormData("attachment", "presentation.pptx");
 
     // Return the presentation as a response entity
     return ResponseEntity.ok()
-            .headers(headers)
-            .body(resource);
+        .headers(headers)
+        .body(resource);
   }
 
   @Override
@@ -68,39 +69,39 @@ public class ResumeController implements ResumesApi {
   }
 
   @Override
-  public ResponseEntity<ResumeDto> resumesResumeIdExperiencesPatch(String resumeId,
+  public ResponseEntity<ShortCvDto> resumesResumeIdExperiencesPatch(String resumeId,
       List<ResumeExperienceDto> resumeExperience) {
     return ResponseEntity.ok(resumeControllerService.updateExperiencesListForResume(resumeId, resumeExperience));
   }
 
   @Override
-  public ResponseEntity<ResumeDto> resumesResumeIdGet(String resumeId) {
+  public ResponseEntity<ShortCvDto> resumesResumeIdGet(String resumeId) {
     return ResponseEntity.ok(resumeControllerService.findResumeById(resumeId));
   }
 
   @Override
-  public ResponseEntity<ResumeDto> resumesResumeIdIndustriesPatch(String resumeId, List<IndustryDto> industries) {
+  public ResponseEntity<ShortCvDto> resumesResumeIdIndustriesPatch(String resumeId, List<IndustryDto> industries) {
     return ResponseEntity.ok(resumeControllerService.updateResumeIndustries(resumeId, industries));
   }
 
   @Override
-  public ResponseEntity<ResumeDto> resumesResumeIdPut(String resumeId, ResumeDto resumeDto) {
+  public ResponseEntity<ShortCvDto> resumesResumeIdPut(String resumeId, ShortCvDto resumeDto) {
     return ResponseEntity.ok(resumeControllerService.updateResume(resumeId, resumeDto));
   }
 
   @Override
-  public ResponseEntity<ResumeDto> resumesResumeIdSkillsPut(String resumeId, List<ResumeSkillDto> resumeSkill) {
+  public ResponseEntity<ShortCvDto> resumesResumeIdSkillsPut(String resumeId, List<ResumeSkillDto> resumeSkill) {
     return ResponseEntity.ok(resumeControllerService.updateResumeSkills(resumeId, resumeSkill));
   }
 
   @Override
-  public ResponseEntity<ResumeDto> updateResumeRole(String resumeId,
+  public ResponseEntity<ShortCvDto> updateResumeRole(String resumeId,
       UpdateResumeRoleRequest updateResumeRoleRequest) {
     return ResponseEntity.ok(resumeControllerService.updateResumeRole(resumeId, updateResumeRoleRequest));
   }
 
   @Override
-  public ResponseEntity<ResumeDto> updateResumeTitle(String resumeId,
+  public ResponseEntity<ShortCvDto> updateResumeTitle(String resumeId,
       UpdateResumeTitleRequest updateResumeTitleRequest) {
     return ResponseEntity.ok(resumeControllerService.updateResumeTitle(resumeId, updateResumeTitleRequest));
   }
@@ -111,7 +112,7 @@ public class ResumeController implements ResumesApi {
   }
 
   @Override
-  public ResponseEntity<ResumeDto> userMeResumesPost(ResumeDto resumeDto) {
+  public ResponseEntity<ShortCvDto> userMeResumesPost(ShortCvDto resumeDto) {
     return ResponseEntity.ok(resumeControllerService.createResumeForCurrentUser(resumeDto));
   }
 
@@ -121,7 +122,7 @@ public class ResumeController implements ResumesApi {
   }
 
   @Override
-  public ResponseEntity<ResumeDto> usersUserIdResumesPost(String userId,
+  public ResponseEntity<ShortCvDto> usersUserIdResumesPost(String userId,
       CreateInitialResumeDto createInitialResumeDto) {
     return ResponseEntity.ok(resumeControllerService.createInitialResumeForUser(userId, createInitialResumeDto));
   }
@@ -137,14 +138,14 @@ public class ResumeController implements ResumesApi {
   }
 
   @Override
-  public ResponseEntity<ResumeDto> resumesResumeIdBackgroundPatch(String resumeId,
+  public ResponseEntity<ShortCvDto> resumesResumeIdBackgroundPatch(String resumeId,
       ResumesResumeIdBackgroundPatchRequest resumesResumeIdBackgroundPatchRequest) {
     return ResponseEntity
         .ok(resumeControllerService.updateResumeBackground(resumeId, resumesResumeIdBackgroundPatchRequest));
   }
 
   @Override
-  public ResponseEntity<ResumeDto> resumesResumeIdExperiencesPut(String resumeId, List<String> ids) {
+  public ResponseEntity<ShortCvDto> resumesResumeIdExperiencesPut(String resumeId, List<String> ids) {
     return ResponseEntity.ok(resumeControllerService.addExperiencesToResume(resumeId, ids));
   }
 
@@ -170,18 +171,20 @@ public class ResumeController implements ResumesApi {
   }
 
   @Override
-  public ResponseEntity<ResumeExperienceDto> resumesResumeIdExperienceExperienceIdGet(String resumeId, String experienceId) {
+  public ResponseEntity<ResumeExperienceDto> resumesResumeIdExperienceExperienceIdGet(String resumeId,
+      String experienceId) {
     return ResponseEntity.ok(resumeControllerService.findResumeExperienceById(experienceId));
   }
 
   @Override
-  public ResponseEntity<ResumeExperienceDto> resumesResumeIdExperienceExperienceIdPut(String resumeId, String experienceId,
+  public ResponseEntity<ResumeExperienceDto> resumesResumeIdExperienceExperienceIdPut(String resumeId,
+      String experienceId,
       ResumeExperienceDto resumeExperienceDto) {
     return ResponseEntity.ok(resumeControllerService.updateResumeExperience(experienceId, resumeExperienceDto));
   }
 
   @Override
-  public ResponseEntity<ResumeDto> usersUserIdResumesAutoGenerationPost(String resumeId, String requirements) {
+  public ResponseEntity<ShortCvDto> usersUserIdResumesAutoGenerationPost(String resumeId, String requirements) {
     resumeControllerService.autoGenerateShortCv(resumeId, requirements);
     return ResponseEntity.status(200).build();
   }

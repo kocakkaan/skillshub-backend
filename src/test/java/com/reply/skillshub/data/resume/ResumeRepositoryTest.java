@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest;
 
 import com.reply.skillshub.BaseRepositoryTest;
-import com.reply.skillshub.data.user.User;
 
 @DataNeo4jTest
 public class ResumeRepositoryTest extends BaseRepositoryTest {
@@ -17,8 +16,8 @@ public class ResumeRepositoryTest extends BaseRepositoryTest {
 
     @Test
     void succesfullySaveCompany() {
-        Resume resume = new Resume();
-        Resume savedResume = resumeRepository.save(resume);
+        ShortCv resume = Instancio.create(ShortCv.class);
+        ShortCv savedResume = resumeRepository.save(resume);
         Assertions.assertNotNull(savedResume.getId());
     }
 

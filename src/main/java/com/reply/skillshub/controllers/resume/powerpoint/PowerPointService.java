@@ -18,7 +18,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import com.reply.skillshub.data.resume.Resume;
+import com.reply.skillshub.data.resume.ShortCv;
 import com.reply.skillshub.data.resumeexperience.ResumeExperience;
 import com.reply.skillshub.data.resumeskill.ResumeSkill;
 import com.reply.skillshub.data.user.BaseUser;
@@ -26,29 +26,28 @@ import com.reply.skillshub.data.user.BaseUser;
 @Service
 public class PowerPointService {
 
-  public PowerPointInformation createPowerPointDto(BaseUser baseUser, Resume resume, String language, String company) {
+  public PowerPointInformation createPowerPointDto(BaseUser baseUser, ShortCv resume, String language, String company) {
     return createPowerPointDto(baseUser, resume, language, company, false);
   }
 
-  public PowerPointInformation createPowerPointDto(BaseUser baseUser, Resume resume, String language, String company, boolean anonymous) {
+  public PowerPointInformation createPowerPointDto(BaseUser baseUser, ShortCv resume, String language, String company, boolean anonymous) {
     PowerPointInformation powerPointInformation = new PowerPointInformation();
 
     if (resume == null) {
       return powerPointInformation;
     }
 
-    resume.getOptionalRole().ifPresent(role -> powerPointInformation.setPosition(role.getLabel()));
+    powerPointInformation.setPosition(resume.getRole());
     powerPointInformation.setProfilePictureLocation(baseUser.getProfilePictureLocation());
     powerPointInformation.setCompany(company);
     powerPointInformation.setLanguage(language);
     powerPointInformation.setName(baseUser.getFullName());
     powerPointInformation.setEmail(baseUser.getEmail());
     powerPointInformation.setPhone(baseUser.getPhoneNumber());
-    resume.getOptionalRole().ifPresent(role -> powerPointInformation.setRole(role.getLabel()));
+    powerPointInformation.setRole(resume.getRole());
     powerPointInformation.setTitle(resume.getTitle());
     powerPointInformation.setSkills(resume.getSkills().stream().map(this::convertSkillToPowerPointSkill).toList());
-    powerPointInformation
-        .setIndustries(resume.getIndustries().stream().map((industry) -> industry.getLabel()).toList());
+    powerPointInformation.setIndustries(resume.getIndustries());
     powerPointInformation.setBackground(resume.getBackground());
     powerPointInformation
         .setExperiences(resume.getExperiences().stream().map(this::converExperienceToPowerPointExperience).toList());
@@ -96,18 +95,16 @@ public class PowerPointService {
   private PowerPointInformation.PowerPointExperience converExperienceToPowerPointExperience(
       ResumeExperience experience) {
     PowerPointInformation.PowerPointExperience powerPointExperience = new PowerPointInformation.PowerPointExperience();
-    powerPointExperience.setTitle(experience.getBasedOf().get().getTitle());
-    if (experience.getBasedOf().get().getOccupation() != null) {
-      powerPointExperience.setPosition(experience.getBasedOf().get().getOccupation().getLabel());
-    }
+    powerPointExperience.setTitle(experience.getTitle());
+    powerPointExperience.setPosition(experience.getRole());
     powerPointExperience.setDescriptions(experience.getDescriptions());
     return powerPointExperience;
   }
 
   private PowerPointInformation.PowerPointSkill convertSkillToPowerPointSkill(ResumeSkill skill) {
     PowerPointInformation.PowerPointSkill powerPointSkill = new PowerPointInformation.PowerPointSkill();
-    skill.getParent().ifPresent(parent -> powerPointSkill.setParentSkill(parent.getLabel()));
-    powerPointSkill.setChildSkills(skill.getSkills().stream().map((childSkill) -> childSkill.getLabel()).toList());
+    powerPointSkill.setParentSkill(skill.getParent());
+    powerPointSkill.setChildSkills(skill.getSkills());
     return powerPointSkill;
   }
 

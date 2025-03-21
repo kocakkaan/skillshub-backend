@@ -1,6 +1,5 @@
 package com.reply.skillshub.base.authentification;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -25,13 +24,14 @@ import com.reply.skillshub.data.userrole.UserRole;
 import com.reply.skillshub.openapi.model.LoginRequest;
 import com.reply.skillshub.openapi.model.LoginResponse;
 import com.reply.skillshub.openapi.model.SignupRequest;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class AuthentificationService {
 
-    @Value("${skillhub.server}") 
+    @Value("${skillhub.server}")
     private String server;
 
     private final UserService userService;
@@ -51,23 +51,22 @@ public class AuthentificationService {
             throw new UnconfirmedUser("A user must be confirmed to login. Please confirm your account");
         }
 
-        Authentication authenticationRequest =
-	        UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.getEmail(), loginRequest.getAccessCode());
-		Authentication authenticationResponse = this.authenticationManager.authenticate(authenticationRequest);
+        Authentication authenticationRequest = UsernamePasswordAuthenticationToken
+                .unauthenticated(loginRequest.getEmail(), loginRequest.getAccessCode());
+        Authentication authenticationResponse = this.authenticationManager.authenticate(authenticationRequest);
 
         var principal = (org.springframework.security.core.userdetails.User) authenticationResponse.getPrincipal();
 
         var jwt = jwtService.createJwtToken(principal.getUsername());
 
-        SecurityContextHolder.getContext().setAuthentication(new RememberMeAuthenticationToken(jwt, principal, principal.getAuthorities()));
-        
+        SecurityContextHolder.getContext()
+                .setAuthentication(new RememberMeAuthenticationToken(jwt, principal, principal.getAuthorities()));
+
         return new LoginResponse()
-                        .id(user.getId())
-                        .jwt(jwt)
-                        .role(user.getUserRole().name());
+                .id(user.getId())
+                .jwt(jwt)
+                .role(user.getUserRole().name());
     }
-
-
 
     public void signUpUser(SignupRequest signupRequest) {
         if (!signupRequest.getAccessCode().equals(signupRequest.getAccessCodeConfirmed())) {
@@ -94,7 +93,7 @@ public class AuthentificationService {
         } else {
             throw new UnconfirmedUser("The user could not be identified");
         }
-        
+
     }
 
     private EmailRequest createEmailConfirmationRequest(User user) {
@@ -114,7 +113,7 @@ public class AuthentificationService {
         emailLink.append(server);
         emailLink.append("/api/auth/confirmation/");
         emailLink.append(user.getConfirmationToken());
-        return emailLink.toString();     
+        return emailLink.toString();
     }
 
     private User convertSignupRequestToUser(SignupRequest signupRequest) {

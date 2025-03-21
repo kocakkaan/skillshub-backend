@@ -1,5 +1,7 @@
 package com.reply.skillshub.controllers.users;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,7 +22,6 @@ import com.reply.skillshub.data.industry.Industry;
 import com.reply.skillshub.data.resumeskill.ResumeSkill;
 import com.reply.skillshub.data.skill.Skill;
 import com.reply.skillshub.data.skill.SkillService;
-import com.reply.skillshub.data.speaks.Speaks;
 import com.reply.skillshub.data.user.BaseUser;
 import com.reply.skillshub.data.user.Employee;
 import com.reply.skillshub.data.user.EmployeeProfile;
@@ -42,9 +43,6 @@ import com.reply.skillshub.openapi.model.ResumeSkillDto;
 import com.reply.skillshub.openapi.model.SkillDto;
 import com.reply.skillshub.openapi.model.UserConfirmRequest;
 import com.reply.skillshub.services.SkillsAgentService;
-
-import java.util.List;
-import java.util.Optional;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -70,7 +68,8 @@ public class UsersControllerService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public ConfirmedUserResponse confirmUser(String userId, String confirmationToken, @Valid UserConfirmRequest userConfirmRequest) {
+    public ConfirmedUserResponse confirmUser(String userId, String confirmationToken,
+            @Valid UserConfirmRequest userConfirmRequest) {
         var user = userService.findById(userId, UserToConfirm.class);
 
         if (!user.getConfirmationToken().equals(confirmationToken)) {
@@ -171,8 +170,8 @@ public class UsersControllerService {
     private ResumeSkillDto convertToResumeSkillDto(ResumeSkill resumeSkill) {
         var resumeSkillDto = new ResumeSkillDto();
         resumeSkillDto.setId(resumeSkill.getId());
-        resumeSkill.getParent().ifPresent(parent -> resumeSkillDto.setParentSkill(Optional.of(convertToSkillDto(parent))));
-        resumeSkillDto.setRelatedEssentialSkills(resumeSkill.getSkills().stream().map(this::convertToSkillDto).toList());
+        resumeSkillDto.setChildren(resumeSkill.getSkills());
+        resumeSkillDto.setParent(resumeSkill.getParent());
         return resumeSkillDto;
     }
 
@@ -240,14 +239,15 @@ public class UsersControllerService {
     private List<EmployeeDto> getEmployeesAccessibleToUserBySearchString(String userId, List<String> keywords) {
         var companies = companyService.findMinimalCompanyByEmployeesId(userId);
         List<String> companyIds = companies.stream().map(MinimalCompany::getId).toList();
-        return userService.findByCompaniesAndKeyWords(companyIds, keywords).stream().map(this::convertUserToEmployeeDto).toList();
+        return userService.findByCompaniesAndKeyWords(companyIds, keywords).stream().map(this::convertUserToEmployeeDto)
+                .toList();
     }
 
     private EmployeeDto convertUserToEmployeeDto(Employee user) {
         return new EmployeeDto()
-            .id(user.getId())
-            .fullname(user.getFullName())
-            .role(user.getUserRole().name());
+                .id(user.getId())
+                .fullname(user.getFullName())
+                .role(user.getUserRole().name());
     }
 
     private User createUserFromRequest(CreateUserRequest createUserRequest) {
