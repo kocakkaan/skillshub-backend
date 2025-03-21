@@ -1,7 +1,5 @@
 package com.reply.skillshub.data.speaks;
 
-import org.springframework.data.neo4j.core.schema.GeneratedValue;
-import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.RelationshipId;
 import org.springframework.data.neo4j.core.schema.RelationshipProperties;
 import org.springframework.data.neo4j.core.schema.TargetNode;
@@ -18,7 +16,7 @@ public class Speaks {
 
     @RelationshipId
     private Long id;
-    
+
     @TargetNode
     private Language language;
 

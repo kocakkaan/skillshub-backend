@@ -1,7 +1,5 @@
 package com.reply.skillshub.data.resumeskill;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
 import com.reply.skillshub.base.exceptionhandling.exeptions.ResumeSkillNotFound;
@@ -25,5 +23,5 @@ public class ResumeSkillService {
   public ResumeSkill save(ResumeSkill resumeSkill) {
     return repository.save(resumeSkill);
   }
-  
+
 }

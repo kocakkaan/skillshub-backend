@@ -10,8 +10,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
 
 import com.reply.skillshub.data.userrole.UserRole;
@@ -32,7 +30,7 @@ public class WithMockUserSecurityContextFactory implements WithSecurityContextFa
 
         Authentication auth = new UsernamePasswordAuthenticationToken(user, "password", user.getAuthorities());
         context.setAuthentication(auth);
-        return context; 
+        return context;
     }
-    
+
 }

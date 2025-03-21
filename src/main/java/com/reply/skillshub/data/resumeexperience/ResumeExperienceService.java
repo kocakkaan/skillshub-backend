@@ -1,7 +1,5 @@
 package com.reply.skillshub.data.resumeexperience;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
 import com.reply.skillshub.base.exceptionhandling.exeptions.ExperienceNotFound;
@@ -11,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ResumeExperienceService {
-  
+
   private final ResumeExperienceRepository repository;
 
   public void deleteById(String id) {

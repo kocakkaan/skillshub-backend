@@ -1,18 +1,14 @@
 package com.reply.skillshub;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.neo4j.harness.Neo4j;
 import org.neo4j.harness.Neo4jBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest;
 import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.Neo4jContainer;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsAutoConfiguration;
 
@@ -25,12 +21,12 @@ public class BaseRepositoryTest {
 	@BeforeAll
 	static void initializeNeo4j() {
 
-		embeddedDatabaseServer = Neo4jBuilders.newInProcessBuilder() 
-			.withDisabledServer() 
-			.build();
+		embeddedDatabaseServer = Neo4jBuilders.newInProcessBuilder()
+				.withDisabledServer()
+				.build();
 	}
 
-	@DynamicPropertySource 
+	@DynamicPropertySource
 	static void neo4jProperties(DynamicPropertyRegistry registry) {
 
 		registry.add("spring.neo4j.uri", embeddedDatabaseServer::boltURI);
@@ -41,22 +37,22 @@ public class BaseRepositoryTest {
 	// @AfterAll
 	// static void stopNeo4j() {
 
-	// 	embeddedDatabaseServer.close(); 
+	// embeddedDatabaseServer.close();
 	// }
 
-
 	// @Container
-    // private static Neo4jContainer<?> neo4jContainer = new Neo4jContainer<>("neo4j:5.21.0").withAdminPassword("somePassword");
+	// private static Neo4jContainer<?> neo4jContainer = new
+	// Neo4jContainer<>("neo4j:5.21.0").withAdminPassword("somePassword");
 
 	// private static Neo4jContainer<?> neo4jContainer;
 
 	// @BeforeAll
 	// static void initializeNeo4j() {
-	// 	if (neo4jContainer == null) {
-	// 		neo4jContainer = new Neo4jContainer<>("neo4j:5.21.0")
-	// 		.withAdminPassword("somePassword");
-	// 		neo4jContainer.start();
-	// 	}
+	// if (neo4jContainer == null) {
+	// neo4jContainer = new Neo4jContainer<>("neo4j:5.21.0")
+	// .withAdminPassword("somePassword");
+	// neo4jContainer.start();
+	// }
 
 	// }
 
@@ -65,13 +61,13 @@ public class BaseRepositoryTest {
 		client.query("MATCH (n) DETACH DELETE n").run();
 	}
 
-    // @DynamicPropertySource
-    // static void neo4jProperties(DynamicPropertyRegistry registry) {
+	// @DynamicPropertySource
+	// static void neo4jProperties(DynamicPropertyRegistry registry) {
 
-    //     registry.add("spring.neo4j.uri", neo4jContainer::getBoltUrl);
-    //     registry.add("spring.neo4j.authentication.username", () -> "neo4j");
-    //     registry.add("spring.neo4j.authentication.password", neo4jContainer::getAdminPassword);
-    // }
-    
+	// registry.add("spring.neo4j.uri", neo4jContainer::getBoltUrl);
+	// registry.add("spring.neo4j.authentication.username", () -> "neo4j");
+	// registry.add("spring.neo4j.authentication.password",
+	// neo4jContainer::getAdminPassword);
+	// }
 
 }
