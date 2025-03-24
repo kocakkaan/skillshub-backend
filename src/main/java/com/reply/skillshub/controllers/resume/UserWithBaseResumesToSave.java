@@ -2,14 +2,12 @@ package com.reply.skillshub.controllers.resume;
 
 import java.util.List;
 
-import com.reply.skillshub.data.resume.ShortCv;
-
 import lombok.Data;
 
 @Data
-public class UserWithResumesToSave {
+public class UserWithBaseResumesToSave {
 
   private String id;
-  private List<ShortCv> resumes;
+  private List<BaseResume> resumes;
 
 }
