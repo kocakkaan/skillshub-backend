@@ -39,7 +39,7 @@ public class ValidationHandler<T> {
                 details.add(objectDetail);
             });
             
-            LOG.error("validation failed", violations);
+            LOG.error("validation failed {}", violations);
             
             throw new ValidationException(details);
         }
