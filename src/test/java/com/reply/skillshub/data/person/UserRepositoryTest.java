@@ -1,5 +1,7 @@
 package com.reply.skillshub.data.person;
 
+import static org.instancio.Select.field;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -7,7 +9,6 @@ import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.instancio.Instancio;
-import static org.instancio.Select.field;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest;
@@ -114,7 +115,7 @@ public class UserRepositoryTest extends BaseRepositoryTest {
         String cypherQuery = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
         client.query(cypherQuery).run();
 
-        List<Employee> javaList = userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", List.of("java"), List.of("java"));
+        List<Employee> javaList = userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", List.of("java", "spring", "certificate 2"), List.of("java", "spring", "certificate 2"));
         Assertions.assertThat(javaList.size()).isEqualTo(3);
 
         List<Employee> hibernateList = userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", List.of("hibernate"), List.of("hibernate"));
@@ -129,6 +130,43 @@ public class UserRepositoryTest extends BaseRepositoryTest {
 
         List<Employee> certAndHibernateList2 = userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", list, list);
         Assertions.assertThat(certAndHibernateList2.size()).isEqualTo(2);
+
+
+        list = List.of("java", "spring", "hibernate", "certificate 2", "certificate 1", "hibernate core");
+
+
+        List<Employee> certAndHibernateList3 = userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", list, list);
+        Assertions.assertThat(certAndHibernateList3.size()).isEqualTo(3);
+    }
+
+    @Test
+    void testFindByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(@Autowired Neo4jClient client) throws IOException {
+        ClassPathResource resource = new ClassPathResource("person/userbycertificateorskill.cypher");
+        String cypherQuery = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
+        client.query(cypherQuery).run();
+
+        List<Employee> javaList = userRepository.findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(List.of("1"), List.of("java", "spring", "certificate 2"), List.of("java", "spring", "certificate 2"));
+        Assertions.assertThat(javaList.size()).isEqualTo(3);
+
+        List<Employee> hibernateList = userRepository.findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(List.of("1"), List.of("hibernate"), List.of("hibernate"));
+        Assertions.assertThat(hibernateList.size()).isEqualTo(2);
+
+        var list = List.of("hibernate", "certificate 2");
+
+        List<Employee> certAndHibernateList = userRepository.findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(List.of("1"), list, list);
+        Assertions.assertThat(certAndHibernateList.size()).isEqualTo(3);
+
+        list = List.of("hibernate", "certificate 1");
+
+        List<Employee> certAndHibernateList2 = userRepository.findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(List.of("1"), list, list);
+        Assertions.assertThat(certAndHibernateList2.size()).isEqualTo(2);
+
+
+        list = List.of("java", "spring", "hibernate", "certificate 2", "certificate 1", "hibernate core");
+
+
+        List<Employee> certAndHibernateList3 = userRepository.findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(List.of("1", "2"), list, list);
+        Assertions.assertThat(certAndHibernateList3.size()).isEqualTo(3);
     }
 
     @Test
