@@ -1,5 +1,6 @@
 // Create a company
 create (c:Company {id: "1", name: "Company 1"})
+create (co:Company {id: "2", name: "Company 2"})
 
 // Create users
 create (u:User {id: "1", email: "user1"})
@@ -8,6 +9,7 @@ create (u2:User {id: "3", email: "user3"})
 
 // Create a user with a company
 create (u)-[:WORKS_FOR]->(c)
+CREATE (u1)-[:WORKS_FOR]->(co)
 create (u1)-[:WORKS_FOR]->(c)
 create (u2)-[:WORKS_FOR]->(c)
 

@@ -31,9 +31,10 @@ public interface UserRepository extends Neo4jRepository<User, String> {
     @Query("""
             match (u:User) - [r:WORKS_FOR] -> (c:Company {id: $companyId})
             optional match (u) - [h_s:HAS_SKILL] -> (skill:Skill where toLower(skill.label) in $skills)
+            with u, collect(skill) as skills
             optional match (u) - [h_c:HAS_CERTIFICATE] -> (cert:Certificate where toLower(cert.name) in $certificates)
-            with u, skill, cert
-            where skill is not null or cert is not null
+            with u, skills, collect(cert) as certs
+            where size(skills) > 0 or size(certs) > 0
             return u
             """)
     List<Employee> findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn(String companyId, List<String> skills, List<String> certificates);
@@ -42,9 +43,10 @@ public interface UserRepository extends Neo4jRepository<User, String> {
     @Query("""
         match (u:User) - [r:WORKS_FOR] -> (c:Company where c.id in $companyId)
         optional match (u) - [h_s:HAS_SKILL] -> (skill:Skill where toLower(skill.label) in $skills)
+        with u, collect(skill) as skills
         optional match (u) - [h_c:HAS_CERTIFICATE] -> (cert:Certificate where toLower(cert.name) in $certificates)
-        with u, skill, cert
-        where skill is not null or cert is not null
+        with u, skills, collect(cert) as certs
+        where size(skills) > 0 or size(certs) > 0
         return u
         """)
     List<Employee> findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(List<String> companyId, List<String> skills, List<String> certificates);
