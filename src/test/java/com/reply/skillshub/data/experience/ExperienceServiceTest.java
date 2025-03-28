@@ -2,6 +2,7 @@ package com.reply.skillshub.data.experience;
 
 import java.util.stream.Stream;
 
+import org.instancio.Instancio;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,11 +10,12 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.reply.skillshub.TestConfiguration;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ValidationException;
 import com.reply.skillshub.base.services.ValidationHandler;
+import com.reply.skillshub.data.occupation.Occupation;
 import com.reply.skillshub.data.user.User;
 
 @SpringBootTest(classes = {ExperienceService.class, ValidationHandler.class, TestConfiguration.class})
@@ -22,7 +24,7 @@ public class ExperienceServiceTest {
     @Autowired
     private ExperienceService experienceService;
 
-    @MockBean
+    @MockitoBean
     private ExperienceRepository experienceRepository;
 
     @Test
@@ -45,28 +47,18 @@ public class ExperienceServiceTest {
     private static Stream<Arguments> failingObjects() {
 
         return Stream.of(
-            Arguments.of(returnExperienceWithTwoUsers()),
             Arguments.of(returnExperienceWithEmptyTitle()),
-            Arguments.of(returnExperienceWithNullTitle()),
-            Arguments.of(returnExperienceWithNoUsers())
+            Arguments.of(returnExperienceWithNullTitle())
         );
     }
 
     private static Experience returnValidExperience() {
         Experience experience = new Experience();
         experience.setTitle("Test");
+        experience.setOccupation(Instancio.create(Occupation.class));
         return experience;
     }
 
-    private static Experience returnExperienceWithNoUsers() {
-        Experience experience = returnValidExperience();
-        return experience;
-    }
-
-    private static Experience returnExperienceWithTwoUsers() {
-        Experience experience = returnValidExperience();
-        return experience;
-    }
 
     private static Experience returnExperienceWithEmptyTitle() {
         Experience experience = returnValidExperience();

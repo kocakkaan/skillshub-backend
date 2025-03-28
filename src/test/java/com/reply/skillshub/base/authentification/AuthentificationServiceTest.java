@@ -1,5 +1,6 @@
 package com.reply.skillshub.base.authentification;
 
+import static org.instancio.Select.field;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 
@@ -15,10 +16,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.reply.skillshub.BaseUserImp;
 import com.reply.skillshub.base.exceptionhandling.exeptions.UnconfirmedUser;
 import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
 import com.reply.skillshub.base.services.EmailService;
-import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.openapi.model.LoginRequest;
 
@@ -51,10 +52,10 @@ public class AuthentificationServiceTest {
 
     @Test
     void unconfirmedUser_authentificationService() {
-        User user = Instancio.create(User.class);
-        user.setConfirmed(false);
-        doReturn(Optional.of(user)).when(userService).findBaseUserByEmail(anyString());
-        Assertions.assertThrows(UnconfirmedUser.class, () -> authentificationService.loginUser(Instancio.create(LoginRequest.class)));
+        var loginRequest = Instancio.create(LoginRequest.class);
+        var user = Instancio.of(BaseUserImp.class).set(field(BaseUserImp::getConfirmed), false).create();
+        doReturn(Optional.of(user)).when(userService).findBaseUserByEmail(loginRequest.getEmail());
+        Assertions.assertThrows(UnconfirmedUser.class, () -> authentificationService.loginUser(loginRequest));
     }
 
 

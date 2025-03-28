@@ -70,7 +70,7 @@ public class UserService {
         return userRepository.findByResumesId(id, BaseUser.class);
     }
 
-    public <T> T findById(String id, Class<T> userType) {
+    public <T> T findById(String id, Class<T> userType) throws UserNotFound {
         return userRepository.findById(id, userType).orElseThrow(() -> new UserNotFound());
     }
 

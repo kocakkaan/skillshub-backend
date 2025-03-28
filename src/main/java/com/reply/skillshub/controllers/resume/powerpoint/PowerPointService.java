@@ -114,7 +114,11 @@ public class PowerPointService {
   public XMLSlideShow createPowerPointFromTemplate(PowerPointInformation pointInformation) {
     try (FileInputStream fis = new FileInputStream("src/main/resources/template.pptx")) {
       XMLSlideShow slideShow = new XMLSlideShow(fis);
-      int slideToRemove = pointInformation.getLanguage().equals("en") ? 1 : 0;
+      var language = pointInformation.getLanguage();
+      if (language == null || language.isEmpty()) {
+        language = "en";
+      }
+      int slideToRemove = language.equals("en") ? 1 : 0;
       // XSLFSlideLayout relevantLayout = slideShow.findLayout(layoutToFind); At some point we will enable this
       slideShow.removeSlide(slideToRemove);
         var slide = slideShow.getSlides().get(0);
