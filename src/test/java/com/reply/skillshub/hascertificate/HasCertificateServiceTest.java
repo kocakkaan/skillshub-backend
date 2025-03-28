@@ -1,20 +1,21 @@
 package com.reply.skillshub.hascertificate;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+
+import org.instancio.Instancio;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
 import com.reply.skillshub.TestConfiguration;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ValidationException;
 import com.reply.skillshub.base.services.ValidationHandler;
 import com.reply.skillshub.data.hascertificate.HasCertificate;
 import com.reply.skillshub.data.hascertificate.HasCertificateRepository;
 import com.reply.skillshub.data.hascertificate.HasCertificateService;
-import org.instancio.Instancio;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 
 @SpringBootTest(classes = {HasCertificateService.class, ValidationHandler.class, TestConfiguration.class})
 public class HasCertificateServiceTest {
@@ -22,7 +23,7 @@ public class HasCertificateServiceTest {
     @Autowired
     private HasCertificateService hasCertificateService;
 
-    @MockBean
+    @MockitoBean
     private HasCertificateRepository hasCertificateRepository;
 
     @Test

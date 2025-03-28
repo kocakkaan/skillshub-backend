@@ -1,14 +1,16 @@
 package com.reply.skillshub.controllers.users;
 
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+
+import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import com.reply.skillshub.base.exceptionhandling.SkillhubExceptionHandler;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.user.User;
@@ -16,8 +18,6 @@ import com.reply.skillshub.openapi.model.CreateUserRequest;
 import com.reply.skillshub.openapi.model.UserConfirmRequest;
 
 import io.restassured.http.ContentType;
-
-import org.instancio.Instancio;
 
 @WebMvcTest(UsersController.class)
 @ContextConfiguration(classes = {UsersController.class, SkillhubExceptionHandler.class})
@@ -27,7 +27,7 @@ public class UsersControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private UsersControllerService usersControllerService;
 
     @Test
