@@ -1,13 +1,12 @@
 package com.reply.skillshub.controllers.certificate;
 
-import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
-import com.reply.skillshub.data.certificate.Certificate;
-import com.reply.skillshub.data.certificate.CertificateService;
-import com.reply.skillshub.data.hascertificate.HasCertificate;
-import com.reply.skillshub.data.hascertificate.HasCertificateService;
-import com.reply.skillshub.data.user.User;
-import com.reply.skillshub.data.user.UserService;
-import com.reply.skillshub.openapi.model.CertificateDto;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,11 +15,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
+import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
+import com.reply.skillshub.data.certificate.Certificate;
+import com.reply.skillshub.data.certificate.CertificateService;
+import com.reply.skillshub.data.hascertificate.HasCertificate;
+import com.reply.skillshub.data.hascertificate.HasCertificateService;
+import com.reply.skillshub.data.user.User;
+import com.reply.skillshub.data.user.UserService;
+import com.reply.skillshub.openapi.model.CertificateDto;
 
 @ExtendWith(MockitoExtension.class)
 public class CertificateControllerServiceTest {
@@ -41,10 +43,11 @@ public class CertificateControllerServiceTest {
     void testFindAllByUserId() {
         List<HasCertificate> hasCertificateList = Instancio.createList(HasCertificate.class);
         User user = Instancio.create(User.class);
+        user.setHasCertificates(hasCertificateList);
 
-        doReturn(user).when(userService).findById(any(String.class));
+        doReturn(user).when(userService).findById(user.getId());
 
-        List<HasCertificate> hasCertificatesListOutput = certificateControllerService.findAllByUserId("id");
+        List<HasCertificate> hasCertificatesListOutput = certificateControllerService.findAllByUserId(user.getId());
 
         Assertions.assertEquals(user.getHasCertificates().size(), hasCertificatesListOutput.size());
 
@@ -63,7 +66,7 @@ public class CertificateControllerServiceTest {
 
     @Test
     void test_successSaveCertificateForUser() {
-        User user = Instancio.create(User.class);
+        UserWithCertificates user = Instancio.create(UserWithCertificates.class);
         Certificate certificate = Instancio.create(Certificate.class);
         HasCertificate hasCertificate = new HasCertificate();
         CertificateDto certificateDto = Instancio.create(CertificateDto.class);
@@ -72,8 +75,8 @@ public class CertificateControllerServiceTest {
         hasCertificate.setIssuedDate(certificateDto.getIssuedDate());
         certificateDto.getExpirationDate().ifPresent((value) -> hasCertificate.setExpirationDate(value));
 
-        doReturn(Optional.of(certificate)).when(certificateService).findByName(any(String.class));
-        doReturn(user).when(userService).findById(any(String.class));
+        doReturn(Optional.of(certificate)).when(certificateService).findByName(certificateDto.getName());
+        doReturn(user).when(userService).findById(user.getId(), UserWithCertificates.class);
         doReturn(hasCertificate).when(hasCertificateService).save(any(HasCertificate.class));
 
         HasCertificate hasCertificateOutput = certificateControllerService.saveCertificateForUser(user.getId(), certificateDto);
@@ -90,9 +93,10 @@ public class CertificateControllerServiceTest {
         Certificate certificate = Instancio.create(Certificate.class);
         CertificateDto certificateDto = Instancio.create(CertificateDto.class);
 
-        doReturn(Optional.of(certificate)).when(certificateService).findByName(any(String.class));
-
-        Assertions.assertThrows(UserNotFound.class, () -> certificateControllerService.saveCertificateForUser("any", certificateDto));
+        doReturn(Optional.of(certificate)).when(certificateService).findByName(certificateDto.getName());
+        doThrow(UserNotFound.class).when(userService).findById("falseId", UserWithCertificates.class);
+        
+        Assertions.assertThrows(UserNotFound.class, () -> certificateControllerService.saveCertificateForUser("falseId", certificateDto));
     }
 
     @Test

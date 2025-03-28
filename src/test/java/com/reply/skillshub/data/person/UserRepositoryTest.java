@@ -93,9 +93,13 @@ public class UserRepositoryTest extends BaseRepositoryTest {
     }
 
     @Test
-    void testFindByCompanyIdInIdList() {
-        Company company = Instancio.of(Company.class).set(field(Company::getEmployees), List.of()).create();
-        Company company2 = Instancio.of(Company.class).set(field(Company::getEmployees), List.of()).create();
+    void testFindByCompanyIdInIdList(@Autowired Neo4jClient client) throws IOException {
+        ClassPathResource resource = new ClassPathResource("person/userbycertificateorskill.cypher");
+        String cypherQuery = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
+        client.query(cypherQuery).run();
+
+        Company company = Instancio.of(Company.class).set(field(Company::getEmployees), List.of()).set(field(Company::getId), "1").create();
+        Company company2 = Instancio.of(Company.class).set(field(Company::getEmployees), List.of()).set(field(Company::getId), "2").create();
 
         User userOneToSave = returnUserWithEmail();
         userOneToSave.getCompanies().add(company);
@@ -106,7 +110,10 @@ public class UserRepositoryTest extends BaseRepositoryTest {
         userRepository.save(userTwoToSave);
 
         List<Employee> foundList = userRepository.findByCompaniesIdIn(List.of(company.getId(), company2.getId())); 
-        Assertions.assertThat(foundList.size()).isEqualTo(2);
+        // It is six because of the test data in the cypher file
+        // and the two users we just saved
+        // One user in the test data belongs to both companies which is why it is twice in the foundList leading to six
+        Assertions.assertThat(foundList.size()).isEqualTo(6);
     }
 
     @Test
