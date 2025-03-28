@@ -1,6 +1,7 @@
 package com.reply.skillshub.controllers.resume;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.reply.skillshub.data.industry.Industry;
 import com.reply.skillshub.data.resume.ShortCv;
@@ -35,7 +36,7 @@ public class ResumeConverterUtil {
 
     public static ResumeSkill convertSkillDtoToEntity(ResumeSkillDto dto) {
         ResumeSkill skill = new ResumeSkill();
-        skill.setId(dto.getId());
+        skill.setId(dto.getId().orElse(""));
         skill.setSkills(dto.getChildren());
         skill.setParent(dto.getParent());
         return skill;
@@ -50,7 +51,7 @@ public class ResumeConverterUtil {
 
     public static ResumeSkillDto convertSkillToDto(ResumeSkill resumeSkill) {
         var resumeSkillDto = new ResumeSkillDto();
-        resumeSkillDto.setId(resumeSkill.getId());
+        resumeSkillDto.setId(Optional.ofNullable(resumeSkill.getId()));
         resumeSkillDto.setChildren(resumeSkill.getSkills());
         resumeSkillDto.setParent(resumeSkill.getParent());
         return resumeSkillDto;

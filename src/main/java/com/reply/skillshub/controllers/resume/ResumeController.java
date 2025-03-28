@@ -89,7 +89,7 @@ public class ResumeController implements ResumesApi {
   }
 
   @Override
-  public ResponseEntity<ShortCvDto> resumesResumeIdSkillsPut(String resumeId, List<ResumeSkillDto> resumeSkill) {
+  public ResponseEntity<List<ResumeSkillDto>> resumesResumeIdSkillsPut(String resumeId, List<ResumeSkillDto> resumeSkill) {
     return ResponseEntity.ok(resumeControllerService.updateResumeSkills(resumeId, resumeSkill));
   }
 

@@ -246,12 +246,12 @@ public class ResumeControllerService {
         return ResumeConverterUtil.convertResumeToDto(resume);
     }
 
-    public ShortCvDto updateResumeSkills(String id, List<ResumeSkillDto> skills) {
+    public List<ResumeSkillDto> updateResumeSkills(String id, List<ResumeSkillDto> skills) {
         ShortCv resume = resumeService.findById(id);
         List<ResumeSkill> resumeSkills = skills.stream().map(ResumeConverterUtil::convertSkillDtoToEntity).toList();
         resume.setSkills(resumeSkills);
-        resumeService.save(resume);
-        return ResumeConverterUtil.convertResumeToDto(resume);
+        var savedResume = resumeService.save(resume);
+        return savedResume.getSkills().stream().map(rSkill -> ResumeConverterUtil.convertSkillToDto(rSkill)).toList();
     }
 
     public List<String> updateResumeIndustries(String id, List<String> industries) {
