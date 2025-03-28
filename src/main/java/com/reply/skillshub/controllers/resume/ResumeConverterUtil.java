@@ -3,7 +3,6 @@ package com.reply.skillshub.controllers.resume;
 import java.util.List;
 
 import com.reply.skillshub.data.industry.Industry;
-import com.reply.skillshub.data.occupation.Occupation;
 import com.reply.skillshub.data.resume.ShortCv;
 import com.reply.skillshub.data.resumeexperience.ResumeExperience;
 import com.reply.skillshub.data.resumeskill.ResumeSkill;
@@ -14,7 +13,6 @@ import com.reply.skillshub.openapi.model.ResumeExperienceDto;
 import com.reply.skillshub.openapi.model.ResumeSkillDto;
 import com.reply.skillshub.openapi.model.ShortCvDto;
 import com.reply.skillshub.openapi.model.SkillDto;
-import com.reply.skillshub.openapi.model.UpdateResumeRoleRequest;
 
 public class ResumeConverterUtil {
 
@@ -58,21 +56,6 @@ public class ResumeConverterUtil {
         return resumeSkillDto;
     }
 
-    private static List<SkillDto> convertSkillsToDto(List<Skill> dtos) {
-        return dtos.stream().map(ResumeConverterUtil::convertSkillToDto).toList();
-    }
-
-    private static List<Skill> convertSkillsDtoToEntity(List<SkillDto> dtos) {
-        return dtos.stream().map(ResumeConverterUtil::convertSkillDtoToEntity).toList();
-    }
-
-    private static Skill convertSkillDtoToEntity(SkillDto dto) {
-        Skill skill = new Skill();
-        skill.setId(dto.getId());
-        skill.setLabel(dto.getLabel());
-        return skill;
-    }
-
     public static BaseResumeDto convertBaseResumeToDto(UserWithResumes.Resume resume) {
         var resumeDto = new BaseResumeDto();
         resumeDto.setTitle(resume.getTitle());
@@ -90,13 +73,6 @@ public class ResumeConverterUtil {
         resumeDto.setIndustries(resume.getIndustries());
         resumeDto.setExperiences(convertExperiences(resume.getExperiences()));
         return resumeDto;
-    }
-
-    private static UpdateResumeRoleRequest convertToUpdateResumeRoleRequest(Occupation occupation) {
-        UpdateResumeRoleRequest role = new UpdateResumeRoleRequest();
-        role.setLabel(occupation.getLabel());
-        role.setId(occupation.getId());
-        return role;
     }
 
     private static List<ResumeExperienceDto> convertExperiences(List<ResumeExperience> experiences) {

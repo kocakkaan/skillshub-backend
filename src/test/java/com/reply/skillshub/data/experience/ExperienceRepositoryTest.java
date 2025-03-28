@@ -58,8 +58,8 @@ public class ExperienceRepositoryTest {
         Experience savedExperience = experienceRepository.save(experience);
 
         Experience foundExperience = experienceRepository.findById(savedExperience.getId()).get();
-        Assertions.assertNotNull(savedExperience);
-        Assertions.assertNotNull(savedExperience.getId());
+        Assertions.assertNotNull(foundExperience);
+        Assertions.assertNotNull(foundExperience.getId());
     }
 
     private static Stream<Arguments> requiredParams() {

@@ -34,7 +34,6 @@ public class ShortCv {
     @NotEmpty
     private String title;
 
-    @NotEmpty
     private String role;
 
     private List<String> industries = new ArrayList<>();

@@ -11,8 +11,6 @@ import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ValidationException;
 import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.data.experience.ExperienceService;
-import com.reply.skillshub.data.industry.IndustryService;
-import com.reply.skillshub.data.occupation.Occupation;
 import com.reply.skillshub.data.resume.ResumeService;
 import com.reply.skillshub.data.resume.ShortCv;
 import com.reply.skillshub.data.resumeexperience.ResumeExperience;
@@ -21,7 +19,6 @@ import com.reply.skillshub.data.resumeskill.ResumeSkill;
 import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.openapi.model.BaseResumeDto;
 import com.reply.skillshub.openapi.model.CreateInitialResumeDto;
-import com.reply.skillshub.openapi.model.IndustryDto;
 import com.reply.skillshub.openapi.model.ResumeExperienceDto;
 import com.reply.skillshub.openapi.model.ResumeSkillDto;
 import com.reply.skillshub.openapi.model.ResumesResumeIdBackgroundPatchRequest;
@@ -38,7 +35,6 @@ import lombok.RequiredArgsConstructor;
 public class ResumeControllerService {
 
     private final ResumeService resumeService;
-    private final IndustryService industryService;
     private final ResumeExperienceService resumeExperienceService;
     private final ExperienceService experienceService;
     private final UserService userService;
@@ -117,8 +113,9 @@ public class ResumeControllerService {
         return resumeExperiences.stream().map(ResumeConverterUtil::convertResumeExperienceToDto).toList();
     }
 
-    public List<IndustryDto> findResumeIndustries(String id) {
-        return industryService.findAllByResumeId(id).stream().map(ResumeConverterUtil::convertIndustryToDto).toList();
+    public List<String> findResumeIndustries(String id) {
+        var resume = resumeService.findById(id, ResumeWithIndustries.class);
+        return resume.getIndustries();
     }
 
     public ResumeExperienceDto findResumeExperienceById(String id) {
@@ -132,7 +129,7 @@ public class ResumeControllerService {
         return ResumeConverterUtil.convertResumeExperienceToDto(resumeExperience);
     }
 
-    public void deleteResumeById(String id ) {
+    public void deleteResumeById(String id) {
         resumeService.deleteById(id);
     }
 
@@ -150,7 +147,8 @@ public class ResumeControllerService {
     }
 
     public ShortCvDto createResumeForCurrentUser(ShortCvDto resumeDto) {
-        return createResume(userService.findById(loadCurrentUser.loadSkillhubUserFromContext().getId(), UserWithBaseResumesToSave.class), resumeDto);
+        return createResume(userService.findById(loadCurrentUser.loadSkillhubUserFromContext().getId(),
+                UserWithBaseResumesToSave.class), resumeDto);
     }
 
     public ShortCvDto createInitialResumeForUser(String userId, CreateInitialResumeDto createInitialResumeDto) {
@@ -174,11 +172,13 @@ public class ResumeControllerService {
         // resume.setRole(resumeDto.getPositionField());
         resume.setIndustries(resumeDto.getIndustries());
         resume.setSkills(resumeDto.getSkills().stream().map(ResumeConverterUtil::convertSkillDtoToEntity).toList());
-        resume.setExperiences(resumeDto.getExperiences().stream().map((dto) -> ResumeConverterUtil.convertExperienDtoToEntity(dto)).toList());
+        resume.setExperiences(resumeDto.getExperiences().stream()
+                .map((dto) -> ResumeConverterUtil.convertExperienDtoToEntity(dto)).toList());
         return resume;
     }
 
-    private ShortCvDto createInitialResumeDto(UserWithBaseResumesToSave user, CreateInitialResumeDto createInitialResumeDto) {
+    private ShortCvDto createInitialResumeDto(UserWithBaseResumesToSave user,
+            CreateInitialResumeDto createInitialResumeDto) {
         ShortCv resume = new ShortCv();
         if (createInitialResumeDto.getBaseResumeId().isPresent()) {
             ShortCv baseResume = resumeService.findById(createInitialResumeDto.getBaseResumeId().get());
@@ -197,7 +197,6 @@ public class ResumeControllerService {
         return ResumeConverterUtil.convertResumeToDto(resume);
     }
 
-
     private ShortCvDto createResume(UserWithBaseResumesToSave user, ShortCvDto resumeDto) {
         ShortCv resume = new ShortCv();
         updateResumeWithDto(resume, resumeDto);
@@ -212,7 +211,8 @@ public class ResumeControllerService {
 
     public ShortCvDto updateExperiencesListForResume(String id, List<ResumeExperienceDto> experience) {
         ShortCv resume = resumeService.findById(id);
-        List<ResumeExperience> experiences = experience.stream().map((dto) -> ResumeConverterUtil.convertExperienDtoToEntity(dto)).toList();
+        List<ResumeExperience> experiences = experience.stream()
+                .map((dto) -> ResumeConverterUtil.convertExperienDtoToEntity(dto)).toList();
         resume.setExperiences(experiences);
         resumeService.save(resume);
         return ResumeConverterUtil.convertResumeToDto(resume);
@@ -239,13 +239,6 @@ public class ResumeControllerService {
         return ResumeConverterUtil.convertResumeToDto(resume);
     }
 
-    private Occupation convertToRoleToOccupation(UpdateResumeRoleRequest role) {
-        Occupation occupation = new Occupation();
-        occupation.setLabel(role.getLabel());
-        occupation.setId(role.getId());
-        return occupation;
-    }
-
     public ShortCvDto updateResumeBackground(String id, String background) {
         ShortCv resume = resumeService.findById(id);
         resume.setBackground(background);
@@ -261,11 +254,11 @@ public class ResumeControllerService {
         return ResumeConverterUtil.convertResumeToDto(resume);
     }
 
-    public ShortCvDto updateResumeIndustries(String id, List<IndustryDto> industries) {
-        ShortCv resume = resumeService.findById(id);
-        resume.setIndustries(industries.stream().map(IndustryDto::getLabel).toList());
-        resumeService.save(resume);
-        return ResumeConverterUtil.convertResumeToDto(resume);
+    public List<String> updateResumeIndustries(String id, List<String> industries) {
+        var resume = resumeService.findById(id, ResumeWithIndustries.class);
+        resume.setIndustries(industries);
+        var savedResume = resumeService.save(resume);
+        return savedResume.getIndustries();
     }
 
     public ShortCvDto addExperiencesToResume(String id, List<String> ids) {
@@ -281,6 +274,5 @@ public class ResumeControllerService {
         resumeService.save(resume);
         return ResumeConverterUtil.convertResumeToDto(resume);
     }
-
 
 }

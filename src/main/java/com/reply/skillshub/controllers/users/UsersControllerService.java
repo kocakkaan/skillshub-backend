@@ -18,9 +18,6 @@ import com.reply.skillshub.data.EmailRequest;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.company.CompanyService;
 import com.reply.skillshub.data.company.MinimalCompany;
-import com.reply.skillshub.data.industry.Industry;
-import com.reply.skillshub.data.resumeskill.ResumeSkill;
-import com.reply.skillshub.data.skill.Skill;
 import com.reply.skillshub.data.skill.SkillService;
 import com.reply.skillshub.data.user.BaseUser;
 import com.reply.skillshub.data.user.Employee;
@@ -34,12 +31,10 @@ import com.reply.skillshub.openapi.model.CreateUserRequest;
 import com.reply.skillshub.openapi.model.CreatedUserResponse;
 import com.reply.skillshub.openapi.model.EmployeeDto;
 import com.reply.skillshub.openapi.model.ExperienceDto;
-import com.reply.skillshub.openapi.model.IndustryDto;
 import com.reply.skillshub.openapi.model.LanguageDto;
 import com.reply.skillshub.openapi.model.OccupationalCategoryDto;
 import com.reply.skillshub.openapi.model.ProfileDto;
 import com.reply.skillshub.openapi.model.ProfileDtoResumesInner;
-import com.reply.skillshub.openapi.model.ResumeSkillDto;
 import com.reply.skillshub.openapi.model.SkillDto;
 import com.reply.skillshub.openapi.model.UserConfirmRequest;
 import com.reply.skillshub.services.SkillsAgentService;
@@ -167,19 +162,6 @@ public class UsersControllerService {
         return new LanguageDto(language.getLanguageName(), language.getLanguageCode().getName());
     }
 
-    private ResumeSkillDto convertToResumeSkillDto(ResumeSkill resumeSkill) {
-        var resumeSkillDto = new ResumeSkillDto();
-        resumeSkillDto.setId(resumeSkill.getId());
-        resumeSkillDto.setChildren(resumeSkill.getSkills());
-        resumeSkillDto.setParent(resumeSkill.getParent());
-        return resumeSkillDto;
-    }
-
-    private SkillDto convertToSkillDto(Skill skill) {
-        var skillDto = new SkillDto(skill.getId(), skill.getLabel());
-        return skillDto;
-    }
-
     private SkillDto convertToSkillDto(EmployeeProfile.Skill skill) {
         var skillDto = new SkillDto(skill.getId(), skill.getLabel());
         return skillDto;
@@ -207,10 +189,6 @@ public class UsersControllerService {
         // experienceDto.setIndustry(Optional.ofNullable(experience.getIndustries().stream().map(this::convertToIndustryDto).findFirst().orElse(null)));
         experienceDto.setOccupationalCategory(convertToOccupationalCategoryDto(experience.getOccupation()));
         return experienceDto;
-    }
-
-    private IndustryDto convertToIndustryDto(Industry industry) {
-        return new IndustryDto(industry.getId(), industry.getLabel());
     }
 
     private OccupationalCategoryDto convertToOccupationalCategoryDto(EmployeeProfile.Occupation occupation) {

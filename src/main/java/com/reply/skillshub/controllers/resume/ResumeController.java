@@ -16,7 +16,6 @@ import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.openapi.api.ResumesApi;
 import com.reply.skillshub.openapi.model.BaseResumeDto;
 import com.reply.skillshub.openapi.model.CreateInitialResumeDto;
-import com.reply.skillshub.openapi.model.IndustryDto;
 import com.reply.skillshub.openapi.model.ResumeExperienceDto;
 import com.reply.skillshub.openapi.model.ResumeSkillDto;
 import com.reply.skillshub.openapi.model.ResumesResumeIdBackgroundPatchRequest;
@@ -80,7 +79,7 @@ public class ResumeController implements ResumesApi {
   }
 
   @Override
-  public ResponseEntity<ShortCvDto> resumesResumeIdIndustriesPatch(String resumeId, List<IndustryDto> industries) {
+  public ResponseEntity<List<String>> resumesResumeIdIndustriesPatch(String resumeId, List<String> industries) {
     return ResponseEntity.ok(resumeControllerService.updateResumeIndustries(resumeId, industries));
   }
 
@@ -161,7 +160,7 @@ public class ResumeController implements ResumesApi {
   }
 
   @Override
-  public ResponseEntity<List<IndustryDto>> resumesResumeIdIndustriesGet(String resumeId) {
+  public ResponseEntity<List<String>> resumesResumeIdIndustriesGet(String resumeId) {
     return ResponseEntity.ok(resumeControllerService.findResumeIndustries(resumeId));
   }
 
