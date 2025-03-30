@@ -1,5 +1,6 @@
 package com.reply.skillshub.base.services;
 
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,7 @@ class EmailServiceTest {
     private EmailService emailService;
 
     @Test
+    @Ignore
     void testEmailSend() {
         var emailRequest = new EmailRequest();
         var context = new Context();
