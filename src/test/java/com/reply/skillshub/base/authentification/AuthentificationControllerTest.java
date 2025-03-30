@@ -1,5 +1,10 @@
 package com.reply.skillshub.base.authentification;
 
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+
+import java.util.stream.Stream;
+
+import org.instancio.Instancio;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,15 +13,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
-
-import java.util.stream.Stream;
-
-import org.instancio.Instancio;
 
 import com.reply.skillshub.base.exceptionhandling.SkillhubExceptionHandler;
 import com.reply.skillshub.openapi.model.ErrorDto;
@@ -30,7 +29,7 @@ public class AuthentificationControllerTest {
     @Autowired
 	private MockMvc mockMvc;
 
-	@MockBean
+	@MockitoBean
 	private AuthentificationService service;
 
     @Test

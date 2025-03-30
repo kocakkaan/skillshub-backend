@@ -2,7 +2,6 @@ package com.reply.skillshub.controllers.resume.powerpoint;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import lombok.Data;
 
@@ -24,7 +23,6 @@ public class PowerPointInformation {
     private List<PowerPointExperience> experiences = new ArrayList<>();
     private List<PowerPointSkill> skills = new ArrayList<>();
 
-
     @Data
     public static class PowerPointExperience {
         private String title;
@@ -37,5 +35,5 @@ public class PowerPointInformation {
         private String parentSkill;
         private List<String> childSkills;
     }
-    
+
 }

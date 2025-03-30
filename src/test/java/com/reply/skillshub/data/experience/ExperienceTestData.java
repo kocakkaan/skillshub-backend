@@ -1,7 +1,5 @@
 package com.reply.skillshub.data.experience;
 
-import com.reply.skillshub.data.user.User;
-
 public class ExperienceTestData {
 
     public static Experience returnValidExperience() {
@@ -9,5 +7,5 @@ public class ExperienceTestData {
         experience.setTitle("Test");
         return experience;
     }
-    
+
 }

@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 import com.reply.skillshub.controllers.resume.powerpoint.PowerPointInformation;
 import com.reply.skillshub.controllers.resume.powerpoint.PowerPointService;
-import com.reply.skillshub.data.resume.Resume;
+import com.reply.skillshub.data.resume.ShortCv;
 import com.reply.skillshub.data.resumeexperience.ResumeExperience;
 import com.reply.skillshub.data.resumeskill.ResumeSkill;
 
@@ -27,11 +27,11 @@ class PowerPointServiceTest {
     void testCreatePowerPointFromTemplate() {
         var user = Instancio.create(BaseUserTest.class);
         user.setProfilePictureLocation("pictures/test.jpg");
-        Resume resume = Instancio.of(Resume.class)
-            .generate(field(Resume::getBackground), gen -> gen.string().length(300))
+        ShortCv resume = Instancio.of(ShortCv.class)
+            .generate(field(ShortCv::getBackground), gen -> gen.string().length(300))
             .generate(field(ResumeSkill::getSkills), gen -> gen.collection().size(10))
             .generate(all(String.class).within(field(ResumeExperience::getDescriptions).toScope()), gen -> gen.string().length(200).lowerCase())
-            .generate(field(Resume::getExperiences),  gen -> gen.collection().maxSize(4).minSize(2))
+            .generate(field(ShortCv::getExperiences),  gen -> gen.collection().maxSize(4).minSize(2))
             .generate(field(ResumeExperience::getDescriptions), gen -> gen.collection().minSize(2).maxSize(4))
             .create();
         var service = new PowerPointService();
@@ -59,7 +59,7 @@ class PowerPointServiceTest {
 
     @ParameterizedTest
     @MethodSource("provideIncompleteResumes")
-    void testPowerPointIncompleteResume(Resume resume) {
+    void testPowerPointIncompleteResume(ShortCv resume) {
         var service = new PowerPointService();
         var user = Instancio.create(BaseUserTest.class);
         var information = service.createPowerPointDto(user, resume, "en", "ML_REPLY");
@@ -67,12 +67,12 @@ class PowerPointServiceTest {
     }
 
     private static Stream<Arguments> provideIncompleteResumes() {
-        var startingPoint = Instancio.of(Resume.class);
+        var startingPoint = Instancio.of(ShortCv.class);
         var completeResume = startingPoint.create();
-        var noBackground = startingPoint.set(field(Resume::getBackground), null).create();
-        var noSkills = startingPoint.set(field(Resume::getSkills), List.of()).create();
-        var noExperiences = startingPoint.set(field(Resume::getExperiences), List.of()).create();
-        var noIndustries = startingPoint.set(field(Resume::getIndustries), List.of()).create();
+        var noBackground = startingPoint.set(field(ShortCv::getBackground), null).create();
+        var noSkills = startingPoint.set(field(ShortCv::getSkills), List.of()).create();
+        var noExperiences = startingPoint.set(field(ShortCv::getExperiences), List.of()).create();
+        var noIndustries = startingPoint.set(field(ShortCv::getIndustries), List.of()).create();
         return Stream.of(
             Arguments.of(completeResume),
             Arguments.of(noBackground),

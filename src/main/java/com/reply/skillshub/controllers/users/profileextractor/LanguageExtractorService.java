@@ -53,17 +53,6 @@ public class LanguageExtractorService {
     return extractedLanguages;
   }
 
-  private List<LanguageCode> getLanguagesFromText(List<String> languages) {
-    List<LanguageCode> languageCodes = new ArrayList<>();
-    for (String language : languages) {
-      var foundLanguageCodes = LanguageCode.findByName(Pattern.compile(language, Pattern.CASE_INSENSITIVE));
-      if (foundLanguageCodes != null) {
-        languageCodes.addAll(foundLanguageCodes);
-      }
-    }
-    return languageCodes;
-  }
-
   private LanguageCode getLanguageFromText(String language) {
     var foundLanguageCodes = LanguageCode.findByName(Pattern.compile(language, Pattern.CASE_INSENSITIVE));
     return foundLanguageCodes != null ? foundLanguageCodes.get(0) : null;

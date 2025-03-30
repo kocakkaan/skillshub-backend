@@ -6,6 +6,8 @@ import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.reply.skillshub.data.experience.Experience;
@@ -22,6 +24,7 @@ public class ExperienceExtractorService {
 
   private final ExperienceService experienceService;
   private final OccupationService occupationService;
+  private static final Logger logger = LoggerFactory.getLogger(ExperienceExtractorService.class);
 
   public List<Experience> handleExtractedExperiences(List<CvInformation.Experience> experiences) {
     List<Experience> extractedExperiences = new ArrayList<>();
@@ -39,7 +42,16 @@ public class ExperienceExtractorService {
         newExperience.setOccupation(savedOccupation);
       }
 
-      newExperience.setDescriptions(experience.getDescriptions());
+      var descriptionLength = experience.getDescriptions().size();
+
+      if (descriptionLength > 6) {
+        descriptionLength = 6;
+        logger.info("Description length is greater than 6, truncating to 6");
+      }
+
+      var description = experience.getDescriptions().subList(0, descriptionLength);
+      newExperience.setDescriptions(description);
+
       newExperience.setStartDate(parseDate(experience.getStart_date()));
       newExperience.setEndDate(parseDate(experience.getEnd_date()));
       var savedExperience = experienceService.save(newExperience);

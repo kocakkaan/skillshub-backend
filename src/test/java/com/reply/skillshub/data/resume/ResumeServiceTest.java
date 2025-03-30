@@ -27,8 +27,8 @@ public class ResumeServiceTest {
         Assertions.assertDoesNotThrow(() -> resumeService.save(createResume()));
     }
 
-    Resume createResume() {
-        Resume resume = new Resume();
+    ShortCv createResume() {
+        ShortCv resume = new ShortCv();
         resume.setTitle("someTitle");
         resume.setBackground("someBackground");
         return resume;

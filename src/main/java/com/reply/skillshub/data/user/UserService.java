@@ -44,6 +44,10 @@ public class UserService {
         return userRepository.findByEmail(email, BaseUser.class);
     }
 
+    public boolean existsById(String userId) {
+        return userRepository.existsById(userId);
+    }
+
     public User findById(String id) {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFound());
     }

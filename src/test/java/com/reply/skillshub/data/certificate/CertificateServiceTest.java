@@ -3,24 +3,24 @@ package com.reply.skillshub.data.certificate;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
-import com.reply.skillshub.TestConfiguration;
-import com.reply.skillshub.base.exceptionhandling.exeptions.ValidationException;
-import com.reply.skillshub.base.services.ValidationHandler;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import java.util.Optional;
+import com.reply.skillshub.TestConfiguration;
+import com.reply.skillshub.base.exceptionhandling.exeptions.ValidationException;
+import com.reply.skillshub.base.services.ValidationHandler;
 
 @SpringBootTest(classes = {CertificateService.class, ValidationHandler.class, TestConfiguration.class})
 public class CertificateServiceTest {
     @Autowired
     private CertificateService certificateService;
 
-    @MockBean
+    @MockitoBean
     private CertificateRepository certificateRepository;
 
     @Test

@@ -23,36 +23,34 @@ public class SecurityConfig {
 
     private final AuthTokenFilter authTokenFilter;
 
-    public SecurityConfig(UserDetailsService userDetailsService, AuthTokenFilter authTokenFilter){
+    public SecurityConfig(UserDetailsService userDetailsService, AuthTokenFilter authTokenFilter) {
         this.userDetailsService = userDetailsService;
         this.authTokenFilter = authTokenFilter;
     }
 
     @Bean
-    public static PasswordEncoder passwordEncoder(){
+    public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-	@Bean
-	public AuthenticationManager authenticationManager(
-			UserDetailsService userDetailsService,
-			PasswordEncoder passwordEncoder) {
-		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-		authenticationProvider.setUserDetailsService(userDetailsService);
-		authenticationProvider.setPasswordEncoder(passwordEncoder);
+    @Bean
+    public AuthenticationManager authenticationManager(
+            UserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
 
-		return new ProviderManager(authenticationProvider);
-	}
+        return new ProviderManager(authenticationProvider);
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
-            .authorizeHttpRequests(expressionInterceptUrlRegistry ->
-                        expressionInterceptUrlRegistry
-                                .requestMatchers("/auth/login", "/error", "/auth/signup", "/auth/confirmation/*").permitAll()
-                                .anyRequest().authenticated()
-                                )
+                .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(expressionInterceptUrlRegistry -> expressionInterceptUrlRegistry
+                        .requestMatchers("/auth/login", "/error", "/auth/signup", "/auth/confirmation/*").permitAll()
+                        .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();

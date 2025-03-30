@@ -1,6 +1,5 @@
 package com.reply.skillshub.data.resume;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.neo4j.core.Neo4jTemplate;
@@ -19,17 +18,17 @@ public class ResumeService {
 
     private final ResumeRepository repository;
 
-    private final ValidationHandler<Resume> validationHandler = new ValidationHandler<>();
+    private final ValidationHandler<ShortCv> validationHandler = new ValidationHandler<>();
 
     public void deleteById(String id) {
         repository.deleteById(id);
     }
 
-    public Optional<Resume> findOptionalById(String id) {
+    public Optional<ShortCv> findOptionalById(String id) {
         return repository.findById(id);
     }
 
-    public Resume findById(String id) {
+    public ShortCv findById(String id) {
         return repository.findById(id).orElseThrow(() -> new ResumeNotFound());
     }
 
@@ -37,14 +36,14 @@ public class ResumeService {
         return repository.findById(id, type).orElseThrow(() -> new ResumeNotFound());
     }
 
-    public Resume save(Resume resume) {
+    public ShortCv save(ShortCv resume) {
         validationHandler.validate(resume);
         return repository.save(resume);
     }
 
     // T needs to have something in common with User.class
     public <T> T save(T resume) {
-        return neo4jTemplate.save(Resume.class).one(resume);
+        return neo4jTemplate.save(ShortCv.class).one(resume);
     }
-    
+
 }
