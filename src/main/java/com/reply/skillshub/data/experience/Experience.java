@@ -16,6 +16,7 @@ import com.reply.skillshub.data.industry.Industry;
 import com.reply.skillshub.data.language.Language;
 import com.reply.skillshub.data.occupation.Occupation;
 import com.reply.skillshub.data.skill.Skill;
+
 import jakarta.validation.constraints.AssertFalse;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotEmpty;
