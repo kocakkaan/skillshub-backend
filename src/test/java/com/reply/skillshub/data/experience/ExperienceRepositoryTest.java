@@ -2,6 +2,7 @@ package com.reply.skillshub.data.experience;
 
 import static org.instancio.Select.field;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -9,6 +10,7 @@ import org.instancio.Instancio;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -17,8 +19,12 @@ import org.neo4j.harness.Neo4jBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest;
+import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+
+import com.reply.skillshub.TestUtils;
+import com.reply.skillshub.data.occupation.Occupation;
 
 import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsAutoConfiguration;
 
@@ -60,6 +66,20 @@ public class ExperienceRepositoryTest {
         Experience foundExperience = experienceRepository.findById(savedExperience.getId()).get();
         Assertions.assertNotNull(foundExperience);
         Assertions.assertNotNull(foundExperience.getId());
+    }
+
+    @Test
+    void testSuccesfullSaveWithNullIdAndOccupation(@Autowired Neo4jClient client) throws IOException {
+        TestUtils.runScript(client, "experience/experience.cypher");
+        var occupation = new Occupation();
+        occupation.setId("1");
+        Experience experience = new Experience();
+        experience.setOccupation(occupation);
+        experience.setTitle("Test Title");
+        var savedExperience = experienceRepository.save(experience);
+        var foundExperience = experienceRepository.findById(savedExperience.getId());
+        Assertions.assertNotNull(foundExperience);
+        Assertions.assertNotNull(foundExperience.get().getId());
     }
 
     private static Stream<Arguments> requiredParams() {
