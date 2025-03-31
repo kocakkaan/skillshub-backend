@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
@@ -15,6 +14,7 @@ import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +30,8 @@ public class PowerPointService {
     return createPowerPointDto(baseUser, resume, language, company, false);
   }
 
-  public PowerPointInformation createPowerPointDto(BaseUser baseUser, ShortCv resume, String language, String company, boolean anonymous) {
+  public PowerPointInformation createPowerPointDto(BaseUser baseUser, ShortCv resume, String language, String company,
+      boolean anonymous) {
     PowerPointInformation powerPointInformation = new PowerPointInformation();
 
     if (resume == null) {
@@ -75,9 +76,9 @@ public class PowerPointService {
     graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
     graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
     graphics.setRenderingHint(Drawable.BUFFERED_IMAGE, new WeakReference<>(img));
-    
+
     graphics.scale(scale, scale);
-    
+
     slide.draw(graphics);
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -109,21 +110,23 @@ public class PowerPointService {
   }
 
   public XMLSlideShow createPowerPointFromTemplate(PowerPointInformation pointInformation) {
-    try (FileInputStream fis = new FileInputStream("src/main/resources/template.pptx")) {
+    ClassPathResource resource = new ClassPathResource("template.pptx");
+    try (var fis = resource.getInputStream()) {
       XMLSlideShow slideShow = new XMLSlideShow(fis);
       var language = pointInformation.getLanguage();
       if (language == null || language.isEmpty()) {
         language = "en";
       }
       int slideToRemove = language.equals("en") ? 1 : 0;
-      // XSLFSlideLayout relevantLayout = slideShow.findLayout(layoutToFind); At some point we will enable this
+      // XSLFSlideLayout relevantLayout = slideShow.findLayout(layoutToFind); At some
+      // point we will enable this
       slideShow.removeSlide(slideToRemove);
-        var slide = slideShow.getSlides().get(0);
-        for (var shape : slide.getShapes()) {
-          FieldHandler
-              .findByLabel(shape.getShapeName())
-              .ifPresent((handler) -> handler.handleShape(shape, pointInformation));
-        }
+      var slide = slideShow.getSlides().get(0);
+      for (var shape : slide.getShapes()) {
+        FieldHandler
+            .findByLabel(shape.getShapeName())
+            .ifPresent((handler) -> handler.handleShape(shape, pointInformation));
+      }
       return slideShow;
     } catch (IOException e) {
       return null;
