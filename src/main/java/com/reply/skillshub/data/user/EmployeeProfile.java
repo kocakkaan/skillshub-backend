@@ -14,7 +14,12 @@ public interface EmployeeProfile extends Employee {
   public List<Resume> getResumes();
   public List<HasCertificate> getHasCertificates();
   public List<Speaks> getSpeaks();
+  public List<Industry> getIndustries();
 
+  interface Industry {
+    public String getId();
+    public String getLabel();
+  }
 
   interface Speaks {
     public String getId();
@@ -38,7 +43,9 @@ public interface EmployeeProfile extends Employee {
     public List<String> getDescriptions();
     public Occupation getOccupation();
     public List<Skill> getSkills();
-
+    public LocalDate getStartDate();
+    public LocalDate getEndDate();
+    public List<Industry> getIndustries();
   }
 
   interface Occupation {

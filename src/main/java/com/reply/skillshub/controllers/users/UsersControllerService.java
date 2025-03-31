@@ -184,8 +184,8 @@ public class UsersControllerService {
         experienceDto.setTitle(experience.getTitle());
         experienceDto.setResponsibilities(experience.getDescriptions());
         experienceDto.setSkills(experience.getSkills().stream().map(this::convertToSkillDto).toList());
-        // experienceDto.setStartDate(Optional.ofNullable(experience.getStartDate()));
-        // experienceDto.setEndDate(Optional.ofNullable(experience.getEndDate()));
+        experienceDto.setStartDate(Optional.ofNullable(experience.getStartDate()));
+        experienceDto.setEndDate(Optional.ofNullable(experience.getEndDate()));
         // experienceDto.setIndustry(Optional.ofNullable(experience.getIndustries().stream().map(this::convertToIndustryDto).findFirst().orElse(null)));
         experienceDto.setOccupationalCategory(convertToOccupationalCategoryDto(experience.getOccupation()));
         return experienceDto;
