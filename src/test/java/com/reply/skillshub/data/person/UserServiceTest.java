@@ -26,13 +26,14 @@ public class UserServiceTest extends BaseRepositoryTest {
 
     }
 
-    @Test void failure_PersonWithJustNullValues() {
+    @Test
+    void failure_PersonWithJustNullValues() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> userService.save(new User()));
     }
 
     @ParameterizedTest
     @NullAndEmptySource
-    @ValueSource(strings = {"lalala"})
+    @ValueSource(strings = { "lalala" })
     void failure_PersonWithFalseEmailOrNull(String email) {
         User person = returnPersonWithEmail();
         person.setEmail(email);
@@ -65,6 +66,4 @@ public class UserServiceTest extends BaseRepositoryTest {
         return personToSave1;
     }
 
-
-    
 }

@@ -19,6 +19,7 @@ import org.springframework.util.StreamUtils;
 
 import com.neovisionaries.i18n.LanguageCode;
 import com.reply.skillshub.BaseRepositoryTest;
+import com.reply.skillshub.TestUtils;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.hascertificate.HasCertificate;
 import com.reply.skillshub.data.language.Language;
@@ -94,9 +95,7 @@ public class UserRepositoryTest extends BaseRepositoryTest {
 
     @Test
     void testFindByCompanyIdInIdList(@Autowired Neo4jClient client) throws IOException {
-        ClassPathResource resource = new ClassPathResource("person/userbycertificateorskill.cypher");
-        String cypherQuery = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
-        client.query(cypherQuery).run();
+        TestUtils.runScript(client, "person/userbycertificateorskill.cypher");
 
         Company company = Instancio.of(Company.class).set(field(Company::getEmployees), List.of()).set(field(Company::getId), "1").create();
         Company company2 = Instancio.of(Company.class).set(field(Company::getEmployees), List.of()).set(field(Company::getId), "2").create();

@@ -1,6 +1,5 @@
 package com.reply.skillshub.base.services;
 
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +16,6 @@ class EmailServiceTest {
     private EmailService emailService;
 
     @Test
-    @Ignore
     void testEmailSend() {
         var emailRequest = new EmailRequest();
         var context = new Context();
@@ -25,6 +23,21 @@ class EmailServiceTest {
         context.setVariable("link", "https://chat.mistral.ai");
         context.setVariable("username", "Maurits De Roover");
         emailRequest.setTemplate("confirmation");
+        emailRequest.setRecipient("maurits.de.roover@outlook.com");
+        emailRequest.setSubject("Test");
+        emailRequest.setContext(context);
+        emailService.sendEmail(emailRequest);
+    }
+
+    
+    @Test
+    void testNewUserSend() {
+        var emailRequest = new EmailRequest();
+        var context = new Context();
+        context.setVariable("title", "Is this a title?");
+        context.setVariable("link", "https://chat.mistral.ai");
+        context.setVariable("username", "Maurits De Roover");
+        emailRequest.setTemplate("new-user");
         emailRequest.setRecipient("maurits.de.roover@outlook.com");
         emailRequest.setSubject("Test");
         emailRequest.setContext(context);
