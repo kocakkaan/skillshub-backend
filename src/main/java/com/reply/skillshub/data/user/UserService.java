@@ -37,7 +37,7 @@ public class UserService {
     }
 
     public <T> Optional<T> findUserByConfirmationToken(String token, Class<T> userType) {
-        return userRepository.findByConfirmationToken(token);
+        return userRepository.findByConfirmationToken(token, userType);
     }
 
     public Optional<BaseUser> findBaseUserByEmail(String email) {

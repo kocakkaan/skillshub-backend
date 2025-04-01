@@ -29,13 +29,15 @@ public class UsersController implements UsersApi {
     @Override
     public ResponseEntity<CreatedUserResponse> companyCompanyIdEmployeesPost(String companyId,
             CreateUserRequest createUserRequest) {
-        return ResponseEntity.status(201).body(usersControllerService.addNewUserToCompany(companyId, createUserRequest));
+        return ResponseEntity.status(201)
+                .body(usersControllerService.addNewUserToCompany(companyId, createUserRequest));
     }
 
     @Override
-    public ResponseEntity<ConfirmedUserResponse> usersUserIdConfirmationConfirmationTokenPut(String userId,
-            String confirmationToken, @Valid UserConfirmRequest userConfirmRequest) {
-        return ResponseEntity.status(201).body(usersControllerService.confirmUser(userId, confirmationToken, userConfirmRequest));
+    public ResponseEntity<ConfirmedUserResponse> usersConfirmationConfirmationTokenPut(
+            String confirmationToken, UserConfirmRequest userConfirmRequest) {
+        return ResponseEntity.status(201)
+                .body(usersControllerService.confirmUser(confirmationToken, userConfirmRequest));
     }
 
     @Override
@@ -69,5 +71,5 @@ public class UsersController implements UsersApi {
     public ResponseEntity<ProfileDto> usersUserIdProfilePost(String userId, MultipartFile body) {
         return ResponseEntity.ok(usersControllerService.extractInformationFromCvPdf(userId, body));
     }
-    
+
 }
