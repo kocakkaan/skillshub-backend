@@ -49,7 +49,7 @@ public class SecurityConfig {
         http
                 .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(expressionInterceptUrlRegistry -> expressionInterceptUrlRegistry
-                        .requestMatchers("/auth/login", "/error", "/auth/signup", "/auth/confirmation/*").permitAll()
+                        .requestMatchers("/auth/login", "/error", "/auth/signup", "/auth/confirmation/*", "/users/confirmation/*").permitAll()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
