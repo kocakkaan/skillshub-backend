@@ -40,6 +40,7 @@ import com.reply.skillshub.openapi.model.SkillDto;
 import com.reply.skillshub.openapi.model.UserConfirmRequest;
 import com.reply.skillshub.services.SkillsAgentService;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 
@@ -66,7 +67,7 @@ public class UsersControllerService {
     @Value("${skillhub.frontend}")
     private String server;
 
-    public ConfirmedUserResponse confirmUser(String confirmationToken, UserConfirmRequest userConfirmRequest) {
+    public ConfirmedUserResponse confirmUser(String confirmationToken, @Valid UserConfirmRequest userConfirmRequest) {
         var user = userService.findUserByConfirmationToken(confirmationToken, UserToConfirm.class);
 
         if (user.isEmpty()) {
