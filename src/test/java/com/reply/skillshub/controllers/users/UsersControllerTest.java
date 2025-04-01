@@ -73,7 +73,7 @@ public class UsersControllerTest {
             .mockMvc(mockMvc)
             .contentType(ContentType.JSON)
             .body(Instancio.create(UserConfirmRequest.class))
-            .when().put("/users/{userId}/confirmation/{confirmationToken}", user.getId(), user.getConfirmationToken())
+            .when().put("/users/confirmation/{confirmationToken}", user.getConfirmationToken())
             .then().assertThat().statusCode(201);
     }
 
