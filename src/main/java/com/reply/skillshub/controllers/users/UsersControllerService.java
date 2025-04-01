@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,18 +64,22 @@ public class UsersControllerService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public ConfirmedUserResponse confirmUser(String userId, String confirmationToken,
-            @Valid UserConfirmRequest userConfirmRequest) {
-        var user = userService.findById(userId, UserToConfirm.class);
+    @Value("${skillhub.frontend}")
+    private String server;
 
-        if (!user.getConfirmationToken().equals(confirmationToken)) {
+    public ConfirmedUserResponse confirmUser(String confirmationToken, @Valid UserConfirmRequest userConfirmRequest) {
+        var user = userService.findUserByConfirmationToken(confirmationToken, UserToConfirm.class);
+
+        if (user.isEmpty()) {
             throw new InvalidConfirmationToken();
         }
 
-        user.setPassword(passwordEncoder.encode(userConfirmRequest.getPassword()));
-        user.setConfirmed(true);
+        var userToConfirm = user.get();
 
-        return createConfirmedUserResponse(userService.save(user));
+        userToConfirm.setPassword(passwordEncoder.encode(userConfirmRequest.getPassword()));
+        userToConfirm.setConfirmed(true);
+
+        return createConfirmedUserResponse(userService.save(userToConfirm));
     }
 
     private ConfirmedUserResponse createConfirmedUserResponse(UserToConfirm user) {
@@ -255,9 +260,14 @@ public class UsersControllerService {
         // email.setMessage(createNewUserMessage());
         email.setTemplate("new-user");
         Context context = new Context();
-        context.setVariable("link", "someLink");
+        var stringBuilder = new StringBuilder();
+        stringBuilder.append(server);
+        stringBuilder.append("/confirm/");
+        stringBuilder.append(user.getConfirmationToken());
+        context.setVariable("link", stringBuilder.toString());
         context.setVariable("username", user.getFullname());
         email.setSubject("An account has been created for you");
+        email.setContext(context);
         return email;
     }
 
