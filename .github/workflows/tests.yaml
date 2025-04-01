@@ -28,4 +28,4 @@ jobs:
         distribution: 'temurin'
 
     - name: Run tests with Maven
-      run: mvn test
+      run: mvn clean test
