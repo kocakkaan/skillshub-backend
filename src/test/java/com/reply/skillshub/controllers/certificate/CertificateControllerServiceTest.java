@@ -19,7 +19,6 @@ import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
 import com.reply.skillshub.data.certificate.Certificate;
 import com.reply.skillshub.data.certificate.CertificateService;
 import com.reply.skillshub.data.hascertificate.HasCertificate;
-import com.reply.skillshub.data.hascertificate.HasCertificateService;
 import com.reply.skillshub.data.user.User;
 import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.openapi.model.CertificateDto;
@@ -35,9 +34,6 @@ public class CertificateControllerServiceTest {
 
     @Mock
     private UserService userService;
-
-    @Mock
-    private HasCertificateService hasCertificateService;
 
     @Test
     void testFindAllByUserId() {
@@ -77,7 +73,6 @@ public class CertificateControllerServiceTest {
 
         doReturn(Optional.of(certificate)).when(certificateService).findByName(certificateDto.getName());
         doReturn(user).when(userService).findById(user.getId(), UserWithCertificates.class);
-        doReturn(hasCertificate).when(hasCertificateService).save(any(HasCertificate.class));
 
         HasCertificate hasCertificateOutput = certificateControllerService.saveCertificateForUser(user.getId(), certificateDto);
 
