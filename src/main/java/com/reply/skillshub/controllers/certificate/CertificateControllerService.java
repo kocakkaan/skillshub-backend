@@ -1,16 +1,17 @@
 package com.reply.skillshub.controllers.certificate;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
 import com.reply.skillshub.data.certificate.Certificate;
 import com.reply.skillshub.data.certificate.CertificateService;
 import com.reply.skillshub.data.hascertificate.HasCertificate;
-import com.reply.skillshub.data.hascertificate.HasCertificateService;
 import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.openapi.model.CertificateDto;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +19,6 @@ public class CertificateControllerService {
 
     private final UserService userService;
     private final CertificateService certificateService;
-    private final HasCertificateService hasCertificateService;
 
     public List<HasCertificate> findAllByUserId(String userId) {
         return userService.findById(userId).getHasCertificates();
@@ -41,10 +41,9 @@ public class CertificateControllerService {
         hasCertificate.setIssuedDate(certificateDto.getIssuedDate());
         hasCertificate.setExpirationDate(certificateDto.getExpirationDate().orElse(null));
 
-        HasCertificate savedHasCertificate = hasCertificateService.save(hasCertificate);
-        user.getHasCertificates().add(savedHasCertificate);
+        user.getHasCertificates().add(hasCertificate);
         userService.save(user);
 
-        return savedHasCertificate;
+        return hasCertificate;
     }
 }
