@@ -1,12 +1,5 @@
 package com.reply.skillshub.controllers.resume;
 
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.instancio.Instancio;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
 import static org.instancio.Select.all;
 import static org.instancio.Select.field;
 
@@ -14,6 +7,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
+
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.instancio.Instancio;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import com.reply.skillshub.controllers.resume.powerpoint.PowerPointInformation;
 import com.reply.skillshub.controllers.resume.powerpoint.PowerPointService;
@@ -45,7 +45,6 @@ class PowerPointServiceTest {
             var test = new FileOutputStream("test.pptx");
             ppt.write(test);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

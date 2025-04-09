@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import org.slf4j.Logger;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -16,13 +17,17 @@ import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.openapi.api.ResumesApi;
 import com.reply.skillshub.openapi.model.BaseResumeDto;
 import com.reply.skillshub.openapi.model.CreateInitialResumeDto;
+import com.reply.skillshub.openapi.model.ExportRequest;
 import com.reply.skillshub.openapi.model.ResumeExperienceDto;
 import com.reply.skillshub.openapi.model.ResumeSkillDto;
 import com.reply.skillshub.openapi.model.ResumesResumeIdBackgroundPatchRequest;
 import com.reply.skillshub.openapi.model.ShortCvDto;
 import com.reply.skillshub.openapi.model.UpdateResumeRoleRequest;
 import com.reply.skillshub.openapi.model.UpdateResumeTitleRequest;
+import com.reply.skillshub.openapi.model.UserWithShortCvDtos;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -32,6 +37,7 @@ public class ResumeController implements ResumesApi {
   private final ResumeControllerService resumeControllerService;
   private final PowerPointService powerPointService;
   private final UserService userService;
+  private static Logger logger = org.slf4j.LoggerFactory.getLogger(ResumeController.class);
 
   @Override
   public ResponseEntity<Resource> exportToPptx(String resumeId, String language, String company) {
@@ -42,9 +48,9 @@ public class ResumeController implements ResumesApi {
     var test = new ByteArrayOutputStream();
     try {
       ppt.write(test);
+      ppt.close();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      logger.error("Error while writing PowerPoint to ByteArrayOutputStream", e);
     }
 
     Resource resource = new ByteArrayResource(test.toByteArray());
@@ -185,6 +191,36 @@ public class ResumeController implements ResumesApi {
   @Override
   public ResponseEntity<ShortCvDto> usersUserIdResumesAutoGenerationPost(String userId, String requirements) {
     return ResponseEntity.ok(resumeControllerService.autoGenerateShortCv(userId, requirements));
+  }
+
+  @Override
+  public ResponseEntity<Resource> export(@Valid ExportRequest exportRequest) {
+    var ppt = resumeControllerService.createPowerPointForMultipleShortCvs(exportRequest);
+    var boas = new ByteArrayOutputStream();
+    try {
+      ppt.write(boas);
+      ppt.close();
+    } catch (IOException e) {
+      logger.error("Error while writing PowerPoint to ByteArrayOutputStream", e);
+    }
+
+    Resource resource = new ByteArrayResource(boas.toByteArray());
+
+    // Set the response headers
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(
+        MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.presentationml.presentation"));
+    headers.setContentDispositionFormData("attachment", "presentation.pptx");
+
+    // Return the presentation as a response entity
+    return ResponseEntity.ok()
+        .headers(headers)
+        .body(resource);
+  }
+
+  @Override
+  public ResponseEntity<List<UserWithShortCvDtos>> resumesGet(@NotNull @Valid List<String> users) {
+    return ResponseEntity.ok(resumeControllerService.findResumesForUsers(users));
   }
 
 }

@@ -1,7 +1,10 @@
 package com.reply.skillshub.controllers.resume;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,6 +12,9 @@ import org.springframework.stereotype.Service;
 import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ValidationException;
 import com.reply.skillshub.base.services.LoadCurrentUser;
+import com.reply.skillshub.controllers.resume.interfaces.UserWithShortCvs;
+import com.reply.skillshub.controllers.resume.powerpoint.PowerPointInformation;
+import com.reply.skillshub.controllers.resume.powerpoint.PowerPointService;
 import com.reply.skillshub.data.experience.ExperienceService;
 import com.reply.skillshub.data.resume.ResumeService;
 import com.reply.skillshub.data.resume.ShortCv;
@@ -18,12 +24,14 @@ import com.reply.skillshub.data.resumeskill.ResumeSkill;
 import com.reply.skillshub.data.user.UserService;
 import com.reply.skillshub.openapi.model.BaseResumeDto;
 import com.reply.skillshub.openapi.model.CreateInitialResumeDto;
+import com.reply.skillshub.openapi.model.ExportRequest;
 import com.reply.skillshub.openapi.model.ResumeExperienceDto;
 import com.reply.skillshub.openapi.model.ResumeSkillDto;
 import com.reply.skillshub.openapi.model.ResumesResumeIdBackgroundPatchRequest;
 import com.reply.skillshub.openapi.model.ShortCvDto;
 import com.reply.skillshub.openapi.model.UpdateResumeRoleRequest;
 import com.reply.skillshub.openapi.model.UpdateResumeTitleRequest;
+import com.reply.skillshub.openapi.model.UserWithShortCvDtos;
 import com.reply.skillshub.services.SkillsAgentService;
 
 import lombok.RequiredArgsConstructor;
@@ -38,7 +46,51 @@ public class ResumeControllerService {
     private final UserService userService;
     private final LoadCurrentUser loadCurrentUser;
     private final SkillsAgentService skillsAgentService;
+    private final PowerPointService powerPointService;
     private static final Logger logger = LoggerFactory.getLogger(ResumeControllerService.class);
+
+    public XMLSlideShow createPowerPointForMultipleShortCvs(ExportRequest exportRequest) {
+        List<PowerPointInformation> pptInfoList = new ArrayList<>();
+        for (var selection : exportRequest.getSelection()) {
+            if (selection.getResumeId() == null || selection.getResumeId().isBlank()) {
+                throw new ValidationException("Resume ID must not be null or empty");
+            }
+            if (selection.getUserId() == null || selection.getUserId().isBlank()) {
+                throw new ValidationException("User ID must not be null or empty");
+            }
+            var resume = resumeService.findById(selection.getResumeId());
+            var user = userService.findByResumeId(selection.getResumeId());
+            var pptInfo = powerPointService.createPowerPointDto(user, resume, "en", "reply");
+
+            pptInfoList.add(pptInfo);
+        }
+
+        return powerPointService.createSlideShowFromMultipleTemplates(pptInfoList);
+    }
+
+    public List<UserWithShortCvDtos> findResumesForUsers(List<String> users) {
+        if (users == null || users.isEmpty()) {
+            throw new ValidationException("Users must not be empty");
+        }
+
+        var userWithShortCvDtosList = users.stream().map(userId -> {
+            var user = userService.findById(userId, UserWithShortCvs.class);
+            var userWithShortCvDtos = new UserWithShortCvDtos();
+            userWithShortCvDtos.setUserId(user.getId());
+
+            var baseResumes = user.getResumes().stream()
+                    .map(resume -> {
+                        var baseResume = new BaseResumeDto(resume.getId(), resume.getTitle());
+                        baseResume.setRole(Optional.ofNullable(resume.getRole()));
+                        return baseResume;
+                    }).toList();
+
+            userWithShortCvDtos.setShortCvs(baseResumes);
+            return userWithShortCvDtos;
+        }).toList();
+
+        return userWithShortCvDtosList;
+    }
 
     public ShortCvDto autoGenerateShortCv(String userId, String requirements) {
         if (userService.existsById(userId) == false) {
