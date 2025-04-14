@@ -5,8 +5,14 @@ import java.util.List;
 public interface UserWithShortCvs {
 
     String getId();
+    String getFirstName();
+    String getLastName();
 
     List<ShortCvWithBaseResume> getResumes();
+
+    default String getFullName() {
+        return getFirstName().concat(" ").concat(getLastName());
+    }
 
     interface ShortCvWithBaseResume {
 

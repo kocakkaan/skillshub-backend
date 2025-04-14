@@ -77,6 +77,7 @@ public class ResumeControllerService {
             var user = userService.findById(userId, UserWithShortCvs.class);
             var userWithShortCvDtos = new UserWithShortCvDtos();
             userWithShortCvDtos.setUserId(user.getId());
+            userWithShortCvDtos.setUserName(user.getFullName());
 
             var baseResumes = user.getResumes().stream()
                     .map(resume -> {
