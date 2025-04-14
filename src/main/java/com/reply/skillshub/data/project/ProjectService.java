@@ -1,5 +1,6 @@
 package com.reply.skillshub.data.project;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.neo4j.core.Neo4jTemplate;
@@ -22,6 +23,10 @@ public class ProjectService {
 
     public void deleteById(String id) {
         repository.deleteById(id);
+    }
+
+    public List<Project> findAll() {
+        return repository.findAll();
     }
 
     public Optional<Project> findOptionalById(String id) {
