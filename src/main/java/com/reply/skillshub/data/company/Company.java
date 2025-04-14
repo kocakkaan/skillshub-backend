@@ -10,6 +10,7 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 import org.springframework.data.neo4j.core.schema.Relationship.Direction;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
+import com.reply.skillshub.data.project.Project;
 import com.reply.skillshub.data.user.User;
 
 import jakarta.validation.constraints.AssertFalse;
@@ -29,6 +30,9 @@ public class Company {
 
     @Relationship(type = "WORKS_FOR", direction = Direction.INCOMING)
     private List<User> employees = new ArrayList<>();
+
+    @Relationship(type = "HAS_PROJECT", direction = Direction.OUTGOING, cascadeUpdates = false)
+    private List<Project> projects = new ArrayList<>();
     
     @AssertFalse
     public boolean isEmployeesEmpty() {
