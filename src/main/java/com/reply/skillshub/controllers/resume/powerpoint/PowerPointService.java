@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -25,6 +26,8 @@ import com.reply.skillshub.data.user.BaseUser;
 
 @Service
 public class PowerPointService {
+
+  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PowerPointService.class);
 
   public PowerPointInformation createPowerPointDto(BaseUser baseUser, ShortCv resume, String language, String company) {
     return createPowerPointDto(baseUser, resume, language, company, false);
@@ -109,18 +112,38 @@ public class PowerPointService {
     return powerPointSkill;
   }
 
+  public XMLSlideShow createSlideShowFromMultipleTemplates(List<PowerPointInformation> powerPointInformationList) {
+    XMLSlideShow ppt = createPowerPointFromTemplate(powerPointInformationList.get(0));
+    if (powerPointInformationList.size() == 1) {
+      return ppt;
+    }
+
+    if (powerPointInformationList.size() > 1) {
+      for (int count = 1; count < powerPointInformationList.size(); count++) {
+        var slideShow = createPowerPointFromTemplate(powerPointInformationList.get(count));
+        var createdSlide = slideShow.getSlides().get(0);
+        ppt.createSlide().importContent(createdSlide);
+        try {
+          slideShow.close();
+        } catch (IOException e) {
+          logger.error("An IO Exception has been thrown on closing the slideshow", e);
+        }
+      }    
+    }
+
+    return ppt;
+  }
+
   public XMLSlideShow createPowerPointFromTemplate(PowerPointInformation pointInformation) {
-    ClassPathResource resource = new ClassPathResource("template.pptx");
+    var language = pointInformation.getLanguage();
+    if (language == null || language.isEmpty()) {
+      language = "en";
+    }
+    String templateName = String.format("template_%s.pptx", language);
+    
+    ClassPathResource resource = new ClassPathResource(templateName);
     try (var fis = resource.getInputStream()) {
       XMLSlideShow slideShow = new XMLSlideShow(fis);
-      var language = pointInformation.getLanguage();
-      if (language == null || language.isEmpty()) {
-        language = "en";
-      }
-      int slideToRemove = language.equals("en") ? 1 : 0;
-      // XSLFSlideLayout relevantLayout = slideShow.findLayout(layoutToFind); At some
-      // point we will enable this
-      slideShow.removeSlide(slideToRemove);
       var slide = slideShow.getSlides().get(0);
       for (var shape : slide.getShapes()) {
         FieldHandler
