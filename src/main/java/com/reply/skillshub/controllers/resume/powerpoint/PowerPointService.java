@@ -153,15 +153,6 @@ public class PowerPointService {
       return slideShow;
     } catch (IOException e) {
       return null;
-    } finally {
-      // Close the input stream
-      try {
-        resource.getInputStream().close();
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-      // Close the XMLSlideShow
     }
   }
 
