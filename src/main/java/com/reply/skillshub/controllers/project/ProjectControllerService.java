@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.reply.skillshub.data.project.Project;
 import com.reply.skillshub.data.project.ProjectService;
+import com.reply.skillshub.openapi.model.CreateProjectDto;
 import com.reply.skillshub.openapi.model.ProjectDto;
 
 import lombok.RequiredArgsConstructor;
@@ -24,8 +26,9 @@ public class ProjectControllerService {
     return projects.stream().map(ProjectControllerServiceUtil::convertToProjectDto).toList();
   }
 
-  public ProjectDto createProject(ProjectDto projectDto) {
-    var project = ProjectControllerServiceUtil.convertToProject(projectDto);
+  public ProjectDto createProject(CreateProjectDto projectDto) {
+    var project = new Project();
+    project.setTitle(projectDto.getTitle());
     var savedProject = projectService.save(project);
     return ProjectControllerServiceUtil.convertToProjectDto(savedProject);
   }

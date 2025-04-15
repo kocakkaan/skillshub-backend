@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.reply.skillshub.openapi.api.ProjectsApi;
+import com.reply.skillshub.openapi.model.CreateProjectDto;
 import com.reply.skillshub.openapi.model.ProjectDto;
 
 import jakarta.validation.Valid;
@@ -24,8 +25,8 @@ public class ProjectController implements ProjectsApi {
   }
 
   @Override
-  public ResponseEntity<ProjectDto> projectsPost(@Valid ProjectDto projectDto) {
-    return ResponseEntity.ok(projectControllerService.createProject(projectDto));
+  public ResponseEntity<ProjectDto> projectsPost(@Valid CreateProjectDto createProjectDto) {
+    return ResponseEntity.ok(projectControllerService.createProject(createProjectDto));
   }
 
   @Override
