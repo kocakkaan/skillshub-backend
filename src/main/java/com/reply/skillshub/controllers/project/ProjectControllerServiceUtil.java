@@ -15,9 +15,9 @@ public class ProjectControllerServiceUtil {
     projectDto.setChallenges(project.getChallenges());
     projectDto.setApproach(project.getApproachTechnologies());
     projectDto.setTechnologies(project.getTechnologies());
-    projectDto.setValueAdded1(Optional.ofNullable(project.getValueAdded1()));
-    projectDto.setValueAdded2(Optional.ofNullable(project.getValueAdded2()));
-    projectDto.setValueAdded3(Optional.ofNullable(project.getValueAdded3()));
+    projectDto.setValueAddedDiamond(Optional.ofNullable(project.getDiamondText()));
+    projectDto.setValueAddedMoney(Optional.ofNullable(project.getMoneyText()));
+    projectDto.setValueAddedGraph(Optional.ofNullable(project.getGraphText()));
     return projectDto;
   }
 
@@ -29,9 +29,9 @@ public class ProjectControllerServiceUtil {
     project.setChallenges(projectDto.getChallenges());
     project.setApproachTechnologies(projectDto.getApproach());
     project.setTechnologies(projectDto.getTechnologies());
-    project.setValueAdded1(projectDto.getValueAdded1().orElse(null));
-    project.setValueAdded2(projectDto.getValueAdded2().orElse(null));
-    project.setValueAdded3(projectDto.getValueAdded3().orElse(null));
+    project.setDiamondText(projectDto.getValueAddedDiamond().orElse(null));
+    project.setMoneyText(projectDto.getValueAddedMoney().orElse(null));
+    project.setGraphText(projectDto.getValueAddedGraph().orElse(null));
     return project;
   }
 
@@ -41,12 +41,10 @@ public class ProjectControllerServiceUtil {
     project.setChallenges(projectDto.getChallenges());
     project.setApproachTechnologies(projectDto.getApproach());
     project.setTechnologies(projectDto.getTechnologies());
-    project.setValueAdded1(projectDto.getValueAdded1().orElse(null));
-    project.setValueAdded2(projectDto.getValueAdded2().orElse(null));
-    project.setValueAdded3(projectDto.getValueAdded3().orElse(null));
+    project.setDiamondText(projectDto.getValueAddedDiamond().orElse(null));
+    project.setMoneyText(projectDto.getValueAddedMoney().orElse(null));
+    project.setGraphText(projectDto.getValueAddedGraph().orElse(null));
     return project;
   }
 
-
-  
 }

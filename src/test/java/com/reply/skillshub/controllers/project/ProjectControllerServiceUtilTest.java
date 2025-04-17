@@ -13,7 +13,7 @@ public class ProjectControllerServiceUtilTest {
     public void testConvertToProjectDto() {
         var project = Instancio.create(Project.class);
         var projectDto = ProjectControllerServiceUtil.convertToProjectDto(project);
-        
+
         // Assertions to verify the conversion
         Assertions.assertEquals(project.getId(), projectDto.getId());
         Assertions.assertEquals(project.getTitle(), projectDto.getTitle());
@@ -21,9 +21,9 @@ public class ProjectControllerServiceUtilTest {
         Assertions.assertIterableEquals(project.getInitialSituation(), projectDto.getInitialSituation());
         Assertions.assertIterableEquals(project.getChallenges(), projectDto.getChallenges());
         Assertions.assertIterableEquals(project.getTechnologies(), projectDto.getTechnologies());
-        Assertions.assertEquals(project.getValueAdded1(), projectDto.getValueAdded1().orElse(null));
-        Assertions.assertEquals(project.getValueAdded2(), projectDto.getValueAdded2().orElse(null));
-        Assertions.assertEquals(project.getValueAdded3(), projectDto.getValueAdded3().orElse(null)); 
+        Assertions.assertEquals(project.getDiamondText(), projectDto.getValueAddedDiamond().orElse(null));
+        Assertions.assertEquals(project.getMoneyText(), projectDto.getValueAddedMoney().orElse(null));
+        Assertions.assertEquals(project.getGraphText(), projectDto.getValueAddedGraph().orElse(null));
     }
 
     @Test
@@ -38,9 +38,9 @@ public class ProjectControllerServiceUtilTest {
         Assertions.assertIterableEquals(projectDto.getInitialSituation(), project.getInitialSituation());
         Assertions.assertIterableEquals(projectDto.getChallenges(), project.getChallenges());
         Assertions.assertIterableEquals(projectDto.getTechnologies(), project.getTechnologies());
-        Assertions.assertEquals(projectDto.getValueAdded1().orElse(null), project.getValueAdded1());
-        Assertions.assertEquals(projectDto.getValueAdded2().orElse(null), project.getValueAdded2());
-        Assertions.assertEquals(projectDto.getValueAdded3().orElse(null), project.getValueAdded3());
+        Assertions.assertEquals(projectDto.getValueAddedDiamond().orElse(null), project.getDiamondText());
+        Assertions.assertEquals(projectDto.getValueAddedMoney().orElse(null), project.getMoneyText());
+        Assertions.assertEquals(projectDto.getValueAddedGraph().orElse(null), project.getGraphText());
     }
 
     @Test
@@ -55,8 +55,8 @@ public class ProjectControllerServiceUtilTest {
         Assertions.assertIterableEquals(projectDto.getInitialSituation(), updatedProject.getInitialSituation());
         Assertions.assertIterableEquals(projectDto.getChallenges(), updatedProject.getChallenges());
         Assertions.assertIterableEquals(projectDto.getTechnologies(), updatedProject.getTechnologies());
-        Assertions.assertEquals(projectDto.getValueAdded1().orElse(null), updatedProject.getValueAdded1());
-        Assertions.assertEquals(projectDto.getValueAdded2().orElse(null), updatedProject.getValueAdded2());
-        Assertions.assertEquals(projectDto.getValueAdded3().orElse(null), updatedProject.getValueAdded3());
+        Assertions.assertEquals(projectDto.getValueAddedDiamond().orElse(null), updatedProject.getDiamondText());
+        Assertions.assertEquals(projectDto.getValueAddedMoney().orElse(null), updatedProject.getMoneyText());
+        Assertions.assertEquals(projectDto.getValueAddedGraph().orElse(null), updatedProject.getGraphText());
     }
 }
