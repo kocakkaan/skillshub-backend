@@ -1,5 +1,9 @@
 package com.reply.skillshub.data.project;
 
+import static org.instancio.Select.field;
+
+import java.util.List;
+
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,7 +20,8 @@ public class ProjectRepositoryTest extends BaseRepositoryTest {
 
   @Test
   void succesfullySaveProject() {
-    Project project = Instancio.create(Project.class);
+    Project project = Instancio.of(Project.class).set(field(Project::getIndustry), null)
+        .set(field(Project::getUsers), List.of()).set(field(Project::getClient), null).create();
     project.setId(null);
     Project savedProject = projectRepository.save(project);
     Assertions.assertNotNull(savedProject.getId());

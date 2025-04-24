@@ -97,8 +97,8 @@ public class UserRepositoryTest extends BaseRepositoryTest {
     void testFindByCompanyIdInIdList(@Autowired Neo4jClient client) throws IOException {
         TestUtils.runScript(client, "person/userbycertificateorskill.cypher");
 
-        Company company = Instancio.of(Company.class).set(field(Company::getEmployees), List.of()).set(field(Company::getId), "1").create();
-        Company company2 = Instancio.of(Company.class).set(field(Company::getEmployees), List.of()).set(field(Company::getId), "2").create();
+        Company company = Instancio.of(Company.class).set(field(Company::getEmployees), List.of()).set(field(Company::getProjects), List.of()).set(field(Company::getId), "1").create();
+        Company company2 = Instancio.of(Company.class).set(field(Company::getEmployees), List.of()).set(field(Company::getProjects), List.of()).set(field(Company::getId), "2").create();
 
         User userOneToSave = returnUserWithEmail();
         userOneToSave.getCompanies().add(company);
