@@ -11,7 +11,8 @@ public enum ErrorCode {
     INVALID_CONFIRMATION_TOKEN("ERROR-007"),
     UNCONFIRMED_USER("ERROR-008"),
     EXPERIENCE_NOT_FOUND("ERROR-009"),
-    RESUME_NOT_FOUND("ERROR-010");
+    RESUME_NOT_FOUND("ERROR-010"),
+    PROFILE_PICTURE_NOT_SAVED("ERROR-011");
 
     private final String code;
 
@@ -23,5 +24,5 @@ public enum ErrorCode {
     public String toString() {
         return code + ": " + this.name();
     }
-    
+
 }
