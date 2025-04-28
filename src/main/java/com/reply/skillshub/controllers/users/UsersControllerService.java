@@ -1,5 +1,12 @@
 package com.reply.skillshub.controllers.users;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,6 +20,7 @@ import org.thymeleaf.context.Context;
 import com.reply.skillshub.base.exceptionhandling.exeptions.InsufficientRights;
 import com.reply.skillshub.base.exceptionhandling.exeptions.InvalidConfirmationToken;
 import com.reply.skillshub.base.exceptionhandling.exeptions.NoCompanyFound;
+import com.reply.skillshub.base.exceptionhandling.exeptions.ProfilePictureNotSavedException;
 import com.reply.skillshub.base.services.EmailService;
 import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.data.EmailRequest;
@@ -63,6 +71,9 @@ public class UsersControllerService {
     private final EmailService emailService;
 
     private final PasswordEncoder passwordEncoder;
+
+    @Value("${skillhub.profilepicture.path}")
+    private String profilePicturePath;
 
     @Value("${skillhub.frontend}")
     private String server;
@@ -146,6 +157,31 @@ public class UsersControllerService {
         var user = userService.findById(userId, UserWithSkills.class);
         user.getSkills().remove(skill);
         userService.save(user);
+    }
+
+    public String saveUserProfilePicture(String userId, MultipartFile profilePicture) { // should we only accept specific filetypes???
+        File directory = new File(profilePicturePath);
+        String extension = ".jpg";
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        if (profilePicture.getOriginalFilename() != null) {
+            String originalFilename = profilePicture.getOriginalFilename();
+            if (originalFilename.contains(".")) {
+                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            }
+        }
+        String filename = userId + extension;
+        Path filePath = Paths.get(profilePicturePath, filename);
+        
+        // Copy the file contents from the resource to the target file
+        // Existing file gets overwritten
+        try (InputStream in = profilePicture.getInputStream()) {
+            Files.copy(in, filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new ProfilePictureNotSavedException(); //should we include the message?
+        }
+        return "Profile picture saved successfully";
     }
 
     private ProfileDto getProfileForUser(EmployeeProfile user) {

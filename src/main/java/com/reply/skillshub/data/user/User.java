@@ -3,19 +3,19 @@ package com.reply.skillshub.data.user;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.reply.skillshub.data.hascertificate.HasCertificate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
-import com.reply.skillshub.data.speaks.Speaks;
-import com.reply.skillshub.data.userrole.UserRole;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.experience.Experience;
+import com.reply.skillshub.data.hascertificate.HasCertificate;
 import com.reply.skillshub.data.resume.ShortCv;
 import com.reply.skillshub.data.skill.Skill;
+import com.reply.skillshub.data.speaks.Speaks;
+import com.reply.skillshub.data.userrole.UserRole;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -27,7 +27,7 @@ import lombok.Data;
 public class User {
 
     @Id
-    @GeneratedValue(UUIDStringGenerator.class)    
+    @GeneratedValue(UUIDStringGenerator.class)
     private String id;
 
     @NotEmpty
@@ -37,7 +37,7 @@ public class User {
     private String lastName;
 
     private String profilePictureLocation;
-    
+
     @Email
     @NotEmpty
     private String email;

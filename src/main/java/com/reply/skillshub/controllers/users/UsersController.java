@@ -28,16 +28,13 @@ public class UsersController implements UsersApi {
 
     @Override
     public ResponseEntity<CreatedUserResponse> companyCompanyIdEmployeesPost(String companyId,
-            CreateUserRequest createUserRequest) {
-        return ResponseEntity.status(201)
-                .body(usersControllerService.addNewUserToCompany(companyId, createUserRequest));
+                                                                             CreateUserRequest createUserRequest) {
+        return ResponseEntity.status(201).body(usersControllerService.addNewUserToCompany(companyId, createUserRequest));
     }
 
     @Override
-    public ResponseEntity<ConfirmedUserResponse> usersConfirmationConfirmationTokenPut(
-            String confirmationToken, UserConfirmRequest userConfirmRequest) {
-        return ResponseEntity.status(201)
-                .body(usersControllerService.confirmUser(confirmationToken, userConfirmRequest));
+    public ResponseEntity<ConfirmedUserResponse> usersConfirmationConfirmationTokenPut(String confirmationToken, @Valid UserConfirmRequest userConfirmRequest) {
+        return ResponseEntity.status(201).body(usersControllerService.confirmUser(confirmationToken, userConfirmRequest));
     }
 
     @Override
@@ -60,6 +57,11 @@ public class UsersController implements UsersApi {
     @Override
     public ResponseEntity<ProfileDto> usersUserIdProfileGet(String userId) {
         return ResponseEntity.ok(usersControllerService.getProfileForEmployee(userId));
+    }
+
+    @Override
+    public ResponseEntity<String> usersUserIdProfilePicturePost(String userId, MultipartFile profilePicture) {
+        return ResponseEntity.ok(usersControllerService.saveUserProfilePicture(userId, profilePicture));
     }
 
     @Override
