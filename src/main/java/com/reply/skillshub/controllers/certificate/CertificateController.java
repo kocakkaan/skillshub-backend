@@ -1,16 +1,19 @@
 package com.reply.skillshub.controllers.certificate;
 
-import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
-import com.reply.skillshub.data.hascertificate.HasCertificate;
-import com.reply.skillshub.openapi.model.CertificateDto;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import com.reply.skillshub.openapi.api.CertificatesApi;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
+import com.reply.skillshub.data.hascertificate.HasCertificate;
+import com.reply.skillshub.openapi.api.CertificatesApi;
+import com.reply.skillshub.openapi.model.CertificateDto;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,5 +49,11 @@ public class CertificateController implements CertificatesApi {
         certificateDto.setIssuedDate(hasCertificate.getIssuedDate());
         certificateDto.setFile(Optional.ofNullable(hasCertificate.getFile()));
         return certificateDto;
+    }
+
+    @Override
+    public ResponseEntity<Void> usersUserIdCertificatesDelete(String userId, @NotNull @Valid String certificateId) {
+        certificateControllerService.deleteCertificateForUser(userId, certificateId);
+        return ResponseEntity.noContent().build();
     }
 }

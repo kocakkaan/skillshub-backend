@@ -189,8 +189,8 @@ public class ResumeController implements ResumesApi {
   }
 
   @Override
-  public ResponseEntity<ShortCvDto> usersUserIdResumesAutoGenerationPost(String userId, String requirements) {
-    return ResponseEntity.ok(resumeControllerService.autoGenerateShortCv(userId, requirements));
+  public ResponseEntity<ShortCvDto> usersUserIdResumesAutoGenerationPost(String userId, String role, String requirements) {
+    return ResponseEntity.ok(resumeControllerService.autoGenerateShortCv(userId, role, requirements));
   }
 
   @Override

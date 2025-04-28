@@ -141,6 +141,13 @@ public class UsersControllerService {
         return new SkillDto(skill.getId(), skill.getLabel());
     }
 
+    public void removeSkillFromUser(String userId, String skillId) {
+        var skill = skillService.findById(skillId);
+        var user = userService.findById(userId, UserWithSkills.class);
+        user.getSkills().remove(skill);
+        userService.save(user);
+    }
+
     private ProfileDto getProfileForUser(EmployeeProfile user) {
         var profile = new ProfileDto();
         profile.setFullname(user.getFullName());
