@@ -72,4 +72,10 @@ public class UsersController implements UsersApi {
         return ResponseEntity.ok(usersControllerService.extractInformationFromCvPdf(userId, body));
     }
 
+    @Override
+    public ResponseEntity<Void> usersUserIdSkillsSkillIdDelete(String userId, String skillId) {
+        usersControllerService.removeSkillFromUser(userId, skillId);
+        return ResponseEntity.ok().build();
+    }
+
 }
