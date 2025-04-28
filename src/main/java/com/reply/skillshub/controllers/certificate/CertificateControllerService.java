@@ -24,6 +24,12 @@ public class CertificateControllerService {
         return userService.findById(userId).getHasCertificates();
     }
 
+    public void deleteCertificateForUser(String userId, String certificateId) {
+        var user = userService.findById(userId, UserWithCertificates.class);
+        user.getHasCertificates().removeIf(c -> c.getId().equals(Long.parseLong(certificateId)));
+        userService.save(user);
+    }
+
     public Certificate convertToCertificateAndSave(CertificateDto certificateDto) {
         Certificate certificate = new Certificate();
         certificate.setName(certificateDto.getName());
