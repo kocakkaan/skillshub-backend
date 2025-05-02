@@ -3,6 +3,7 @@ package com.reply.skillshub.controllers.resume;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.springframework.core.io.ByteArrayResource;
@@ -40,10 +41,11 @@ public class ResumeController implements ResumesApi {
   private static Logger logger = org.slf4j.LoggerFactory.getLogger(ResumeController.class);
 
   @Override
-  public ResponseEntity<Resource> exportToPptx(String resumeId, String language, String company) {
+  public ResponseEntity<Resource> exportToPptx(String resumeId, String language, String company,
+      Optional<Boolean> anonymous) {
     var resume = resumeControllerService.findResumeEntityById(resumeId);
     var user = userService.findByResumeId(resumeId);
-    var pptDto = powerPointService.createPowerPointDto(user, resume, language, company);
+    var pptDto = powerPointService.createPowerPointDto(user, resume, language, company, anonymous.orElse(true));
     var ppt = powerPointService.createPowerPointFromTemplate(pptDto);
     var test = new ByteArrayOutputStream();
     try {
@@ -95,7 +97,8 @@ public class ResumeController implements ResumesApi {
   }
 
   @Override
-  public ResponseEntity<List<ResumeSkillDto>> resumesResumeIdSkillsPut(String resumeId, List<ResumeSkillDto> resumeSkill) {
+  public ResponseEntity<List<ResumeSkillDto>> resumesResumeIdSkillsPut(String resumeId,
+      List<ResumeSkillDto> resumeSkill) {
     return ResponseEntity.ok(resumeControllerService.updateResumeSkills(resumeId, resumeSkill));
   }
 
@@ -133,10 +136,11 @@ public class ResumeController implements ResumesApi {
   }
 
   @Override
-  public ResponseEntity<Resource> resumesResumeIdExportToImgPost(String resumeId, String language, String company) {
+  public ResponseEntity<Resource> resumesResumeIdExportToImgPost(String resumeId, String language, String company,
+      Optional<Boolean> anonymous) {
     var resume = resumeControllerService.findResumeEntityById(resumeId);
     var user = userService.findByResumeId(resumeId);
-    var pptDto = powerPointService.createPowerPointDto(user, resume, language, company);
+    var pptDto = powerPointService.createPowerPointDto(user, resume, language, company, anonymous.orElse(true));
     var ppt = powerPointService.createPowerPointFromTemplate(pptDto);
     var output = powerPointService.getFirstSlideAsImage(ppt);
     return ResponseEntity.status(200).body(output);
@@ -151,7 +155,7 @@ public class ResumeController implements ResumesApi {
 
   @Override
   public ResponseEntity<ShortCvDto> resumesResumeIdExperiencesPut(String resumeId, List<String> ids) {
-    return ResponseEntity.ok(resumeControllerService.addExperiencesToResume(resumeId, ids));
+    return ResponseEntity.ok(resumeControllerService.saveExperienceOrderToResume(resumeId, ids));
   }
 
   @Override
@@ -189,7 +193,8 @@ public class ResumeController implements ResumesApi {
   }
 
   @Override
-  public ResponseEntity<ShortCvDto> usersUserIdResumesAutoGenerationPost(String userId, String role, String requirements) {
+  public ResponseEntity<ShortCvDto> usersUserIdResumesAutoGenerationPost(String userId, String role,
+      String requirements) {
     return ResponseEntity.ok(resumeControllerService.autoGenerateShortCv(userId, role, requirements));
   }
 
@@ -221,6 +226,12 @@ public class ResumeController implements ResumesApi {
   @Override
   public ResponseEntity<List<UserWithShortCvDtos>> resumesGet(@NotNull @Valid List<String> users) {
     return ResponseEntity.ok(resumeControllerService.findResumesForUsers(users));
+  }
+
+  @Override
+  public ResponseEntity<ShortCvDto> resumesResumeIdExperiencesPost(String resumeId,
+      @NotNull @Valid String experienceId) {
+        return ResponseEntity.ok(resumeControllerService.addExperienceToResume(resumeId, experienceId));
   }
 
 }

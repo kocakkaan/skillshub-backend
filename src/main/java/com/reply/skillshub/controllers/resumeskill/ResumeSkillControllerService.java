@@ -23,4 +23,8 @@ public class ResumeSkillControllerService {
     return ResumeConverterUtil.convertSkillToDto(savedResumeSkill);
   }
 
+  public void deleteResumeSkill(String resumeSkillId) {
+    resumeSkillService.deleteById(resumeSkillId);
+  }
+
 }

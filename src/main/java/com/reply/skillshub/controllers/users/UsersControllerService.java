@@ -178,6 +178,9 @@ public class UsersControllerService {
         // Existing file gets overwritten
         try (InputStream in = profilePicture.getInputStream()) {
             Files.copy(in, filePath, StandardCopyOption.REPLACE_EXISTING);
+            var user = userService.findById(userId,UserToConfirm .class);
+            user.setProfilePictureLocation(filename);
+            userService.save(user);
         } catch (IOException e) {
             throw new ProfilePictureNotSavedException(); //should we include the message?
         }

@@ -22,6 +22,7 @@ public class PowerPointInformation {
     private List<String> industries = new ArrayList<>();
     private List<PowerPointExperience> experiences = new ArrayList<>();
     private List<PowerPointSkill> skills = new ArrayList<>();
+    private boolean anonymous = false;
 
     @Data
     public static class PowerPointExperience {

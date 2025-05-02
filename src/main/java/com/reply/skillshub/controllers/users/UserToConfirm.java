@@ -15,6 +15,7 @@ public class UserToConfirm {
   private String firstName;
   private String lastName;
   private UserRole userRole;
+  private String profilePictureLocation;
 
   public String getFullname() {
     return this.firstName + " " + this.lastName;

@@ -1,9 +1,9 @@
 package com.reply.skillshub.controllers.resume.powerpoint;
 
-import java.util.Optional;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.PaintStyle;
@@ -25,6 +25,9 @@ public enum FieldHandler {
     public void handleShape(XSLFShape shape, PowerPointInformation powerPointInformation) {
       // This handles pictures
       if (shape instanceof XSLFPictureShape) {
+        if (powerPointInformation.isAnonymous()) {
+          return;
+        }
         InputStream runStream = loadFile(powerPointInformation.getProfilePictureLocation());
         if (runStream == null) {
           return;

@@ -1,5 +1,7 @@
 package com.reply.skillshub.data.resumeexperience;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.reply.skillshub.base.exceptionhandling.exeptions.ExperienceNotFound;
@@ -18,6 +20,10 @@ public class ResumeExperienceService {
 
   public ResumeExperience findById(String resumeExperienceId) {
     return repository.findById(resumeExperienceId).orElseThrow(ExperienceNotFound::new);
+  }
+
+  public List<ResumeExperience> findAllByIds(List<String> ids) {
+    return repository.findAllById(ids);
   }
 
   public ResumeExperience save(ResumeExperience resumeExperience) {

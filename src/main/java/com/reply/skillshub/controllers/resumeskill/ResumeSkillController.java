@@ -16,8 +16,8 @@ public class ResumeSkillController implements ResumesSkillsApi {
 
   @Override
   public ResponseEntity<Void> resumeSkillResumeSkillIdDelete(String resumeSkillId) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'resumeSkillResumeSkillIdDelete'");
+    resumeSkillControllerService.deleteResumeSkill(resumeSkillId);
+    return ResponseEntity.noContent().build();
   }
 
   @Override

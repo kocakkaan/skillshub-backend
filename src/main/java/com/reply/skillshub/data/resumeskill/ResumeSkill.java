@@ -18,6 +18,8 @@ public class ResumeSkill {
     @GeneratedValue(UUIDStringGenerator.class)
     private String id;
 
+    private int index;
+
     private String parent;
 
     private List<String> skills = new ArrayList<>();

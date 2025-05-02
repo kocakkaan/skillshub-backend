@@ -1,5 +1,6 @@
 package com.reply.skillshub.controllers.resume;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,11 +35,12 @@ public class ResumeConverterUtil {
         return industry;
     }
 
-    public static ResumeSkill convertSkillDtoToEntity(ResumeSkillDto dto) {
+    public static ResumeSkill convertSkillDtoToEntity(int index, ResumeSkillDto dto) {
         ResumeSkill skill = new ResumeSkill();
         skill.setId(dto.getId().orElse(""));
         skill.setSkills(dto.getChildren());
         skill.setParent(dto.getParent());
+        skill.setIndex(index);
         return skill;
     }
 
@@ -77,7 +79,7 @@ public class ResumeConverterUtil {
     }
 
     private static List<ResumeExperienceDto> convertExperiences(List<ResumeExperience> experiences) {
-        return experiences.stream().map(ResumeConverterUtil::convertResumeExperienceToDto).toList();
+        return experiences.stream().sorted(Comparator.comparingInt(ResumeExperience::getIndex)).map(ResumeConverterUtil::convertResumeExperienceToDto).toList();
     }
 
     static ResumeExperienceDto convertResumeExperienceToDto(ResumeExperience experience) {
@@ -86,15 +88,17 @@ public class ResumeConverterUtil {
         dto.setTechnologies(experience.getTechnologies());
         dto.setTitle(experience.getTitle());
         dto.setRole(experience.getRole());
+        dto.setId(experience.getId());
         return dto;
     }
 
-    public static ResumeExperience convertExperienDtoToEntity(ResumeExperienceDto dto) {
+    public static ResumeExperience convertExperienDtoToEntity(int index, ResumeExperienceDto dto) {
         ResumeExperience experience = new ResumeExperience();
         experience.setDescriptions(dto.getDescriptions());
         experience.setTitle(dto.getTitle());
         experience.setRole(dto.getRole());
         experience.setTechnologies(dto.getTechnologies());
+        experience.setIndex(index);
         return experience;
     }
 

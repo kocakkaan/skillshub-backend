@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -14,6 +15,7 @@ import javax.imageio.ImageIO;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -26,6 +28,9 @@ import com.reply.skillshub.data.user.BaseUser;
 
 @Service
 public class PowerPointService {
+
+  @Value("${skillhub.profilepicture.path}")
+  private String profilePicturePath;
 
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PowerPointService.class);
 
@@ -41,8 +46,11 @@ public class PowerPointService {
       return powerPointInformation;
     }
 
+    var profilePictureLocation = profilePicturePath + "/" + baseUser.getProfilePictureLocation();
+
     powerPointInformation.setPosition(resume.getRole());
-    powerPointInformation.setProfilePictureLocation(baseUser.getProfilePictureLocation());
+    powerPointInformation.setProfilePictureLocation(profilePictureLocation);
+    powerPointInformation.setAnonymous(anonymous);
     powerPointInformation.setCompany(company);
     powerPointInformation.setLanguage(language);
     powerPointInformation.setName(baseUser.getFullName());
@@ -50,11 +58,13 @@ public class PowerPointService {
     powerPointInformation.setPhone(baseUser.getPhoneNumber());
     powerPointInformation.setRole(resume.getRole());
     powerPointInformation.setTitle(resume.getTitle());
-    powerPointInformation.setSkills(resume.getSkills().stream().map(this::convertSkillToPowerPointSkill).toList());
+    powerPointInformation.setSkills(resume.getSkills().stream().sorted(Comparator.comparingInt(ResumeSkill::getIndex))
+        .map(this::convertSkillToPowerPointSkill).toList());
     powerPointInformation.setIndustries(resume.getIndustries());
     powerPointInformation.setBackground(resume.getBackground());
     powerPointInformation
-        .setExperiences(resume.getExperiences().stream().map(this::converExperienceToPowerPointExperience).toList());
+        .setExperiences(resume.getExperiences().stream().sorted(Comparator.comparingInt(ResumeExperience::getIndex))
+            .map(this::converExperienceToPowerPointExperience).toList());
 
     return powerPointInformation;
   }
@@ -128,7 +138,7 @@ public class PowerPointService {
         } catch (IOException e) {
           logger.error("An IO Exception has been thrown on closing the slideshow", e);
         }
-      }    
+      }
     }
 
     return ppt;
@@ -140,7 +150,7 @@ public class PowerPointService {
       language = "en";
     }
     String templateName = String.format("template_%s.pptx", language);
-    
+
     ClassPathResource resource = new ClassPathResource(templateName);
     try (var fis = resource.getInputStream()) {
       XMLSlideShow slideShow = new XMLSlideShow(fis);
