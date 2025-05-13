@@ -3,15 +3,20 @@ package com.reply.skillshub.controllers.users;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +24,9 @@ import org.thymeleaf.context.Context;
 
 import com.reply.skillshub.base.exceptionhandling.exeptions.InsufficientRights;
 import com.reply.skillshub.base.exceptionhandling.exeptions.InvalidConfirmationToken;
+import com.reply.skillshub.base.exceptionhandling.exeptions.InvalidFileTypeException;
 import com.reply.skillshub.base.exceptionhandling.exeptions.NoCompanyFound;
+import com.reply.skillshub.base.exceptionhandling.exeptions.ProfilePictureNotFoundException;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ProfilePictureNotSavedException;
 import com.reply.skillshub.base.services.EmailService;
 import com.reply.skillshub.base.services.LoadCurrentUser;
@@ -159,32 +166,109 @@ public class UsersControllerService {
         userService.save(user);
     }
 
-    public String saveUserProfilePicture(String userId, MultipartFile profilePicture) { // should we only accept specific filetypes???
+    public String saveUserProfilePicture(String userId, MultipartFile profilePicture) {
+        if (userId == null) {
+            BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
+            userId = currentUser.getId();
+        }
+
         File directory = new File(profilePicturePath);
-        String extension = ".jpg";
         if (!directory.exists()) {
             directory.mkdirs();
         }
-        if (profilePicture.getOriginalFilename() != null) {
-            String originalFilename = profilePicture.getOriginalFilename();
-            if (originalFilename.contains(".")) {
-                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-            }
+
+        String originalFilename = profilePicture.getOriginalFilename();
+        if (originalFilename == null || !originalFilename.contains(".")) {
+            throw new InvalidFileTypeException("File must have a valid extension.");
         }
+
+        String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+        Set<String> allowedExtensions = Set.of(".jpg", ".jpeg", ".png");
+        if (!allowedExtensions.contains(extension)) {
+            throw new InvalidFileTypeException("Only JPG, JPEG and PNG formats are supported.");
+        }
+
         String filename = userId + extension;
         Path filePath = Paths.get(profilePicturePath, filename);
-        
-        // Copy the file contents from the resource to the target file
-        // Existing file gets overwritten
+
         try (InputStream in = profilePicture.getInputStream()) {
             Files.copy(in, filePath, StandardCopyOption.REPLACE_EXISTING);
-            var user = userService.findById(userId,UserToConfirm .class);
+            var user = userService.findById(userId, UserToConfirm.class);
             user.setProfilePictureLocation(filename);
             userService.save(user);
         } catch (IOException e) {
-            throw new ProfilePictureNotSavedException(); //should we include the message?
+            throw new ProfilePictureNotSavedException();
         }
+
         return "Profile picture saved successfully";
+    }
+
+    public Resource getUserProfilePicture(String userId) {
+        var user = userService.findById(userId, UserToConfirm.class);
+        var profilePictureLocation = user.getProfilePictureLocation();
+        if (profilePictureLocation == null) {
+            throw new ProfilePictureNotFoundException();
+        }
+
+        Path filePath = Paths.get(profilePicturePath, profilePictureLocation);
+        if (!Files.exists(filePath)) {
+            throw new ProfilePictureNotFoundException();
+        }
+
+        return new FileSystemResource(filePath.toString());
+    }
+
+    public String getProfilePictureContentType(String userId) {
+        var user = userService.findById(userId, UserToConfirm.class);
+        var profilePictureLocation = user.getProfilePictureLocation();
+        if (profilePictureLocation == null) {
+            throw new ProfilePictureNotFoundException();
+        }
+
+        String extension = profilePictureLocation.toLowerCase();
+        if (extension.endsWith(".png")) {
+            return "image/png";
+        } else if (extension.endsWith(".jpg") || extension.endsWith(".jpeg")) {
+            return "image/jpeg";
+        }
+
+        return "image/jpeg";
+    }
+
+    public void saveUserProfilePictureFromBase64(String base64URL) {
+        BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
+        String userId = currentUser.getId();
+
+        String base64Image = base64URL;
+        if (base64URL.contains(",")) {
+            base64Image = base64URL.split(",")[1];
+        }
+
+        String extension = ".png";
+        if (base64URL.contains("data:image/jpeg")) {
+            extension = ".jpg";
+        } else if (base64URL.contains("data:image/png")) {
+            extension = ".png";
+        }
+
+        File directory = new File(profilePicturePath);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String filename = userId + extension;
+        Path filePath = Paths.get(profilePicturePath, filename);
+
+        try {
+            byte[] decodedImg = Base64.getDecoder().decode(base64Image.getBytes(StandardCharsets.UTF_8));
+            Files.write(filePath, decodedImg);
+
+            var user = userService.findById(userId, UserToConfirm.class);
+            user.setProfilePictureLocation(filename);
+            userService.save(user);
+        } catch (IOException e) {
+            throw new ProfilePictureNotSavedException("Failed to save profile picture: " + e.getMessage());
+        }
     }
 
     private ProfileDto getProfileForUser(EmployeeProfile user) {
