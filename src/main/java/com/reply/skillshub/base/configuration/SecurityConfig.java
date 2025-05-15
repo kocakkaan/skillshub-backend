@@ -2,6 +2,7 @@ package com.reply.skillshub.base.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -49,7 +50,10 @@ public class SecurityConfig {
         http
                 .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(expressionInterceptUrlRegistry -> expressionInterceptUrlRegistry
-                        .requestMatchers("/auth/login", "/error", "/auth/signup", "/auth/confirmation/*", "/users/confirmation/*").permitAll()
+                        .requestMatchers("/auth/login", "/error", "/auth/signup", "/auth/confirmation/*",
+                                "/users/confirmation/*")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/projects/*/picture").permitAll()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

@@ -53,8 +53,10 @@ public class Project {
   private List<String> challenges = new ArrayList<>();
   private List<String> approachTechnologies = new ArrayList<>();
   private List<String> technologies = new ArrayList<>();
-  private String diamondText;
-  private String moneyText;
-  private String graphText;
+  private String valueAddedText0;
+  private String valueAddedText1;
+  private String valueAddedText2;
+
+  private String projectPictureLocation;
 
 }

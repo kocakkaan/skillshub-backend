@@ -1,5 +1,6 @@
 package com.reply.skillshub.controllers.project.powerpoint;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +12,7 @@ import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
+import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 
 import lombok.Data;
 
@@ -22,6 +24,34 @@ public enum FieldHandler {
       if (shape instanceof XSLFTextShape) {
         XSLFTextShape text_shape = (XSLFTextShape) shape;
         text_shape.setText(getString(powerPointInformation.getProjectTitle()));
+      }
+    }
+  },
+
+  PROJECT_PICTURE("ProjectPicture") {
+    @Override
+    public void handleShape(XSLFShape shape, PowerPointInformation powerPointInformation) {
+      if (shape instanceof XSLFPictureShape) {
+        InputStream runStream = loadFile(powerPointInformation.getProjectPictureLocation());
+        if (runStream == null) {
+          return;
+        }
+        XSLFPictureShape pictureShape = (XSLFPictureShape) shape;
+        var pictureData = pictureShape.getPictureData();
+        try {
+          ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+          int nRead;
+          byte[] data = new byte[1024];
+          while ((nRead = runStream.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+          }
+          buffer.flush();
+          byte[] imageData = buffer.toByteArray();
+          pictureData.setData(imageData);
+        } catch (IOException e) {
+          System.err.println("Error reading image data: " + e.getMessage());
+          return;
+        }
       }
     }
   },
@@ -85,30 +115,30 @@ public enum FieldHandler {
       }
     }
   },
-  DIAMOND_TEXT("DiamondText") {
+  VALUE_ADDED_0("ValueAdded0") {
     @Override
     public void handleShape(XSLFShape shape, PowerPointInformation powerPointInformation) {
       if (shape instanceof XSLFTextShape) {
         XSLFTextShape text_shape = (XSLFTextShape) shape;
-        text_shape.setText(getString(powerPointInformation.getDiamondText()));
+        text_shape.setText(getString(powerPointInformation.getValueAddedText0()));
       }
     }
   },
-  MONEY_TEXT("MoneyText") {
+  VALUE_ADDED_1("ValueAdded1") {
     @Override
     public void handleShape(XSLFShape shape, PowerPointInformation powerPointInformation) {
       if (shape instanceof XSLFTextShape) {
         XSLFTextShape text_shape = (XSLFTextShape) shape;
-        text_shape.setText(getString(powerPointInformation.getMoneyText()));
+        text_shape.setText(getString(powerPointInformation.getValueAddedText1()));
       }
     }
   },
-  GRAPH_TEXT("GraphText") {
+  VALUE_ADDED_2("ValueAdded2") {
     @Override
     public void handleShape(XSLFShape shape, PowerPointInformation powerPointInformation) {
       if (shape instanceof XSLFTextShape) {
         XSLFTextShape text_shape = (XSLFTextShape) shape;
-        text_shape.setText(getString(powerPointInformation.getGraphText()));
+        text_shape.setText(getString(powerPointInformation.getValueAddedText2()));
       }
     }
   },
@@ -137,7 +167,6 @@ public enum FieldHandler {
       }
     }
   };
-
 
   FieldHandler(String label) {
     this.fieldLabel = label;
@@ -254,5 +283,5 @@ public enum FieldHandler {
     private PaintStyle fontColor;
     private Boolean bold;
   }
-  
+
 }

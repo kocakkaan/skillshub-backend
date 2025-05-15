@@ -1,12 +1,24 @@
 package com.reply.skillshub.controllers.project;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.reply.skillshub.base.exceptionhandling.exeptions.ProjectPictureNotFoundException;
+import com.reply.skillshub.base.exceptionhandling.exeptions.ProjectPictureNotSavedException;
 import com.reply.skillshub.controllers.project.powerpoint.PowerPointInformation;
 import com.reply.skillshub.controllers.project.powerpoint.ProjectPowerPointService;
 import com.reply.skillshub.data.project.Project;
@@ -22,6 +34,9 @@ public class ProjectControllerService {
 
   private final ProjectService projectService;
   private final ProjectPowerPointService powerPointService;
+
+  @Value("${skillhub.projectpicture.path}")
+  private String projectPicturePath;
 
   public void deleteProject(String id) {
     projectService.deleteById(id);
@@ -52,6 +67,57 @@ public class ProjectControllerService {
     return image;
   }
 
+  public String saveProjectPicture(String projectId, MultipartFile projectPictureFile) {
+    var project = projectService.findById(projectId);
+    if (project == null) {
+      throw new RuntimeException("Project not found with id: " + projectId);
+    }
+
+    File directory = new File(projectPicturePath);
+    if (!directory.exists()) {
+      directory.mkdirs();
+    }
+
+    String extension = ".jpg";
+    String originalFilename = projectPictureFile.getOriginalFilename();
+    if (originalFilename != null && originalFilename.contains(".")) {
+      extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+    }
+
+    String filename = project.getId() + "_picture" + extension;
+    Path filePath = Paths.get(projectPicturePath, filename);
+
+    try (InputStream in = projectPictureFile.getInputStream()) {
+      Files.copy(in, filePath, StandardCopyOption.REPLACE_EXISTING);
+      project.setProjectPictureLocation(filename);
+      projectService.save(project);
+    } catch (IOException e) {
+      throw new ProjectPictureNotSavedException("Could not save project picture: " + filename);
+    }
+    return "Project picture saved successfully: " + filename;
+  }
+
+  public Resource getProjectPicture(String projectId) {
+    var project = projectService.findById(projectId);
+    if (project == null || project.getProjectPictureLocation() == null
+        || project.getProjectPictureLocation().isEmpty()) {
+      throw new ProjectPictureNotFoundException("Project picture not found for project id: " + projectId);
+    }
+
+    try {
+      Path filePath = Paths.get(projectPicturePath).resolve(project.getProjectPictureLocation()).normalize();
+      Resource resource = new UrlResource(filePath.toUri());
+      if (resource.exists() && resource.isReadable()) {
+        return resource;
+      } else {
+        throw new ProjectPictureNotFoundException(
+            "Could not read project picture: " + project.getProjectPictureLocation());
+      }
+    } catch (Exception e) {
+      throw new ProjectPictureNotFoundException(
+          "Error accessing project picture: " + project.getProjectPictureLocation(), e);
+    }
+  }
 
   public List<ProjectDto> getAllProjects() {
     var projects = projectService.findAll();

@@ -45,3 +45,5 @@ build/
 
 ### Folders ###
 profile/
+project/
+.DS_Store
