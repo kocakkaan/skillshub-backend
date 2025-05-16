@@ -3,6 +3,8 @@ package com.reply.skillshub.controllers.users;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,20 +30,25 @@ public class UsersController implements UsersApi {
 
     @Override
     public ResponseEntity<CreatedUserResponse> companyCompanyIdEmployeesPost(String companyId,
-                                                                             CreateUserRequest createUserRequest) {
-        return ResponseEntity.status(201).body(usersControllerService.addNewUserToCompany(companyId, createUserRequest));
+            CreateUserRequest createUserRequest) {
+        return ResponseEntity.status(201)
+                .body(usersControllerService.addNewUserToCompany(companyId, createUserRequest));
     }
 
     @Override
-    public ResponseEntity<ConfirmedUserResponse> usersConfirmationConfirmationTokenPut(String confirmationToken, @Valid UserConfirmRequest userConfirmRequest) {
-        return ResponseEntity.status(201).body(usersControllerService.confirmUser(confirmationToken, userConfirmRequest));
+    public ResponseEntity<ConfirmedUserResponse> usersConfirmationConfirmationTokenPut(String confirmationToken,
+            @Valid UserConfirmRequest userConfirmRequest) {
+        return ResponseEntity.status(201)
+                .body(usersControllerService.confirmUser(confirmationToken, userConfirmRequest));
     }
 
     @Override
     public ResponseEntity<Void> userMeProfilePicturePost(
             @Valid UserMeProfilePicturePostRequest userMeProfilePicturePostRequest) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'userMeProfilePicturePost'");
+        String base64URL = userMeProfilePicturePostRequest.getBase64URL()
+                .orElseThrow(() -> new IllegalArgumentException("base64URL is required"));
+        usersControllerService.saveUserProfilePictureFromBase64(base64URL);
+        return ResponseEntity.ok().build();
     }
 
     @Override
@@ -78,6 +85,32 @@ public class UsersController implements UsersApi {
     public ResponseEntity<Void> usersUserIdSkillsSkillIdDelete(String userId, String skillId) {
         usersControllerService.removeSkillFromUser(userId, skillId);
         return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Resource> usersUserIdProfilePictureGet(String userId) {
+        try {
+            Resource profilePicture = usersControllerService.getUserProfilePicture(userId);
+            String contentType = usersControllerService.getProfilePictureContentType(userId);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(profilePicture);
+        } catch (com.reply.skillshub.base.exceptionhandling.exeptions.ProfilePictureNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Override
+    public ResponseEntity<Resource> userMeProfilePictureGet() {
+        try {
+            Resource profilePicture = usersControllerService.getProfilePictureForCurrentUser();
+            String contentType = usersControllerService.getProfilePictureContentTypeForCurrentUser();
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(profilePicture);
+        } catch (com.reply.skillshub.base.exceptionhandling.exeptions.ProfilePictureNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }
