@@ -166,8 +166,12 @@ public class UsersControllerService {
         userService.save(user);
     }
 
-    public String saveUserProfilePicture(String userId, MultipartFile profilePicture) { // should we only accept
-                                                                                        // specific filetypes???
+    public String saveUserProfilePicture(String userId, MultipartFile profilePicture) {
+        if (userId == null) {
+            BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
+            userId = currentUser.getId();
+        }
+
         File directory = new File(profilePicturePath);
         if (!directory.exists()) {
             directory.mkdirs();
@@ -187,15 +191,13 @@ public class UsersControllerService {
         String filename = userId + extension;
         Path filePath = Paths.get(profilePicturePath, filename);
 
-        // Copy the file contents from the resource to the target file
-        // Existing file gets overwritten
         try (InputStream in = profilePicture.getInputStream()) {
             Files.copy(in, filePath, StandardCopyOption.REPLACE_EXISTING);
             var user = userService.findById(userId, UserToConfirm.class);
             user.setProfilePictureLocation(filename);
             userService.save(user);
         } catch (IOException e) {
-            throw new ProfilePictureNotSavedException(); // should we include the message?
+            throw new ProfilePictureNotSavedException();
         }
 
         return "Profile picture saved successfully";
