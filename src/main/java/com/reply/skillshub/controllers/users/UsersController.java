@@ -9,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.reply.skillshub.base.services.LoadCurrentUser;
-import com.reply.skillshub.data.user.BaseUser;
 import com.reply.skillshub.openapi.api.UsersApi;
 import com.reply.skillshub.openapi.model.ConfirmedUserResponse;
 import com.reply.skillshub.openapi.model.CreateUserRequest;
@@ -29,7 +27,6 @@ import lombok.RequiredArgsConstructor;
 public class UsersController implements UsersApi {
 
     private final UsersControllerService usersControllerService;
-    private final LoadCurrentUser loadCurrentUser;
 
     @Override
     public ResponseEntity<CreatedUserResponse> companyCompanyIdEmployeesPost(String companyId,
@@ -105,8 +102,15 @@ public class UsersController implements UsersApi {
 
     @Override
     public ResponseEntity<Resource> userMeProfilePictureGet() {
-        BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
-        return usersUserIdProfilePictureGet(currentUser.getId());
+        try {
+            Resource profilePicture = usersControllerService.getProfilePictureForCurrentUser();
+            String contentType = usersControllerService.getProfilePictureContentTypeForCurrentUser();
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(profilePicture);
+        } catch (com.reply.skillshub.base.exceptionhandling.exeptions.ProfilePictureNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }

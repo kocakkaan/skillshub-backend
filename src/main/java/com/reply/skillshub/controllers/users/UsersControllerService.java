@@ -271,6 +271,16 @@ public class UsersControllerService {
         }
     }
 
+    public Resource getProfilePictureForCurrentUser() {
+        BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
+        return getUserProfilePicture(currentUser.getId());
+    }
+
+    public String getProfilePictureContentTypeForCurrentUser() {
+        BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
+        return getProfilePictureContentType(currentUser.getId());
+    }
+
     private ProfileDto getProfileForUser(EmployeeProfile user) {
         var profile = new ProfileDto();
         profile.setFullname(user.getFullName());
