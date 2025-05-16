@@ -14,7 +14,7 @@ import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
 
 import com.reply.skillshub.base.services.images.FileTypeDetector;
-import com.reply.skillshub.base.services.images.ResizeImageService;
+import com.reply.skillshub.base.services.images.CropImageService;
 import com.reply.skillshub.controllers.resume.powerpoint.PowerPointInformation.PowerPointSkill;
 
 import lombok.Data;
@@ -35,8 +35,10 @@ public enum FieldHandler {
         XSLFPictureShape pictureShape = (XSLFPictureShape) shape;
         var pictureData = pictureShape.getPictureData();
         var dimensionPixels = pictureData.getImageDimensionInPixels();
-        String fileType = FileTypeDetector.detectFileType(powerPointInformation.getProfilePictureLocation()).orElse("PNG");
-        byte[] resizedImageData = ResizeImageService.resizeImage(runStream, (int) dimensionPixels.getWidth() * 4, (int) dimensionPixels.getHeight() * 4, fileType);
+        String fileType = FileTypeDetector.detectFileType(powerPointInformation.getProfilePictureLocation())
+            .orElse("PNG");
+        byte[] resizedImageData = CropImageService.cropAndScaleImage(runStream, (int) dimensionPixels.getWidth() * 4,
+            (int) dimensionPixels.getHeight() * 4, fileType);
         try {
           pictureData.setData(resizedImageData);
         } catch (Exception e) {
