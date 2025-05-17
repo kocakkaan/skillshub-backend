@@ -11,13 +11,14 @@ public class PowerPointInformation {
 
   private String projectId;
   private String projectTitle;
+  private String projectPictureLocation;
 
   private List<String> initialSituation;
   private List<String> challenges;
   private List<String> approachTechnologies;
 
-  private String diamondText;
-  private String moneyText;
-  private String graphText;
-  
+  private String valueAddedText0;
+  private String valueAddedText1;
+  private String valueAddedText2;
+
 }

@@ -15,9 +15,16 @@ public class ProjectControllerServiceUtil {
     projectDto.setChallenges(project.getChallenges());
     projectDto.setApproach(project.getApproachTechnologies());
     projectDto.setTechnologies(project.getTechnologies());
-    projectDto.setValueAddedDiamond(Optional.ofNullable(project.getDiamondText()));
-    projectDto.setValueAddedMoney(Optional.ofNullable(project.getMoneyText()));
-    projectDto.setValueAddedGraph(Optional.ofNullable(project.getGraphText()));
+    projectDto.setValueAdded0(Optional.ofNullable(project.getValueAddedText0()));
+    projectDto.setValueAdded1(Optional.ofNullable(project.getValueAddedText1()));
+    projectDto.setValueAdded2(Optional.ofNullable(project.getValueAddedText2()));
+
+    if (project.getProjectPictureLocation() != null && !project.getProjectPictureLocation().isEmpty()) {
+      projectDto.setProjectPictureUrl(Optional.of("/api/projects/" + project.getId() + "/picture"));
+    } else {
+      projectDto.setProjectPictureUrl(Optional.empty());
+    }
+
     return projectDto;
   }
 
@@ -29,9 +36,9 @@ public class ProjectControllerServiceUtil {
     project.setChallenges(projectDto.getChallenges());
     project.setApproachTechnologies(projectDto.getApproach());
     project.setTechnologies(projectDto.getTechnologies());
-    project.setDiamondText(projectDto.getValueAddedDiamond().orElse(null));
-    project.setMoneyText(projectDto.getValueAddedMoney().orElse(null));
-    project.setGraphText(projectDto.getValueAddedGraph().orElse(null));
+    project.setValueAddedText0(projectDto.getValueAdded0().orElse(null));
+    project.setValueAddedText1(projectDto.getValueAdded1().orElse(null));
+    project.setValueAddedText2(projectDto.getValueAdded2().orElse(null));
     return project;
   }
 
@@ -41,9 +48,9 @@ public class ProjectControllerServiceUtil {
     project.setChallenges(projectDto.getChallenges());
     project.setApproachTechnologies(projectDto.getApproach());
     project.setTechnologies(projectDto.getTechnologies());
-    project.setDiamondText(projectDto.getValueAddedDiamond().orElse(null));
-    project.setMoneyText(projectDto.getValueAddedMoney().orElse(null));
-    project.setGraphText(projectDto.getValueAddedGraph().orElse(null));
+    project.setValueAddedText0(projectDto.getValueAdded0().orElse(null));
+    project.setValueAddedText1(projectDto.getValueAdded1().orElse(null));
+    project.setValueAddedText2(projectDto.getValueAdded2().orElse(null));
     return project;
   }
 

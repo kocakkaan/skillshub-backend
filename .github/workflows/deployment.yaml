@@ -76,6 +76,7 @@ jobs:
               --name backend \
               -p 3080:8080 \
               -v /skillshub/data/profile:/profile \
+              -v /skillshub/data/projects:/projects \
               --env NEO4J_USER=$BACKEND_NEO4J_USER \
               --env NEO4J_PASS=$BACKEND_NEO4J_PASS \
               --env NEO4J_URI=$BACKEND_NEO4J_URI \

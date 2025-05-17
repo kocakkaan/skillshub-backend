@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.nio.file.Paths;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -14,6 +15,7 @@ import javax.imageio.ImageIO;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -23,6 +25,9 @@ import com.reply.skillshub.data.project.Project;
 
 @Service
 public class ProjectPowerPointService {
+
+  @Value("${skillhub.projectpicture.path}")
+  private String projectPicturePath;
 
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ProjectPowerPointService.class);
 
@@ -37,9 +42,17 @@ public class ProjectPowerPointService {
     powerPointInformation.setApproachTechnologies(resume.getApproachTechnologies());
     powerPointInformation.setInitialSituation(resume.getInitialSituation());
     powerPointInformation.setChallenges(resume.getChallenges());
-    powerPointInformation.setDiamondText(resume.getDiamondText());
-    powerPointInformation.setMoneyText(resume.getMoneyText());
-    powerPointInformation.setGraphText(resume.getGraphText());
+    powerPointInformation.setValueAddedText0(resume.getValueAddedText0());
+    powerPointInformation.setValueAddedText1(resume.getValueAddedText1());
+    powerPointInformation.setValueAddedText2(resume.getValueAddedText2());
+
+    if (resume.getProjectPictureLocation() != null && !resume.getProjectPictureLocation().isEmpty()) {
+      String fullPath = Paths.get(projectPicturePath, resume.getProjectPictureLocation()).toString();
+      powerPointInformation.setProjectPictureLocation(fullPath);
+    } else {
+      powerPointInformation.setProjectPictureLocation(null);
+    }
+
     powerPointInformation.setLanguage(language);
 
     return powerPointInformation;
@@ -83,7 +96,7 @@ public class ProjectPowerPointService {
         } catch (IOException e) {
           logger.error("An IO Exception has been thrown on closing the slideshow", e);
         }
-      }    
+      }
     }
 
     return ppt;

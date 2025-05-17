@@ -2,6 +2,7 @@ package com.reply.skillshub.controllers.project;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.reply.skillshub.openapi.api.ProjectsApi;
 import com.reply.skillshub.openapi.model.CreateProjectDto;
@@ -109,6 +111,31 @@ public class ProjectController implements ProjectsApi {
       @NotNull @Valid String language) {
     var image = projectControllerService.exportToImage(projectId, language);
     return ResponseEntity.ok(image);
+  }
+
+  @Override
+  public ResponseEntity<String> uploadProjectPicture(String projectId, MultipartFile file) {
+    String message = projectControllerService.saveProjectPicture(projectId, file);
+    return ResponseEntity.ok(message);
+  }
+
+  @Override
+  public ResponseEntity<Resource> getProjectPicture(String projectId) {
+    Resource file = projectControllerService.getProjectPicture(projectId);
+    String contentType = null;
+    try {
+      contentType = Files.probeContentType(file.getFile().toPath());
+    } catch (IOException | UnsupportedOperationException e) {
+      logger.warn("Could not determine content type for project picture {}", projectId, e);
+    }
+    if (contentType == null) {
+      contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+    }
+
+    return ResponseEntity.ok()
+        .contentType(MediaType.parseMediaType(contentType))
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+        .body(file);
   }
 
 }
