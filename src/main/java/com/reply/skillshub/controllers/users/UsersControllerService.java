@@ -28,6 +28,7 @@ import com.reply.skillshub.base.exceptionhandling.exeptions.InvalidFileTypeExcep
 import com.reply.skillshub.base.exceptionhandling.exeptions.NoCompanyFound;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ProfilePictureNotFoundException;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ProfilePictureNotSavedException;
+import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
 import com.reply.skillshub.base.services.EmailService;
 import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.data.EmailRequest;
@@ -106,6 +107,19 @@ public class UsersControllerService {
         response.setFullName(user.getFullname());
         response.setId(user.getId());
         response.setRole(user.getUserRole().name());
+
+        String creatorId = user.getCreatedBy();
+        if (creatorId != null) {
+            User creatorEntity = userService.findById(creatorId, User.class);
+            if (creatorEntity != null) {
+                response.setCreatedBy(creatorEntity.getFullname());
+            } else {
+                throw new UserNotFound("Creator not found with ID: " + creatorId);
+            }
+        } else {
+            response.setCreatedBy(null);
+        }
+        response.setCreatedOn(user.getCreatedOn());
         return response;
     }
 
@@ -120,7 +134,7 @@ public class UsersControllerService {
             throw new InsufficientRights();
         }
 
-        User userToSave = createUserFromRequest(createUserRequest);
+        User userToSave = createUserFromRequest(createUserRequest, currentUser.getId());
 
         userToSave.getCompanies().add(company);
 
@@ -291,6 +305,19 @@ public class UsersControllerService {
         profile.setSkills(user.getSkills().stream().map(this::convertToSkillDto).toList());
         profile.setLanguages(user.getSpeaks().stream().map(this::convertSpeaksToLanguageDto).toList());
         profile.setResumes(user.getResumes().stream().map(this::convertToResumeDto).toList());
+
+        String creatorId = user.getCreatedBy();
+        if (creatorId != null) {
+            User creator = userService.findById(creatorId, User.class);
+            if (creator != null) {
+                profile.setCreatedBy(creator.getFullname());
+            } else {
+                throw new UserNotFound("Creator not found with ID: " + creatorId);
+            }
+        } else {
+            profile.setCreatedBy(null);
+        }
+        profile.setCreatedOn(user.getCreatedOn());
         return profile;
     }
 
@@ -367,13 +394,27 @@ public class UsersControllerService {
     }
 
     private EmployeeDto convertUserToEmployeeDto(Employee user) {
-        return new EmployeeDto()
+        EmployeeDto dto = new EmployeeDto()
                 .id(user.getId())
                 .fullname(user.getFullName())
-                .role(user.getUserRole().name());
+                .role(user.getUserRole().name())
+                .createdOn(user.getCreatedOn());
+
+        String creatorId = user.getCreatedBy();
+        if (creatorId != null) {
+            User creator = userService.findById(creatorId, User.class);
+            if (creator != null) {
+                dto.setCreatedBy(Optional.of(creator.getFullname()));
+            } else {
+                throw new UserNotFound("Creator not found with ID: " + creatorId);
+            }
+        } else {
+            dto.setCreatedBy(Optional.empty());
+        }
+        return dto;
     }
 
-    private User createUserFromRequest(CreateUserRequest createUserRequest) {
+    private User createUserFromRequest(CreateUserRequest createUserRequest, String creatorId) {
         User user = new User();
         user.setFirstName(createUserRequest.getFirstName());
         user.setLastName(createUserRequest.getLastName());
@@ -381,6 +422,8 @@ public class UsersControllerService {
         user.setConfirmationToken(UUID.randomUUID().toString());
         user.setUserRole(UserRole.EMPLOYEE);
         user.setPassword("tempPassword");
+        user.setCreatedBy(creatorId);
+        user.setCreatedOn(java.time.LocalDate.now());
         return user;
     }
 
@@ -391,6 +434,15 @@ public class UsersControllerService {
         response.fullName(user.getFullname());
         response.id(user.getId());
         response.role(user.getUserRole().name());
+
+        String creatorId = user.getCreatedBy();
+        User creator = userService.findById(creatorId, User.class);
+        if (creator != null) {
+            response.setCreatedBy(creator.getFullname());
+        } else {
+            throw new UserNotFound("Creator not found with ID: " + creatorId);
+        }
+        response.setCreatedOn(user.getCreatedOn());
         return response;
     }
 

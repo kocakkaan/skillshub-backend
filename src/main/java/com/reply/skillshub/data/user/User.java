@@ -1,5 +1,6 @@
 package com.reply.skillshub.data.user;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,9 +52,15 @@ public class User {
     private String password;
 
     private String confirmationToken;
-    
+
     @NotNull
     private boolean confirmed;
+
+    @NotNull
+    private String createdBy;
+
+    @NotNull
+    private LocalDate createdOn;
 
     @Relationship(type = "SPEAKS")
     private List<Speaks> speaks = new ArrayList<>();
