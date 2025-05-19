@@ -22,9 +22,9 @@ import lombok.Data;
 public class Company {
 
     @Id
-    @GeneratedValue(UUIDStringGenerator.class)    
+    @GeneratedValue(UUIDStringGenerator.class)
     private String id;
-    
+
     @NotEmpty
     private String label;
 
@@ -33,7 +33,7 @@ public class Company {
 
     @Relationship(type = "HAS_PROJECT", direction = Direction.OUTGOING, cascadeUpdates = false)
     private List<Project> projects = new ArrayList<>();
-    
+
     @AssertFalse
     public boolean isEmployeesEmpty() {
         return employees.isEmpty();

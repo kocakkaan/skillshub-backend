@@ -1,7 +1,7 @@
 package com.reply.skillshub.data.project;
 
 public enum ProjectStatus {
-    IN_PROGRESS("In Progress"),
+    ACTIVE("ACTIVE"),
     COMPLETED("Completed"),
     ON_HOLD("On Hold"),
     CANCELLED("Cancelled");

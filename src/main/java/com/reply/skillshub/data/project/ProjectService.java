@@ -25,8 +25,8 @@ public class ProjectService {
         repository.deleteById(id);
     }
 
-    public List<Project> findAll() {
-        return repository.findAll();
+    public List<ProjectReference> findAll() {
+        return repository.findAllBy(ProjectReference.class);
     }
 
     public Optional<Project> findOptionalById(String id) {
@@ -35,6 +35,11 @@ public class ProjectService {
 
     public Project findById(String id) {
         return repository.findById(id).orElseThrow(() -> new ResumeNotFound());
+    }
+
+    public ProjectReference findReferenceById(String id) {
+        return repository.findById(id, ProjectReference.class)
+                .orElseThrow(() -> new ResumeNotFound());
     }
 
     public <T> T findById(String id, Class<T> type) {

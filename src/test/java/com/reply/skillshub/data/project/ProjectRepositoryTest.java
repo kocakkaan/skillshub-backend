@@ -21,7 +21,7 @@ public class ProjectRepositoryTest extends BaseRepositoryTest {
   @Test
   void succesfullySaveProject() {
     Project project = Instancio.of(Project.class).set(field(Project::getIndustry), null)
-        .set(field(Project::getUsers), List.of()).set(field(Project::getClient), null).create();
+        .set(field(Project::getUsers), List.of()).set(field(Project::getClients), null).create();
     project.setId(null);
     Project savedProject = projectRepository.save(project);
     Assertions.assertNotNull(savedProject.getId());
