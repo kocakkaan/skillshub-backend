@@ -86,6 +86,10 @@ public class UsersControllerService {
     @Value("${skillhub.frontend}")
     private String server;
 
+    private boolean isAdmin() {
+        return loadCurrentUser.loadSkillhubUserFromContext().getUserRole() == UserRole.ADMIN;
+    }
+
     public ConfirmedUserResponse confirmUser(String confirmationToken, @Valid UserConfirmRequest userConfirmRequest) {
         var user = userService.findUserByConfirmationToken(confirmationToken, UserToConfirm.class);
 
@@ -107,25 +111,8 @@ public class UsersControllerService {
         response.setFullName(user.getFullname());
         response.setId(user.getId());
         response.setRole(user.getUserRole().name());
-
-        BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
-        if (currentUser.getUserRole() == UserRole.ADMIN) {
-            String creatorId = user.getCreatedBy();
-            if (creatorId != null) {
-                User creatorEntity = userService.findById(creatorId, User.class);
-                if (creatorEntity != null) {
-                    response.setCreatedBy(creatorEntity.getFullname());
-                } else {
-                    throw new UserNotFound("Creator not found with ID: " + creatorId);
-                }
-            } else {
-                response.setCreatedBy(null);
-            }
-            response.setCreatedOn(user.getCreatedOn());
-        } else {
-            response.setCreatedBy(null);
-            response.setCreatedOn(null);
-        }
+        response.setCreatedBy(isAdmin() && user.getCreatedBy() != null ? user.getCreatedBy().getFullname() : null);
+        response.setCreatedOn(isAdmin() ? user.getCreatedOn() : null);
         return response;
     }
 
@@ -311,25 +298,8 @@ public class UsersControllerService {
         profile.setSkills(user.getSkills().stream().map(this::convertToSkillDto).toList());
         profile.setLanguages(user.getSpeaks().stream().map(this::convertSpeaksToLanguageDto).toList());
         profile.setResumes(user.getResumes().stream().map(this::convertToResumeDto).toList());
-
-        BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
-        if (currentUser.getUserRole() == UserRole.ADMIN) {
-            String creatorId = user.getCreatedBy();
-            if (creatorId != null) {
-                User creator = userService.findById(creatorId, User.class);
-                if (creator != null) {
-                    profile.setCreatedBy(creator.getFullname());
-                } else {
-                    throw new UserNotFound("Creator not found with ID: " + creatorId);
-                }
-            } else {
-                profile.setCreatedBy(null);
-            }
-            profile.setCreatedOn(user.getCreatedOn());
-        } else {
-            profile.setCreatedBy(null);
-            profile.setCreatedOn(null);
-        }
+        profile.setCreatedBy(isAdmin() && user.getCreatedBy() != null ? user.getCreatedBy().getFullname() : null);
+        profile.setCreatedOn(isAdmin() ? user.getCreatedOn() : null);
         return profile;
     }
 
@@ -409,26 +379,11 @@ public class UsersControllerService {
         EmployeeDto dto = new EmployeeDto()
                 .id(user.getId())
                 .fullname(user.getFullName())
-                .role(user.getUserRole().name())
-                .createdOn(user.getCreatedOn());
+                .role(user.getUserRole().name());
 
-        BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
-        if (currentUser.getUserRole() == UserRole.ADMIN) {
-            String creatorId = user.getCreatedBy();
-            if (creatorId != null) {
-                User creator = userService.findById(creatorId, User.class);
-                if (creator != null) {
-                    dto.setCreatedBy(Optional.of(creator.getFullname()));
-                } else {
-                    throw new UserNotFound("Creator not found with ID: " + creatorId);
-                }
-            } else {
-                dto.setCreatedBy(Optional.empty());
-            }
-        } else {
-            dto.setCreatedBy(Optional.empty());
-            dto.setCreatedOn(null);
-        }
+        dto.setCreatedBy(isAdmin() && user.getCreatedBy() != null ? Optional.of(user.getCreatedBy().getFullname())
+                : Optional.empty());
+        dto = dto.createdOn(isAdmin() ? user.getCreatedOn() : null);
         return dto;
     }
 
@@ -440,7 +395,13 @@ public class UsersControllerService {
         user.setConfirmationToken(UUID.randomUUID().toString());
         user.setUserRole(UserRole.EMPLOYEE);
         user.setPassword("tempPassword");
-        user.setCreatedBy(creatorId);
+
+        User creator = userService.findById(creatorId, User.class);
+        if (creator == null) {
+            throw new UserNotFound("Creator user not found with ID: " + creatorId);
+        }
+        user.setCreatedBy(creator);
+        user.setCreatedUserId(creatorId);
         user.setCreatedOn(java.time.LocalDate.now());
         return user;
     }
@@ -452,21 +413,8 @@ public class UsersControllerService {
         response.fullName(user.getFullname());
         response.id(user.getId());
         response.role(user.getUserRole().name());
-
-        BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
-        if (currentUser.getUserRole() == UserRole.ADMIN) {
-            String creatorId = user.getCreatedBy();
-            User creator = userService.findById(creatorId, User.class);
-            if (creator != null) {
-                response.setCreatedBy(creator.getFullname());
-            } else {
-                throw new UserNotFound("Creator not found with ID: " + creatorId);
-            }
-            response.setCreatedOn(user.getCreatedOn());
-        } else {
-            response.setCreatedBy(null);
-            response.setCreatedOn(null);
-        }
+        response.setCreatedBy(isAdmin() && user.getCreatedBy() != null ? user.getCreatedBy().getFullname() : null);
+        response.setCreatedOn(isAdmin() ? user.getCreatedOn() : null);
         return response;
     }
 

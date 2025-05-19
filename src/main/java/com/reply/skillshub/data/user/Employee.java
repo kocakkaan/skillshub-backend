@@ -14,7 +14,9 @@ public interface Employee {
 
   public UserRole getUserRole();
 
-  public String getCreatedBy();
+  public String getCreatedUserId();
+
+  public User getCreatedBy();
 
   public LocalDate getCreatedOn();
 

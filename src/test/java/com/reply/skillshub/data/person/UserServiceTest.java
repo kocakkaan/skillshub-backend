@@ -63,6 +63,10 @@ public class UserServiceTest extends BaseRepositoryTest {
         personToSave1.setEmail("maurits.de.roover@reply.com");
         personToSave1.setUserRole(UserRole.ADMIN);
         personToSave1.setPassword("test");
+        personToSave1.setCreatedOn(java.time.LocalDate.now());
+        personToSave1.setCreatedBy(personToSave1);
+        personToSave1.setCreatedUserId("temp-test-creator-id");
+
         return personToSave1;
     }
 

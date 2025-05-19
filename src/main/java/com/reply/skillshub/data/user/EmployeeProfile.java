@@ -23,7 +23,9 @@ public interface EmployeeProfile extends Employee {
 
   public List<Industry> getIndustries();
 
-  public String getCreatedBy();
+  public String getCreatedUserId();
+
+  public User getCreatedBy();
 
   public LocalDate getCreatedOn();
 
