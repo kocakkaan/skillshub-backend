@@ -108,18 +108,24 @@ public class UsersControllerService {
         response.setId(user.getId());
         response.setRole(user.getUserRole().name());
 
-        String creatorId = user.getCreatedBy();
-        if (creatorId != null) {
-            User creatorEntity = userService.findById(creatorId, User.class);
-            if (creatorEntity != null) {
-                response.setCreatedBy(creatorEntity.getFullname());
+        BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
+        if (currentUser.getUserRole() == UserRole.ADMIN) {
+            String creatorId = user.getCreatedBy();
+            if (creatorId != null) {
+                User creatorEntity = userService.findById(creatorId, User.class);
+                if (creatorEntity != null) {
+                    response.setCreatedBy(creatorEntity.getFullname());
+                } else {
+                    throw new UserNotFound("Creator not found with ID: " + creatorId);
+                }
             } else {
-                throw new UserNotFound("Creator not found with ID: " + creatorId);
+                response.setCreatedBy(null);
             }
+            response.setCreatedOn(user.getCreatedOn());
         } else {
             response.setCreatedBy(null);
+            response.setCreatedOn(null);
         }
-        response.setCreatedOn(user.getCreatedOn());
         return response;
     }
 
@@ -306,18 +312,24 @@ public class UsersControllerService {
         profile.setLanguages(user.getSpeaks().stream().map(this::convertSpeaksToLanguageDto).toList());
         profile.setResumes(user.getResumes().stream().map(this::convertToResumeDto).toList());
 
-        String creatorId = user.getCreatedBy();
-        if (creatorId != null) {
-            User creator = userService.findById(creatorId, User.class);
-            if (creator != null) {
-                profile.setCreatedBy(creator.getFullname());
+        BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
+        if (currentUser.getUserRole() == UserRole.ADMIN) {
+            String creatorId = user.getCreatedBy();
+            if (creatorId != null) {
+                User creator = userService.findById(creatorId, User.class);
+                if (creator != null) {
+                    profile.setCreatedBy(creator.getFullname());
+                } else {
+                    throw new UserNotFound("Creator not found with ID: " + creatorId);
+                }
             } else {
-                throw new UserNotFound("Creator not found with ID: " + creatorId);
+                profile.setCreatedBy(null);
             }
+            profile.setCreatedOn(user.getCreatedOn());
         } else {
             profile.setCreatedBy(null);
+            profile.setCreatedOn(null);
         }
-        profile.setCreatedOn(user.getCreatedOn());
         return profile;
     }
 
@@ -400,16 +412,22 @@ public class UsersControllerService {
                 .role(user.getUserRole().name())
                 .createdOn(user.getCreatedOn());
 
-        String creatorId = user.getCreatedBy();
-        if (creatorId != null) {
-            User creator = userService.findById(creatorId, User.class);
-            if (creator != null) {
-                dto.setCreatedBy(Optional.of(creator.getFullname()));
+        BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
+        if (currentUser.getUserRole() == UserRole.ADMIN) {
+            String creatorId = user.getCreatedBy();
+            if (creatorId != null) {
+                User creator = userService.findById(creatorId, User.class);
+                if (creator != null) {
+                    dto.setCreatedBy(Optional.of(creator.getFullname()));
+                } else {
+                    throw new UserNotFound("Creator not found with ID: " + creatorId);
+                }
             } else {
-                throw new UserNotFound("Creator not found with ID: " + creatorId);
+                dto.setCreatedBy(Optional.empty());
             }
         } else {
             dto.setCreatedBy(Optional.empty());
+            dto.setCreatedOn(null);
         }
         return dto;
     }
@@ -435,14 +453,20 @@ public class UsersControllerService {
         response.id(user.getId());
         response.role(user.getUserRole().name());
 
-        String creatorId = user.getCreatedBy();
-        User creator = userService.findById(creatorId, User.class);
-        if (creator != null) {
-            response.setCreatedBy(creator.getFullname());
+        BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
+        if (currentUser.getUserRole() == UserRole.ADMIN) {
+            String creatorId = user.getCreatedBy();
+            User creator = userService.findById(creatorId, User.class);
+            if (creator != null) {
+                response.setCreatedBy(creator.getFullname());
+            } else {
+                throw new UserNotFound("Creator not found with ID: " + creatorId);
+            }
+            response.setCreatedOn(user.getCreatedOn());
         } else {
-            throw new UserNotFound("Creator not found with ID: " + creatorId);
+            response.setCreatedBy(null);
+            response.setCreatedOn(null);
         }
-        response.setCreatedOn(user.getCreatedOn());
         return response;
     }
 
