@@ -37,7 +37,7 @@ public class ProjectPowerPointService {
     if (resume == null) {
       return powerPointInformation;
     }
-    powerPointInformation.setProjectId(resume.getId());
+    powerPointInformation.setProjectId(resume.getFormattedProjectId());
     powerPointInformation.setProjectTitle(resume.getTitle());
     powerPointInformation.setApproachTechnologies(resume.getApproachTechnologies());
     powerPointInformation.setInitialSituation(resume.getInitialSituation());

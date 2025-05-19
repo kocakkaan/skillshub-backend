@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
@@ -22,7 +23,9 @@ import com.reply.skillshub.base.exceptionhandling.exeptions.ProjectPictureNotSav
 import com.reply.skillshub.controllers.project.powerpoint.PowerPointInformation;
 import com.reply.skillshub.controllers.project.powerpoint.ProjectPowerPointService;
 import com.reply.skillshub.data.project.Project;
+import com.reply.skillshub.data.project.ProjectReference;
 import com.reply.skillshub.data.project.ProjectService;
+import com.reply.skillshub.data.projectcounter.ProjectCounterService;
 import com.reply.skillshub.openapi.model.CreateProjectDto;
 import com.reply.skillshub.openapi.model.ProjectDto;
 
@@ -33,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class ProjectControllerService {
 
   private final ProjectService projectService;
+  private final ProjectCounterService projectCounterService;
   private final ProjectPowerPointService powerPointService;
 
   @Value("${skillhub.projectpicture.path}")
@@ -68,7 +72,7 @@ public class ProjectControllerService {
   }
 
   public String saveProjectPicture(String projectId, MultipartFile projectPictureFile) {
-    var project = projectService.findById(projectId);
+    var project = projectService.findById(projectId, ProjectWithFilelocation.class);
     if (project == null) {
       throw new RuntimeException("Project not found with id: " + projectId);
     }
@@ -121,14 +125,17 @@ public class ProjectControllerService {
 
   public List<ProjectDto> getAllProjects() {
     var projects = projectService.findAll();
-    return projects.stream().map(ProjectControllerServiceUtil::convertToProjectDto).toList();
+    return projects.stream().sorted(Comparator.comparingInt(ProjectReference::getProjectId)).map(ProjectControllerServiceUtil::convertToProjectDto).toList();
   }
 
   public ProjectDto createProject(CreateProjectDto projectDto) {
     var project = new Project();
     project.setTitle(projectDto.getTitle());
+    var nextProjectId = projectCounterService.incrementProjectId();
+    project.setProjectId(nextProjectId);
     var savedProject = projectService.save(project);
-    return ProjectControllerServiceUtil.convertToProjectDto(savedProject);
+    var projectReference = projectService.findReferenceById(savedProject.getId());
+    return ProjectControllerServiceUtil.convertToProjectDto(projectReference);
   }
 
   public ProjectDto updateProject(String id, ProjectDto projectDto) {
@@ -136,13 +143,14 @@ public class ProjectControllerService {
     if (project != null) {
       ProjectControllerServiceUtil.updateProjectFromDto(project, projectDto);
       var updatedProject = projectService.save(project);
-      return ProjectControllerServiceUtil.convertToProjectDto(updatedProject);
+      var projectReference = projectService.findReferenceById(updatedProject.getId());
+      return ProjectControllerServiceUtil.convertToProjectDto(projectReference);
     }
     return null;
   }
 
   public ProjectDto getProjectById(String id) {
-    var project = projectService.findById(id);
+    var project = projectService.findReferenceById(id);
     return ProjectControllerServiceUtil.convertToProjectDto(project);
   }
 
