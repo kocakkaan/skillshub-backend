@@ -379,11 +379,9 @@ public class UsersControllerService {
         EmployeeDto dto = new EmployeeDto()
                 .id(user.getId())
                 .fullname(user.getFullName())
-                .role(user.getUserRole().name());
-
-        dto.setCreatedBy(isAdmin() && user.getCreatedBy() != null ? Optional.of(user.getCreatedBy().getFullname())
-                : Optional.empty());
-        dto = dto.createdOn(isAdmin() ? user.getCreatedOn() : null);
+                .role(user.getUserRole().name())
+                .createdBy(isAdmin() && user.getCreatedBy() != null ? user.getCreatedBy().getFullname() : null)
+                .createdOn(isAdmin() ? user.getCreatedOn() : null);
         return dto;
     }
 

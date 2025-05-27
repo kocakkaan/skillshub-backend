@@ -1,5 +1,7 @@
 package com.reply.skillshub.data.user;
 
+import java.time.LocalDate;
+
 import com.reply.skillshub.data.userrole.UserRole;
 
 public interface BaseUser {
@@ -22,6 +24,10 @@ public interface BaseUser {
     public String getConfirmationToken();
 
     public Boolean getConfirmed();
+
+    public BaseUser getCreatedBy();
+
+    public LocalDate getCreatedOn();
 
     default String getFullName() {
         return getFirstName().concat(" ").concat(getLastName());

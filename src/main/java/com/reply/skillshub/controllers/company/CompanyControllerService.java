@@ -46,15 +46,14 @@ public class CompanyControllerService {
 
     private CompanyDto convertEntityToApiDto(BaseCompany company) {
         return new CompanyDto()
-            .id(company.getId())
-            .name(company.getLabel());
+                .id(company.getId())
+                .name(company.getLabel());
     }
 
-    
     private CompanyDto convertEntityToApiDto(Company company) {
         return new CompanyDto()
-            .id(company.getId())
-            .name(company.getLabel());
+                .id(company.getId())
+                .name(company.getLabel());
     }
 
     public CompanyDto createCompany(CreateCompanyRequest createCompanyRequest) {
@@ -68,36 +67,43 @@ public class CompanyControllerService {
 
     public CompanyInformationDto getCompanyInformation(String companyId) {
         var company = companyService.findBaseCompanyById(companyId).orElseThrow(NoCompanyFound::new);
+        final String companyName = company.getLabel();
         return new CompanyInformationDto()
-            .id(company.getId())
-            .name(company.getLabel())
-            .employees(company.getEmployees().stream().map(this::convertEmployeeToApiDto).toList());
+                .id(company.getId())
+                .name(company.getLabel())
+                .employees(company.getEmployees().stream()
+                        .map(employee -> convertEmployeeToApiDto(employee, companyName)).toList());
     }
 
     public List<EmployeeDto> getCompanyEmployees(String companyId, Optional<String> searchString) {
         var company = companyService.findBaseCompanyById(companyId).orElseThrow(NoCompanyFound::new);
+        final String companyName = company.getLabel();
         userService.findByCompaniesIdIn(List.of(companyId));
         if (searchString.isPresent()) {
             var keywords = skillsAgentService.getKeywordsFromSearchString(searchString.get());
             return userService.findByCompanyAndKeyWords(companyId, keywords).stream()
-                .map(this::convertEmployeeToApiDto)
-                .toList();
+                    .map(employee -> convertEmployeeToApiDto(employee, companyName))
+                    .toList();
         }
-        return company.getEmployees().stream().map(this::convertEmployeeToApiDto).toList();
+        return company.getEmployees().stream().map(employee -> convertEmployeeToApiDto(employee, companyName)).toList();
     }
 
-    private EmployeeDto convertEmployeeToApiDto(BaseUser employee) {
+    private EmployeeDto convertEmployeeToApiDto(BaseUser employee, String companyName) {
         return new EmployeeDto()
-            .id(employee.getId())
-            .fullname(employee.getFullName())
-            .company("TODO: Implement company name");
+                .id(employee.getId())
+                .fullname(employee.getFullName())
+                .createdBy(employee.getCreatedBy() != null ? employee.getCreatedBy().getFullName() : null)
+                .createdOn(employee.getCreatedOn() != null ? employee.getCreatedOn() : null)
+                .company(companyName);
     }
 
-    private EmployeeDto convertEmployeeToApiDto(Employee employee) {
+    private EmployeeDto convertEmployeeToApiDto(Employee employee, String companyName) {
         return new EmployeeDto()
-            .id(employee.getId())
-            .fullname(employee.getFullName())
-            .company("TODO: Implement company name");
+                .id(employee.getId())
+                .fullname(employee.getFullName())
+                .createdBy(employee.getCreatedBy().getFullname())
+                .createdOn(employee.getCreatedOn())
+                .company(companyName);
     }
-    
+
 }
