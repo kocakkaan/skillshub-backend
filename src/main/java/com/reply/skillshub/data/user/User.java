@@ -22,7 +22,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Node
 @Data
@@ -71,7 +70,6 @@ public class User {
     private List<Speaks> speaks = new ArrayList<>();
 
     @Relationship(type = "WORKS_FOR", cascadeUpdates = false)
-    @EqualsAndHashCode.Exclude
     private List<Company> companies = new ArrayList<>();
 
     @Relationship(type = "HAS_EXPERIENCE", cascadeUpdates = false)

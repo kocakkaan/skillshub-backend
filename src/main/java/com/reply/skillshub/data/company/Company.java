@@ -16,7 +16,6 @@ import com.reply.skillshub.data.user.User;
 import jakarta.validation.constraints.AssertFalse;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Node
 @Data
@@ -30,7 +29,6 @@ public class Company {
     private String label;
 
     @Relationship(type = "WORKS_FOR", direction = Direction.INCOMING)
-    @EqualsAndHashCode.Exclude
     private List<User> employees = new ArrayList<>();
 
     @Relationship(type = "HAS_PROJECT", direction = Direction.OUTGOING, cascadeUpdates = false)
