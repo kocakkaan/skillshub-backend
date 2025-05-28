@@ -22,6 +22,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Node
 @Data
@@ -61,6 +62,7 @@ public class User {
 
     @Relationship(type = "CREATED_BY")
     @NotNull
+    @EqualsAndHashCode.Exclude
     private User createdBy;
 
     @NotNull
