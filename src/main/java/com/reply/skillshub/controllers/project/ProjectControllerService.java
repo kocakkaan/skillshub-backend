@@ -18,14 +18,18 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.reply.skillshub.base.exceptionhandling.exeptions.InsufficientRights;
+import com.reply.skillshub.base.exceptionhandling.exeptions.ProjectPictureNotDeletedException;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ProjectPictureNotFoundException;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ProjectPictureNotSavedException;
+import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.controllers.project.powerpoint.PowerPointInformation;
 import com.reply.skillshub.controllers.project.powerpoint.ProjectPowerPointService;
 import com.reply.skillshub.data.project.Project;
 import com.reply.skillshub.data.project.ProjectReference;
 import com.reply.skillshub.data.project.ProjectService;
 import com.reply.skillshub.data.projectcounter.ProjectCounterService;
+import com.reply.skillshub.data.userrole.UserRole;
 import com.reply.skillshub.openapi.model.CreateProjectDto;
 import com.reply.skillshub.openapi.model.ProjectDto;
 
@@ -38,11 +42,33 @@ public class ProjectControllerService {
   private final ProjectService projectService;
   private final ProjectCounterService projectCounterService;
   private final ProjectPowerPointService powerPointService;
+  private final LoadCurrentUser loadCurrentUser;
 
   @Value("${skillhub.projectpicture.path}")
   private String projectPicturePath;
 
+  private boolean isAdmin() {
+    return loadCurrentUser.loadSkillhubUserFromContext().getUserRole() == UserRole.ADMIN;
+  }
+
   public void deleteProject(String id) {
+    if (!isAdmin()) {
+      throw new InsufficientRights();
+    }
+
+    Project project = projectService.findById(id);
+
+    if (project != null) {
+      String pictureLocation = project.getProjectPictureLocation();
+      if (pictureLocation != null && !pictureLocation.isEmpty()) {
+        try {
+          Path filePath = Paths.get(projectPicturePath).resolve(pictureLocation).normalize();
+          Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+          throw new ProjectPictureNotDeletedException("Error deleting project picture: " + pictureLocation, e);
+        }
+      }
+    }
     projectService.deleteById(id);
   }
 
@@ -125,7 +151,8 @@ public class ProjectControllerService {
 
   public List<ProjectDto> getAllProjects() {
     var projects = projectService.findAll();
-    return projects.stream().sorted(Comparator.comparingInt(ProjectReference::getProjectId)).map(ProjectControllerServiceUtil::convertToProjectDto).toList();
+    return projects.stream().sorted(Comparator.comparingInt(ProjectReference::getProjectId))
+        .map(ProjectControllerServiceUtil::convertToProjectDto).toList();
   }
 
   public ProjectDto createProject(CreateProjectDto projectDto) {
