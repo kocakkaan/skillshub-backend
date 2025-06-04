@@ -8,8 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +28,7 @@ import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.controllers.project.powerpoint.PowerPointInformation;
 import com.reply.skillshub.controllers.project.powerpoint.ProjectPowerPointService;
 import com.reply.skillshub.data.project.Project;
+import com.reply.skillshub.data.project.ProjectAgentService;
 import com.reply.skillshub.data.project.ProjectReference;
 import com.reply.skillshub.data.project.ProjectService;
 import com.reply.skillshub.data.projectcounter.ProjectCounterService;
@@ -43,6 +46,9 @@ public class ProjectControllerService {
   private final ProjectCounterService projectCounterService;
   private final ProjectPowerPointService powerPointService;
   private final LoadCurrentUser loadCurrentUser;
+  private final ProjectAgentService projectAgentService;
+
+  private static final int TOP_K = 5;
 
   @Value("${skillhub.projectpicture.path}")
   private String projectPicturePath;
@@ -155,6 +161,36 @@ public class ProjectControllerService {
         .map(ProjectControllerServiceUtil::convertToProjectDto).toList();
   }
 
+  public List<ProjectDto> getSearchProjects(String search) {
+    List<ProjectReference> projectReferences;
+
+    if (search != null && search.trim().toUpperCase().startsWith("MATCH")) {
+      List<Project> projectsFromCypher = projectService.findProjectsByCypherQuery(search);
+      if (projectsFromCypher == null || projectsFromCypher.isEmpty()) {
+        return Collections.emptyList();
+      }
+      projectReferences = projectsFromCypher.stream()
+          .map(Project::getId)
+          .map(projectService::findReferenceById)
+          .filter(Objects::nonNull)
+          .toList();
+    } else {
+      List<String> projectIdsFromAgent = projectAgentService.searchProjectsByQuery(search, TOP_K);
+      if (projectIdsFromAgent == null || projectIdsFromAgent.isEmpty()) {
+        return Collections.emptyList();
+      }
+      projectReferences = projectIdsFromAgent.stream()
+          .map(projectService::findReferenceById)
+          .filter(Objects::nonNull)
+          .toList();
+    }
+
+    return projectReferences.stream()
+        .sorted(Comparator.comparingInt(ProjectReference::getProjectId))
+        .map(ProjectControllerServiceUtil::convertToProjectDto)
+        .toList();
+  }
+
   public ProjectDto createProject(CreateProjectDto projectDto) {
     var project = new Project();
     project.setTitle(projectDto.getTitle());
@@ -170,6 +206,7 @@ public class ProjectControllerService {
     if (project != null) {
       ProjectControllerServiceUtil.updateProjectFromDto(project, projectDto);
       var updatedProject = projectService.save(project);
+      projectAgentService.processProject(updatedProject.getId());
       var projectReference = projectService.findReferenceById(updatedProject.getId());
       return ProjectControllerServiceUtil.convertToProjectDto(projectReference);
     }

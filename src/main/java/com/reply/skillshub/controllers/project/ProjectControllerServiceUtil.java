@@ -33,10 +33,10 @@ public class ProjectControllerServiceUtil {
     List<ClientDto> clients = new ArrayList<>();
     if (project.getClients() != null) {
       for (var clientEntity : project.getClients()) {
-      ClientDto client = new ClientDto();
-      client.setId(clientEntity.getId());
-      client.setName(clientEntity.getName());
-      clients.add(client);
+        ClientDto client = new ClientDto();
+        client.setId(clientEntity.getId());
+        client.setName(clientEntity.getName());
+        clients.add(client);
       }
     }
 
@@ -62,6 +62,7 @@ public class ProjectControllerServiceUtil {
 
   public static Project updateProjectFromDto(Project project, ProjectDto projectDto) {
     project.setTitle(projectDto.getTitle());
+    project.setDescription(projectDto.getDescription().orElse(null));
     project.setInitialSituation(projectDto.getInitialSituation());
     project.setChallenges(projectDto.getChallenges());
     project.setApproachTechnologies(projectDto.getApproach());
