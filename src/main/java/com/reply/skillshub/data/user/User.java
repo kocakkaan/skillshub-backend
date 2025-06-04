@@ -1,5 +1,6 @@
 package com.reply.skillshub.data.user;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Node
 @Data
@@ -51,9 +53,20 @@ public class User {
     private String password;
 
     private String confirmationToken;
-    
+
     @NotNull
     private boolean confirmed;
+
+    @NotNull
+    private String createdUserId;
+
+    @Relationship(type = "CREATED_BY", cascadeUpdates = false)
+    @NotNull
+    @EqualsAndHashCode.Exclude
+    private User createdBy;
+
+    @NotNull
+    private LocalDate createdOn;
 
     @Relationship(type = "SPEAKS")
     private List<Speaks> speaks = new ArrayList<>();

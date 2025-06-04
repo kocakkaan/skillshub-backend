@@ -28,6 +28,7 @@ import com.reply.skillshub.base.exceptionhandling.exeptions.InvalidFileTypeExcep
 import com.reply.skillshub.base.exceptionhandling.exeptions.NoCompanyFound;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ProfilePictureNotFoundException;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ProfilePictureNotSavedException;
+import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
 import com.reply.skillshub.base.services.EmailService;
 import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.data.EmailRequest;
@@ -85,6 +86,10 @@ public class UsersControllerService {
     @Value("${skillhub.frontend}")
     private String server;
 
+    private boolean isAdmin() {
+        return loadCurrentUser.loadSkillhubUserFromContext().getUserRole() == UserRole.ADMIN;
+    }
+
     public ConfirmedUserResponse confirmUser(String confirmationToken, @Valid UserConfirmRequest userConfirmRequest) {
         var user = userService.findUserByConfirmationToken(confirmationToken, UserToConfirm.class);
 
@@ -106,6 +111,8 @@ public class UsersControllerService {
         response.setFullName(user.getFullname());
         response.setId(user.getId());
         response.setRole(user.getUserRole().name());
+        response.setCreatedBy(isAdmin() && user.getCreatedBy() != null ? user.getCreatedBy().getFullname() : null);
+        response.setCreatedOn(isAdmin() ? user.getCreatedOn() : null);
         return response;
     }
 
@@ -120,7 +127,7 @@ public class UsersControllerService {
             throw new InsufficientRights();
         }
 
-        User userToSave = createUserFromRequest(createUserRequest);
+        User userToSave = createUserFromRequest(createUserRequest, currentUser.getId());
 
         userToSave.getCompanies().add(company);
 
@@ -291,6 +298,8 @@ public class UsersControllerService {
         profile.setSkills(user.getSkills().stream().map(this::convertToSkillDto).toList());
         profile.setLanguages(user.getSpeaks().stream().map(this::convertSpeaksToLanguageDto).toList());
         profile.setResumes(user.getResumes().stream().map(this::convertToResumeDto).toList());
+        profile.setCreatedBy(isAdmin() && user.getCreatedBy() != null ? user.getCreatedBy().getFullname() : null);
+        profile.setCreatedOn(isAdmin() ? user.getCreatedOn() : null);
         return profile;
     }
 
@@ -367,13 +376,16 @@ public class UsersControllerService {
     }
 
     private EmployeeDto convertUserToEmployeeDto(Employee user) {
-        return new EmployeeDto()
+        EmployeeDto dto = new EmployeeDto()
                 .id(user.getId())
                 .fullname(user.getFullName())
-                .role(user.getUserRole().name());
+                .role(user.getUserRole().name())
+                .createdBy(isAdmin() && user.getCreatedBy() != null ? user.getCreatedBy().getFullname() : null)
+                .createdOn(isAdmin() ? user.getCreatedOn() : null);
+        return dto;
     }
 
-    private User createUserFromRequest(CreateUserRequest createUserRequest) {
+    private User createUserFromRequest(CreateUserRequest createUserRequest, String creatorId) {
         User user = new User();
         user.setFirstName(createUserRequest.getFirstName());
         user.setLastName(createUserRequest.getLastName());
@@ -381,6 +393,14 @@ public class UsersControllerService {
         user.setConfirmationToken(UUID.randomUUID().toString());
         user.setUserRole(UserRole.EMPLOYEE);
         user.setPassword("tempPassword");
+
+        User creator = userService.findById(creatorId, User.class);
+        if (creator == null) {
+            throw new UserNotFound("Creator user not found with ID: " + creatorId);
+        }
+        user.setCreatedBy(creator);
+        user.setCreatedUserId(creatorId);
+        user.setCreatedOn(java.time.LocalDate.now());
         return user;
     }
 
@@ -391,6 +411,8 @@ public class UsersControllerService {
         response.fullName(user.getFullname());
         response.id(user.getId());
         response.role(user.getUserRole().name());
+        response.setCreatedBy(isAdmin() && user.getCreatedBy() != null ? user.getCreatedBy().getFullname() : null);
+        response.setCreatedOn(isAdmin() ? user.getCreatedOn() : null);
         return response;
     }
 

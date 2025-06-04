@@ -1,5 +1,7 @@
 package com.reply.skillshub;
 
+import java.time.LocalDate;
+
 import com.reply.skillshub.data.user.BaseUser;
 import com.reply.skillshub.data.userrole.UserRole;
 
@@ -13,6 +15,8 @@ public class BaseUserImp implements BaseUser {
   private String password;
   private String confirmationToken;
   private Boolean confirmed;
+  private CreatedBy createdBy;
+  private LocalDate createdOn;
 
   @Override
   public String getId() {
@@ -62,5 +66,15 @@ public class BaseUserImp implements BaseUser {
   @Override
   public Boolean getConfirmed() {
     return confirmed;
+  }
+
+  @Override
+  public CreatedBy getCreatedBy() {
+    return createdBy;
+  }
+
+  @Override
+  public LocalDate getCreatedOn() {
+    return createdOn;
   }
 }

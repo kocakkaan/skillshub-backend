@@ -3,6 +3,7 @@ package com.reply.skillshub.controllers.resume;
 import static org.instancio.Select.all;
 import static org.instancio.Select.field;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -23,21 +24,23 @@ import com.reply.skillshub.data.resumeskill.ResumeSkill;
 
 class PowerPointServiceTest {
 
-    @Test 
+    @Test
     void testCreatePowerPointFromTemplate() {
         var user = Instancio.create(BaseUserTest.class);
         user.setProfilePictureLocation("pictures/test.jpg");
         ShortCv resume = Instancio.of(ShortCv.class)
-            .generate(field(ShortCv::getBackground), gen -> gen.string().length(300))
-            .generate(field(ResumeSkill::getSkills), gen -> gen.collection().size(10))
-            .generate(all(String.class).within(field(ResumeExperience::getDescriptions).toScope()), gen -> gen.string().length(200).lowerCase())
-            .generate(field(ShortCv::getExperiences),  gen -> gen.collection().maxSize(4).minSize(2))
-            .generate(field(ResumeExperience::getDescriptions), gen -> gen.collection().minSize(2).maxSize(4))
-            .create();
+                .generate(field(ShortCv::getBackground), gen -> gen.string().length(300))
+                .generate(field(ResumeSkill::getSkills), gen -> gen.collection().size(10))
+                .generate(all(String.class).within(field(ResumeExperience::getDescriptions).toScope()),
+                        gen -> gen.string().length(200).lowerCase())
+                .generate(field(ShortCv::getExperiences), gen -> gen.collection().maxSize(4).minSize(2))
+                .generate(field(ResumeExperience::getDescriptions), gen -> gen.collection().minSize(2).maxSize(4))
+                .create();
         var service = new PowerPointService();
         var information = service.createPowerPointDto(user, resume, "de", "Reply");
         var ppt = service.createPowerPointFromTemplate(information);
         savePowerPoint(ppt);
+        cleanUpPowerPoint();
     }
 
     private void savePowerPoint(XMLSlideShow ppt) {
@@ -46,6 +49,13 @@ class PowerPointServiceTest {
             ppt.write(test);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void cleanUpPowerPoint() {
+        var file = new File("test.pptx");
+        if (file.exists()) {
+            file.delete();
         }
     }
 
@@ -73,15 +83,12 @@ class PowerPointServiceTest {
         var noExperiences = startingPoint.set(field(ShortCv::getExperiences), List.of()).create();
         var noIndustries = startingPoint.set(field(ShortCv::getIndustries), List.of()).create();
         return Stream.of(
-            Arguments.of(completeResume),
-            Arguments.of(noBackground),
-            Arguments.of(noSkills),
-            Arguments.of(noExperiences),
-            Arguments.of(noIndustries)
-        );
+                Arguments.of(completeResume),
+                Arguments.of(noBackground),
+                Arguments.of(noSkills),
+                Arguments.of(noExperiences),
+                Arguments.of(noIndustries));
     }
-
-    
 
     @Test
     void testPowerPointEmptyInformationObject() {
@@ -95,9 +102,9 @@ class PowerPointServiceTest {
     void testPowerPointWithNullAndEmptyLists() {
         var service = new PowerPointService();
         var information = Instancio.of(PowerPointInformation.class)
-            .set(all(String.class), null)
-            .supply(all(List.class), () -> List.of())
-            .create();
+                .set(all(String.class), null)
+                .supply(all(List.class), () -> List.of())
+                .create();
         service.createPowerPointFromTemplate(information);
     }
 
@@ -105,9 +112,9 @@ class PowerPointServiceTest {
     void testPowerPointRandomProfilePictureLocation() {
         var service = new PowerPointService();
         var information = Instancio.of(PowerPointInformation.class)
-            .generate(field(PowerPointInformation::getSkills), gen -> gen.collection().size(10))
-            .generate(field(PowerPointInformation::getExperiences), gen -> gen.collection().size(4))
-            .create();
+                .generate(field(PowerPointInformation::getSkills), gen -> gen.collection().size(10))
+                .generate(field(PowerPointInformation::getExperiences), gen -> gen.collection().size(4))
+                .create();
         service.createPowerPointFromTemplate(information);
     }
 

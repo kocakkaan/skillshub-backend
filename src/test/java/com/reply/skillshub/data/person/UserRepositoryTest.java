@@ -26,7 +26,7 @@ import com.reply.skillshub.data.language.Language;
 import com.reply.skillshub.data.speaks.Speaks;
 import com.reply.skillshub.data.user.Employee;
 import com.reply.skillshub.data.user.User;
-import com.reply.skillshub.data.user.UserRepository; 
+import com.reply.skillshub.data.user.UserRepository;
 
 @DataNeo4jTest
 public class UserRepositoryTest extends BaseRepositoryTest {
@@ -45,8 +45,8 @@ public class UserRepositoryTest extends BaseRepositoryTest {
     void throwsErrorWhenEmailNotUnique() {
         userRepository.save(returnUserWithEmail());
         Assertions
-            .assertThatExceptionOfType(DataIntegrityViolationException.class)
-            .isThrownBy(() -> userRepository.save(returnUserWithEmail()));
+                .assertThatExceptionOfType(DataIntegrityViolationException.class)
+                .isThrownBy(() -> userRepository.save(returnUserWithEmail()));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class UserRepositoryTest extends BaseRepositoryTest {
         userRepository.save(person);
 
         List<User> foundList = userRepository.findBySpeaksLanguageLanguageCode(language.getLanguageCode());
-        
+
         Assertions.assertThat(foundList.size()).isEqualTo(1);
     }
 
@@ -97,8 +97,10 @@ public class UserRepositoryTest extends BaseRepositoryTest {
     void testFindByCompanyIdInIdList(@Autowired Neo4jClient client) throws IOException {
         TestUtils.runScript(client, "person/userbycertificateorskill.cypher");
 
-        Company company = Instancio.of(Company.class).set(field(Company::getEmployees), List.of()).set(field(Company::getProjects), List.of()).set(field(Company::getId), "1").create();
-        Company company2 = Instancio.of(Company.class).set(field(Company::getEmployees), List.of()).set(field(Company::getProjects), List.of()).set(field(Company::getId), "2").create();
+        Company company = Instancio.of(Company.class).set(field(Company::getEmployees), List.of())
+                .set(field(Company::getProjects), List.of()).set(field(Company::getId), "1").create();
+        Company company2 = Instancio.of(Company.class).set(field(Company::getEmployees), List.of())
+                .set(field(Company::getProjects), List.of()).set(field(Company::getId), "2").create();
 
         User userOneToSave = returnUserWithEmail();
         userOneToSave.getCompanies().add(company);
@@ -108,76 +110,91 @@ public class UserRepositoryTest extends BaseRepositoryTest {
         userRepository.save(userOneToSave);
         userRepository.save(userTwoToSave);
 
-        List<Employee> foundList = userRepository.findByCompaniesIdIn(List.of(company.getId(), company2.getId())); 
+        List<Employee> foundList0 = userRepository.findByCompaniesIdIn(List.of(company.getId()));
+        List<Employee> foundList1 = userRepository.findByCompaniesIdIn(List.of(company2.getId()));
+        List<Employee> foundList = new java.util.ArrayList<>(foundList0);
+        foundList.addAll(foundList1);
         // It is six because of the test data in the cypher file
         // and the two users we just saved
-        // One user in the test data belongs to both companies which is why it is twice in the foundList leading to six
+        // One user in the test data belongs to both companies which is why it is twice
+        // in the foundList leading to six
         Assertions.assertThat(foundList.size()).isEqualTo(6);
     }
 
     @Test
-    void testFindByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn(@Autowired Neo4jClient client) throws IOException {
+    void testFindByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn(@Autowired Neo4jClient client)
+            throws IOException {
         ClassPathResource resource = new ClassPathResource("person/userbycertificateorskill.cypher");
         String cypherQuery = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
         client.query(cypherQuery).run();
 
-        List<Employee> javaList = userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", List.of("java", "spring", "certificate 2"), List.of("java", "spring", "certificate 2"));
+        List<Employee> javaList = userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn(
+                "1", List.of("java", "spring", "certificate 2"), List.of("java", "spring", "certificate 2"));
         Assertions.assertThat(javaList.size()).isEqualTo(3);
 
-        List<Employee> hibernateList = userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", List.of("hibernate"), List.of("hibernate"));
+        List<Employee> hibernateList = userRepository
+                .findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", List.of("hibernate"),
+                        List.of("hibernate"));
         Assertions.assertThat(hibernateList.size()).isEqualTo(2);
 
         var list = List.of("hibernate", "certificate 2");
 
-        List<Employee> certAndHibernateList = userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", list, list);
+        List<Employee> certAndHibernateList = userRepository
+                .findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", list, list);
         Assertions.assertThat(certAndHibernateList.size()).isEqualTo(3);
 
         list = List.of("hibernate", "certificate 1");
 
-        List<Employee> certAndHibernateList2 = userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", list, list);
+        List<Employee> certAndHibernateList2 = userRepository
+                .findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", list, list);
         Assertions.assertThat(certAndHibernateList2.size()).isEqualTo(2);
-
 
         list = List.of("java", "spring", "hibernate", "certificate 2", "certificate 1", "hibernate core");
 
-
-        List<Employee> certAndHibernateList3 = userRepository.findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", list, list);
+        List<Employee> certAndHibernateList3 = userRepository
+                .findByCompaniesIdAndSkillsLabelInOrHasCertificatesCertificateNameIn("1", list, list);
         Assertions.assertThat(certAndHibernateList3.size()).isEqualTo(3);
     }
 
     @Test
-    void testFindByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(@Autowired Neo4jClient client) throws IOException {
+    void testFindByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(@Autowired Neo4jClient client)
+            throws IOException {
         ClassPathResource resource = new ClassPathResource("person/userbycertificateorskill.cypher");
         String cypherQuery = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
         client.query(cypherQuery).run();
 
-        List<Employee> javaList = userRepository.findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(List.of("1"), List.of("java", "spring", "certificate 2"), List.of("java", "spring", "certificate 2"));
+        List<Employee> javaList = userRepository.findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(
+                List.of("1"), List.of("java", "spring", "certificate 2"), List.of("java", "spring", "certificate 2"));
         Assertions.assertThat(javaList.size()).isEqualTo(3);
 
-        List<Employee> hibernateList = userRepository.findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(List.of("1"), List.of("hibernate"), List.of("hibernate"));
+        List<Employee> hibernateList = userRepository
+                .findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(List.of("1"),
+                        List.of("hibernate"), List.of("hibernate"));
         Assertions.assertThat(hibernateList.size()).isEqualTo(2);
 
         var list = List.of("hibernate", "certificate 2");
 
-        List<Employee> certAndHibernateList = userRepository.findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(List.of("1"), list, list);
+        List<Employee> certAndHibernateList = userRepository
+                .findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(List.of("1"), list, list);
         Assertions.assertThat(certAndHibernateList.size()).isEqualTo(3);
 
         list = List.of("hibernate", "certificate 1");
 
-        List<Employee> certAndHibernateList2 = userRepository.findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(List.of("1"), list, list);
+        List<Employee> certAndHibernateList2 = userRepository
+                .findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(List.of("1"), list, list);
         Assertions.assertThat(certAndHibernateList2.size()).isEqualTo(2);
-
 
         list = List.of("java", "spring", "hibernate", "certificate 2", "certificate 1", "hibernate core");
 
-
-        List<Employee> certAndHibernateList3 = userRepository.findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(List.of("1", "2"), list, list);
+        List<Employee> certAndHibernateList3 = userRepository
+                .findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(List.of("1", "2"), list, list);
         Assertions.assertThat(certAndHibernateList3.size()).isEqualTo(3);
     }
 
     @Test
     void test_multiple_certificates_save() {
-        List<HasCertificate> certificates = Instancio.ofList(HasCertificate.class).size(2).set(field(HasCertificate::getId), null).create();
+        List<HasCertificate> certificates = Instancio.ofList(HasCertificate.class).size(2)
+                .set(field(HasCertificate::getId), null).create();
         User user = returnUserWithEmail();
         user.getHasCertificates().add(certificates.get(0));
 
@@ -248,6 +265,4 @@ public class UserRepositoryTest extends BaseRepositoryTest {
         return company;
     }
 
-
-    
 }
