@@ -15,7 +15,7 @@ public class BaseUserImp implements BaseUser {
   private String password;
   private String confirmationToken;
   private Boolean confirmed;
-  private BaseUser createdBy;
+  private CreatedBy createdBy;
   private LocalDate createdOn;
 
   @Override
@@ -69,7 +69,7 @@ public class BaseUserImp implements BaseUser {
   }
 
   @Override
-  public BaseUser getCreatedBy() {
+  public CreatedBy getCreatedBy() {
     return createdBy;
   }
 

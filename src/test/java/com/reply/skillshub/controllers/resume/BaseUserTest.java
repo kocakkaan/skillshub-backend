@@ -20,7 +20,7 @@ public class BaseUserTest implements BaseUser {
   private String password;
   private String confirmationToken;
   private Boolean confirmed;
-  private BaseUser createdBy;
+  private CreatedBy createdBy;
   private LocalDate createdOn;
 
   public String getFullName() {

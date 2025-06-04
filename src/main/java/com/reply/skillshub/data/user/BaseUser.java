@@ -25,11 +25,24 @@ public interface BaseUser {
 
     public Boolean getConfirmed();
 
-    public BaseUser getCreatedBy();
+    public CreatedBy getCreatedBy();
 
     public LocalDate getCreatedOn();
 
     default String getFullName() {
         return getFirstName().concat(" ").concat(getLastName());
+    }
+
+    interface CreatedBy {
+        public String getId();
+
+        public String getFirstName();
+
+        public String getLastName();
+
+        default String getFullName() {
+            return getFirstName().concat(" ").concat(getLastName());
+        }
+
     }
 }
