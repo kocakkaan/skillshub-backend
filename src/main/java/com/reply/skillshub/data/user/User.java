@@ -60,7 +60,7 @@ public class User {
     @NotNull
     private String createdUserId;
 
-    @Relationship(type = "CREATED_BY")
+    @Relationship(type = "CREATED_BY", cascadeUpdates = false)
     @NotNull
     @EqualsAndHashCode.Exclude
     private User createdBy;
