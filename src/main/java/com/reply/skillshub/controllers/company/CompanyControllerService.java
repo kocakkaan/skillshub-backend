@@ -101,7 +101,7 @@ public class CompanyControllerService {
         return new EmployeeDto()
                 .id(employee.getId())
                 .fullname(employee.getFullName())
-                .createdBy(employee.getCreatedBy().getFullname())
+                .createdBy(employee.getCreatedBy().getFullName())
                 .createdOn(employee.getCreatedOn())
                 .company(companyName);
     }

@@ -5,7 +5,6 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
-
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
@@ -20,7 +19,6 @@ public class Certificate {
     @NotEmpty
     private String name;
 
-    @NotEmpty
-    private String issuer;
+    private String issuer = "";
 }
 

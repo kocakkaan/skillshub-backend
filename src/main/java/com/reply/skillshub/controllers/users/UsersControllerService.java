@@ -111,8 +111,8 @@ public class UsersControllerService {
         response.setFullName(user.getFullname());
         response.setId(user.getId());
         response.setRole(user.getUserRole().name());
-        response.setCreatedBy(isAdmin() && user.getCreatedBy() != null ? user.getCreatedBy().getFullname() : null);
-        response.setCreatedOn(isAdmin() ? user.getCreatedOn() : null);
+        response.setCreatedBy(user.getCreatedBy() != null ? user.getCreatedBy().getFullname() : null);
+        response.setCreatedOn(user.getCreatedOn());
         return response;
     }
 
@@ -298,7 +298,7 @@ public class UsersControllerService {
         profile.setSkills(user.getSkills().stream().map(this::convertToSkillDto).toList());
         profile.setLanguages(user.getSpeaks().stream().map(this::convertSpeaksToLanguageDto).toList());
         profile.setResumes(user.getResumes().stream().map(this::convertToResumeDto).toList());
-        profile.setCreatedBy(isAdmin() && user.getCreatedBy() != null ? user.getCreatedBy().getFullname() : null);
+        profile.setCreatedBy(isAdmin() && user.getCreatedBy() != null ? user.getCreatedBy().getFullName() : null);
         profile.setCreatedOn(isAdmin() ? user.getCreatedOn() : null);
         return profile;
     }
@@ -380,7 +380,7 @@ public class UsersControllerService {
                 .id(user.getId())
                 .fullname(user.getFullName())
                 .role(user.getUserRole().name())
-                .createdBy(isAdmin() && user.getCreatedBy() != null ? user.getCreatedBy().getFullname() : null)
+                .createdBy(isAdmin() && user.getCreatedBy() != null ? user.getCreatedBy().getFullName() : null)
                 .createdOn(isAdmin() ? user.getCreatedOn() : null);
         return dto;
     }
