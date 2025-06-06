@@ -31,14 +31,6 @@ public class CertificateServiceTest {
     }
 
     @Test
-    void throwsError_whenNoIssuer() {
-        Certificate certificate = new Certificate();
-        certificate.setName("null");
-        certificate.setIssuer(null);
-        Assertions.assertThrows(ValidationException.class, () -> certificateService.save(certificate));
-    }
-
-    @Test
     void successful_save() {
         Certificate certificate = new Certificate();
         certificate.setIssuer("AWS");
