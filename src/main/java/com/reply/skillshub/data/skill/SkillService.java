@@ -11,9 +11,12 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class SkillService {
 
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SkillService.class);
+
     private final SkillRepository skillRepository;
 
     public Skill save(Skill skill) {
+        logger.info("Saving skill: {}", skill.getLabel());
         return skillRepository.save(skill);
     }
 
@@ -26,6 +29,7 @@ public class SkillService {
     }
 
     public Optional<Skill> findByLabelIgnoreCase(String label) {
+        logger.info("Finding skill by label: {}", label);
         return skillRepository.findByLabelIgnoreCase(label);
     }
 

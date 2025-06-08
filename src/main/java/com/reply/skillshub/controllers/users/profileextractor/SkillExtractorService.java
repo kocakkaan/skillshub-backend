@@ -22,8 +22,10 @@ public class SkillExtractorService {
     logger.info("Extracting skills from CV information");
     List<Skill> extractedSkills = new ArrayList<>();
     for (String skill : skills) {
+      logger.info("Processing skill: {}", skill);
       var optionalSkill = skillService.findByLabelIgnoreCase(skill);
       if (optionalSkill.isEmpty()) {
+        logger.info("Skill not found: {}, creating new skill", skill);
         var newSkill = new Skill();
         newSkill.setLabel(skill);
         skillService.save(newSkill);
