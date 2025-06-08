@@ -19,9 +19,12 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class CertificateExtractorService {
 
+  private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CertificateExtractorService.class);
+
   private final CertificateService certificateService;
 
   public List<HasCertificate> handleExtractedCertificates(List<CvInformation.Certificate> certificates) {
+    logger.info("Extracting certificates from CV information");
     List<HasCertificate> extractedCertificates = new ArrayList<>();
     for (var certificate : certificates) {
       var optionalCertificate = certificateService.findByNameIgnoreCase(certificate.getName());
@@ -35,6 +38,7 @@ public class CertificateExtractorService {
         extractedCertificates.add(createHasCertificate(certificate.getIssued_date(),optionalCertificate.get()));
       }
     }
+    logger.info("Successfully extracted certificates");
     return extractedCertificates;
   }
 

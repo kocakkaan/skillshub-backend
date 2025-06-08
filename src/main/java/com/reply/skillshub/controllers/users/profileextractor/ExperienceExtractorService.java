@@ -27,6 +27,7 @@ public class ExperienceExtractorService {
   private static final Logger logger = LoggerFactory.getLogger(ExperienceExtractorService.class);
 
   public List<Experience> handleExtractedExperiences(List<CvInformation.Experience> experiences) {
+    logger.info("Extracting experiences from CV information");
     List<Experience> extractedExperiences = new ArrayList<>();
     for (var experience : experiences) {
       Experience newExperience = new Experience();
@@ -57,6 +58,7 @@ public class ExperienceExtractorService {
       var savedExperience = experienceService.save(newExperience);
       extractedExperiences.add(savedExperience);
     }
+    logger.info("Successfully extracted experiences");
     return extractedExperiences;
   }
 

@@ -1,5 +1,7 @@
 package com.reply.skillshub.controllers.users;
 
+import java.util.logging.Logger;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class UserProfileExtractorService {
 
+  private final Logger logger = Logger.getLogger(UserProfileExtractorService.class.getName());
+
   private final SkillsAgentService skillsAgentService;
 
   private final LanguageExtractorService languageExtractorService;
@@ -27,7 +31,9 @@ public class UserProfileExtractorService {
   private final UserService userService;
 
   public void extractInformationFromCvPdf(String userId, MultipartFile cvPdf) {
+    logger.info("Extracting information from CV PDF for user: " + userId);
     var cvInformation = skillsAgentService.extractInformationFromCvPdf(cvPdf);
+    logger.info(userId + " CV information extracted from agent service");
 
     var extractedSpeaks = languageExtractorService.handleExtractedLanguages(cvInformation.getLanguages());
     var skills = skillExtractorService.handleExtractedSkills(cvInformation.getSkills());
@@ -49,6 +55,8 @@ public class UserProfileExtractorService {
     user.getExperiences().addAll(experiences);
 
     userService.save(user);
+
+    logger.info("Successfully extracted and saved user profile information for user: " + userId);
 
   }
 

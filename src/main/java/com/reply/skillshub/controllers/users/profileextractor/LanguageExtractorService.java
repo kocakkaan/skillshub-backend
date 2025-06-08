@@ -2,6 +2,7 @@ package com.reply.skillshub.controllers.users.profileextractor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
@@ -19,9 +20,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LanguageExtractorService {
 
+  private final Logger logger = Logger.getLogger(LanguageExtractorService.class.getName());
+
   private final LanguageService languageService;
 
   public List<Speaks> handleExtractedLanguages(List<CvInformation.Language> languages) {
+    logger.info("Extracting languages from CV information");
+    
     List<Speaks> extractedLanguages = new ArrayList<>();
     for (var language : languages) {
       var speaks = new Speaks();
@@ -50,6 +55,7 @@ public class LanguageExtractorService {
       extractedLanguages.add(speaks);
 
     }
+    logger.info("Successfully extracted languages");
     return extractedLanguages;
   }
 
