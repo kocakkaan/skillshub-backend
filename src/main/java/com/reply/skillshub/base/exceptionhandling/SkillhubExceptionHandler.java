@@ -30,7 +30,7 @@ public class SkillhubExceptionHandler extends ResponseEntityExceptionHandler {
     
     @ExceptionHandler({BaseException.class})
     public ResponseEntity<Object> handleDefaultBaseExceptions(BaseException e, WebRequest webRequest) {
-        LOG.debug("Exception sent:", e);
+        LOG.error("Exception sent:", e);
         var errorData = new ErrorDto().errorCode(e.getErrorCode().toString()).message(e.getMessage()).details(e.getDetails().stream().map(this::convertDetailToErrorDetail).toList());
         return new ResponseEntity<>(errorData, new HttpHeaders(), determineHttpStatus(e));
     }
@@ -52,7 +52,7 @@ public class SkillhubExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<Object> handleDefaultBaseExceptions(Exception e, WebRequest webRequest) {
-        LOG.debug("Exception sent:", e);
+        LOG.error("Exception sent:", e);
         e.getStackTrace();
         var errorData = new ErrorDto().errorCode(ErrorCode.DEFAULT.name()).message(e.getMessage());
         return new ResponseEntity<>(errorData, new HttpHeaders(), determineHttpStatus(e));
