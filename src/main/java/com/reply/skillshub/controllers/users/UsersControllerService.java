@@ -64,6 +64,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UsersControllerService {
 
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UsersControllerService.class);
+
     private final CompanyService companyService;
 
     private final UserService userService;
@@ -123,6 +125,8 @@ public class UsersControllerService {
 
         BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
 
+        logger.info("Current user ID: {} started process to create user {}", currentUser.getId(), createUserRequest.getEmail());
+
         if (company.getEmployees().stream().noneMatch(user -> user.getId().equals(currentUser.getId()))) {
             throw new InsufficientRights();
         }
@@ -134,7 +138,7 @@ public class UsersControllerService {
         User savedUser = userService.save(userToSave);
 
         emailService.sendEmail(createNewUserEmailRequest(savedUser));
-
+        logger.info("User {} created successfully with ID: {}", createUserRequest.getEmail(), savedUser.getId());
         return createUserResponse(savedUser, company);
     }
 
