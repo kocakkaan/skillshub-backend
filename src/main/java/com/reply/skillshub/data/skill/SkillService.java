@@ -17,7 +17,15 @@ public class SkillService {
 
     public Skill save(Skill skill) {
         logger.info("Saving skill: {}", skill.getLabel());
-        return skillRepository.save(skill);
+        skill.setLabel(skill.getLabel().trim());
+        var potentialSkill = skillRepository.findByLabelIgnoreCase(skill.getLabel());
+        if (potentialSkill.isPresent()) {
+            logger.info("Skill already exists, returning existing skill: {}", skill.getLabel());
+            return potentialSkill.get();
+        }
+        var savedSkill = skillRepository.save(skill);
+        logger.info("Skill saved successfully: {}", savedSkill.getLabel());
+        return savedSkill;
     }
 
     public Skill findById(String id) {
