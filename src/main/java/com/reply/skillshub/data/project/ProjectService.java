@@ -56,8 +56,4 @@ public class ProjectService {
         return neo4jTemplate.save(Project.class).one(resume);
     }
 
-    public List<Project> findProjectsByCypherQuery(String cypherQuery) {
-        return neo4jTemplate.findAll(cypherQuery, Project.class);
-    }
-
 }

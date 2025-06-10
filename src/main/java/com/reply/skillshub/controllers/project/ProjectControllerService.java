@@ -162,28 +162,14 @@ public class ProjectControllerService {
   }
 
   public List<ProjectDto> getSearchProjects(String search) {
-    List<ProjectReference> projectReferences;
-
-    if (search != null && search.trim().toUpperCase().startsWith("MATCH")) {
-      List<Project> projectsFromCypher = projectService.findProjectsByCypherQuery(search);
-      if (projectsFromCypher == null || projectsFromCypher.isEmpty()) {
-        return Collections.emptyList();
-      }
-      projectReferences = projectsFromCypher.stream()
-          .map(Project::getId)
-          .map(projectService::findReferenceById)
-          .filter(Objects::nonNull)
-          .toList();
-    } else {
-      List<String> projectIdsFromAgent = projectAgentService.searchProjectsByQuery(search, TOP_K);
-      if (projectIdsFromAgent == null || projectIdsFromAgent.isEmpty()) {
-        return Collections.emptyList();
-      }
-      projectReferences = projectIdsFromAgent.stream()
-          .map(projectService::findReferenceById)
-          .filter(Objects::nonNull)
-          .toList();
+    List<String> projectIdsFromAgent = projectAgentService.searchProjectsByQuery(search, TOP_K);
+    if (projectIdsFromAgent == null || projectIdsFromAgent.isEmpty()) {
+      return Collections.emptyList();
     }
+    List<ProjectReference> projectReferences = projectIdsFromAgent.stream()
+        .map(projectService::findReferenceById)
+        .filter(Objects::nonNull)
+        .toList();
 
     return projectReferences.stream()
         .sorted(Comparator.comparingInt(ProjectReference::getProjectId))
