@@ -99,6 +99,9 @@ public class ResumeControllerService {
     }
 
     public ShortCvDto autoGenerateShortCv(String userId, String role, String requirements) {
+
+        logger.info("Auto-generating short CV for userId: {}, role: {}, requirements: {}", userId, role, requirements);
+
         if (userService.existsById(userId) == false) {
             throw new UserNotFound();
         }
@@ -110,6 +113,7 @@ public class ResumeControllerService {
         var optionalGeneratedShortCv = skillsAgentService.generateShortCv(userId, requirements);
 
         if (optionalGeneratedShortCv.isPresent()) {
+            logger.info("Agent Service successfully generated short CV for userId: {}. Saving Process started", userId);
             var generated = optionalGeneratedShortCv.get();
             var user = userService.findById(userId, UserWithResumesToSave.class);
             var resumeToSave = ShortCvGeneratorUtils.convertToShortCv(generated);
@@ -119,6 +123,7 @@ public class ResumeControllerService {
             var savedResume = resumeService.save(resumeToSave);
             user.getResumes().add(savedResume);
             userService.save(user);
+            logger.info("Short CV with id {} and requirements {} successfully generated and saved", userId, requirements);
             return ResumeConverterUtil.convertResumeToDto(savedResume);
         }
 

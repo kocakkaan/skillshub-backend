@@ -28,20 +28,24 @@ public class SkillsAgentService {
 
     public List<String> getKeywordsFromSearchString(String queryString) {
         try {
+            logger.info("Sending query string to agent for keyword extraction: {}", queryString);
             List<String> returnValue = webClient
             .get()
             .uri((uriBuilder) -> uriBuilder.path("/keywords").queryParam("text", queryString).build())
             .retrieve()
             .bodyToMono(new ParameterizedTypeReference<List<String>>() {})
             .block();
+            logger.info("Received keywords from agent: {}", returnValue);
             return returnValue;
         } catch (Exception e) {
+            logger.error("Failed to extract keywords from query string", e);
             return new ArrayList<>();
         }
     }
 
     public CvInformation extractInformationFromCvPdf(MultipartFile cvPdf) {
         try {
+            logger.info("Sending CV PDF to agent for extraction");
             MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
             parts.add("file", cvPdf.getResource());
 
@@ -54,13 +58,16 @@ public class SkillsAgentService {
             .retrieve()
             .bodyToMono(CvInformation.class)
             .block();
+            logger.info("Received CV information based on PDF from agent");
             return returnValue;
         } catch (Exception e) {
+            logger.error("Failed to extract information from CV PDF", e);
             return new CvInformation();
         }
     }
 
     public Optional<GeneratedShortCv> generateShortCv(String userId, String requirements) {
+        logger.info("Sent short CV to agent for userId: {}, requirements: {}", userId, requirements);
         try {
             var returnValue = webClient
             .get()
@@ -68,6 +75,7 @@ public class SkillsAgentService {
             .retrieve()
             .bodyToMono(GeneratedShortCv.class)
             .block();
+            logger.info("Received short CV from agent for userId: {}", userId);
             return Optional.of(returnValue);
         } catch (Exception e) {
             logger.error("Failed to generate short CV", e);
