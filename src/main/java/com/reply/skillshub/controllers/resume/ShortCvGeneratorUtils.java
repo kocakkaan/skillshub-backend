@@ -30,7 +30,7 @@ public class ShortCvGeneratorUtils {
     }
     if (industries.size() > 5) {
       logger.warn("Industries length is greater than 5, it will be cutoff");
-      return industries.subList(0, 4);
+      return industries.subList(0, 5);
     }
     return industries;
   }

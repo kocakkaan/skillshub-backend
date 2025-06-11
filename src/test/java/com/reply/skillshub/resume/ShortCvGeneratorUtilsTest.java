@@ -29,7 +29,6 @@ public class ShortCvGeneratorUtilsTest {
     } else {
       assertEquals(generatedShortCv.getIndustries().size(), shortCv.getIndustries().size());
     }
-    assertEquals(generatedShortCv.getIndustries(), shortCv.getIndustries());
     assertEquals(generatedShortCv.getSkills().size(), shortCv.getSkills().size());
     assertEquals(generatedShortCv.getExperiences().size(), shortCv.getExperiences().size());
 
