@@ -14,14 +14,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.reply.skillshub.openapi.model.ErrorDto;
-import com.reply.skillshub.openapi.model.ErrorDetailDto;
-
-import jakarta.validation.constraints.NotNull;
-
 import com.reply.skillshub.base.exceptionhandling.exeptions.BaseException;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ErrorCode;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ObjectDetail;
+import com.reply.skillshub.openapi.model.ErrorDetailDto;
+import com.reply.skillshub.openapi.model.ErrorDto;
+
+import jakarta.validation.constraints.NotNull;
 
 @RestControllerAdvice
 public class SkillhubExceptionHandler extends ResponseEntityExceptionHandler {
@@ -30,7 +29,7 @@ public class SkillhubExceptionHandler extends ResponseEntityExceptionHandler {
     
     @ExceptionHandler({BaseException.class})
     public ResponseEntity<Object> handleDefaultBaseExceptions(BaseException e, WebRequest webRequest) {
-        LOG.error("Exception sent:", e);
+        LOG.error("Exception sent:", e.getMessage());
         var errorData = new ErrorDto().errorCode(e.getErrorCode().toString()).message(e.getMessage()).details(e.getDetails().stream().map(this::convertDetailToErrorDetail).toList());
         return new ResponseEntity<>(errorData, new HttpHeaders(), determineHttpStatus(e));
     }
@@ -52,7 +51,7 @@ public class SkillhubExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<Object> handleDefaultBaseExceptions(Exception e, WebRequest webRequest) {
-        LOG.error("Exception sent:", e);
+        LOG.error("Exception sent:", e.getMessage());
         e.getStackTrace();
         var errorData = new ErrorDto().errorCode(ErrorCode.DEFAULT.name()).message(e.getMessage());
         return new ResponseEntity<>(errorData, new HttpHeaders(), determineHttpStatus(e));
