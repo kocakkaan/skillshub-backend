@@ -20,8 +20,19 @@ public class ShortCvGeneratorUtils {
     shortCV.setBackground(generatedShortCv.getProfessionalBackground());
     shortCV.setSkills(convertMapToResumeSkill(generatedShortCv.getSkills()));
     shortCV.setExperiences(convertCvExperienceToResumeExperience(generatedShortCv.getExperiences()));
-    shortCV.setIndustries(generatedShortCv.getIndustries());
+    shortCV.setIndustries(convertToShortCvIndustries(generatedShortCv.getIndustries()));
     return shortCV;
+  }
+
+  private static List<String> convertToShortCvIndustries(List<String> industries) {
+    if (industries == null || industries.isEmpty()) {
+      return List.of();
+    }
+    if (industries.size() > 5) {
+      logger.warn("Industries length is greater than 5, it will be cutoff");
+      return industries.subList(0, 4);
+    }
+    return industries;
   }
 
   private static List<ResumeExperience> convertCvExperienceToResumeExperience(List<CvExperience> experiences) {
