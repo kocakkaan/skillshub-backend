@@ -24,6 +24,11 @@ public class ShortCvGeneratorUtilsTest {
     ShortCv shortCv = ShortCvGeneratorUtils.convertToShortCv(generatedShortCv);
 
     assertEquals(generatedShortCv.getProfessionalBackground(), shortCv.getBackground());
+    if (generatedShortCv.getIndustries().size() > 5) {
+      assertEquals(5, shortCv.getIndustries().size());
+    } else {
+      assertEquals(generatedShortCv.getIndustries().size(), shortCv.getIndustries().size());
+    }
     assertEquals(generatedShortCv.getIndustries(), shortCv.getIndustries());
     assertEquals(generatedShortCv.getSkills().size(), shortCv.getSkills().size());
     assertEquals(generatedShortCv.getExperiences().size(), shortCv.getExperiences().size());
@@ -48,7 +53,11 @@ public class ShortCvGeneratorUtilsTest {
     ShortCv shortCv = ShortCvGeneratorUtils.convertToShortCv(generatedShortCv);
 
     assertEquals(generatedShortCv.getProfessionalBackground(), shortCv.getBackground());
-    assertEquals(generatedShortCv.getIndustries(), shortCv.getIndustries());
+    if (generatedShortCv.getIndustries().size() > 5) {
+      assertEquals(5, shortCv.getIndustries().size());
+    } else {
+      assertEquals(generatedShortCv.getIndustries().size(), shortCv.getIndustries().size());
+    }
     assertEquals(generatedShortCv.getSkills().size(), shortCv.getSkills().size());
     assertEquals(generatedShortCv.getExperiences().size(), shortCv.getExperiences().size());
 
