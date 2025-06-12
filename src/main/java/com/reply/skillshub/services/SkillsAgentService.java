@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StopWatch;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -28,14 +29,17 @@ public class SkillsAgentService {
 
     public List<String> getKeywordsFromSearchString(String queryString) {
         try {
-            logger.info("Sending query string to agent for keyword extraction: {}", queryString);
+            logger.info("Sending query string to agent for keyword extraction");
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
             List<String> returnValue = webClient
             .get()
             .uri((uriBuilder) -> uriBuilder.path("/keywords").queryParam("text", queryString).build())
             .retrieve()
             .bodyToMono(new ParameterizedTypeReference<List<String>>() {})
             .block();
-            logger.info("Received keywords from agent: {}", returnValue);
+            stopWatch.stop();
+            logger.info("Keyword extraction completed in {} ms", stopWatch.getTotalTimeMillis());
             return returnValue;
         } catch (Exception e) {
             logger.error("Failed to extract keywords from query string", e);
@@ -49,6 +53,8 @@ public class SkillsAgentService {
             MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
             parts.add("file", cvPdf.getResource());
 
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
 
             var returnValue = webClient
             .post()
@@ -58,7 +64,8 @@ public class SkillsAgentService {
             .retrieve()
             .bodyToMono(CvInformation.class)
             .block();
-            logger.info("Received CV information based on PDF from agent");
+            stopWatch.stop();
+            logger.info("CV PDF extraction completed in {} ms", stopWatch.getTotalTimeMillis());
             return returnValue;
         } catch (Exception e) {
             logger.error("Failed to extract information from CV PDF", e);
@@ -69,13 +76,16 @@ public class SkillsAgentService {
     public Optional<GeneratedShortCv> generateShortCv(String userId, String requirements) {
         logger.info("Sent short CV to agent for userId: {}, requirements: {}", userId, requirements);
         try {
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();           
             var returnValue = webClient
             .get()
             .uri((uriBuilder) -> uriBuilder.path("/short-cv-generation").queryParam("user_id", userId).queryParam("requirements", requirements).build())
             .retrieve()
             .bodyToMono(GeneratedShortCv.class)
             .block();
-            logger.info("Received short CV from agent for userId: {}", userId);
+            stopWatch.stop();
+            logger.info("Short CV generation by agent service for user {} completed in {} ms", userId, stopWatch.getTotalTimeMillis());
             return Optional.of(returnValue);
         } catch (Exception e) {
             logger.error("Failed to generate short CV", e);
