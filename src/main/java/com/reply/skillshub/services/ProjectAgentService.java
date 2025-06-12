@@ -1,4 +1,4 @@
-package com.reply.skillshub.data.project;
+package com.reply.skillshub.services;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;

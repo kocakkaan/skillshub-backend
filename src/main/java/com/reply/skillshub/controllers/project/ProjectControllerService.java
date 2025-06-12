@@ -28,13 +28,13 @@ import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.controllers.project.powerpoint.PowerPointInformation;
 import com.reply.skillshub.controllers.project.powerpoint.ProjectPowerPointService;
 import com.reply.skillshub.data.project.Project;
-import com.reply.skillshub.data.project.ProjectAgentService;
 import com.reply.skillshub.data.project.ProjectReference;
 import com.reply.skillshub.data.project.ProjectService;
 import com.reply.skillshub.data.projectcounter.ProjectCounterService;
 import com.reply.skillshub.data.userrole.UserRole;
 import com.reply.skillshub.openapi.model.CreateProjectDto;
 import com.reply.skillshub.openapi.model.ProjectDto;
+import com.reply.skillshub.services.ProjectAgentService;
 
 import lombok.RequiredArgsConstructor;
 
