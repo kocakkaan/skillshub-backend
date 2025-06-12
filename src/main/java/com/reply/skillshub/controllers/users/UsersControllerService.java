@@ -372,10 +372,18 @@ public class UsersControllerService {
         return userService.findByCompaniesIdIn(companyIds).stream().map(this::convertUserToEmployeeDto).toList();
     }
 
-    private List<EmployeeDto> getEmployeesAccessibleToUserBySearchString(String userId, List<String> keywords) {
+    private List<EmployeeDto> getEmployeesAccessibleToUserBySearchString(String userId, String searchString) {
         var companies = companyService.findMinimalCompanyByEmployeesId(userId);
         List<String> companyIds = companies.stream().map(MinimalCompany::getId).toList();
-        return userService.findByCompaniesAndKeyWords(companyIds, keywords).stream().map(this::convertUserToEmployeeDto)
+        
+        // Get matching employee IDs directly from agent service
+        List<String> matchingEmployeeIds = skillsAgentService.getMatchingEmployeeIds(searchString, companyIds);
+        
+        // Fetch employees by IDs
+        List<Employee> employees = userService.findEmployeesByIds(matchingEmployeeIds);
+        
+        return employees.stream()
+                .map(this::convertUserToEmployeeDto)
                 .toList();
     }
 

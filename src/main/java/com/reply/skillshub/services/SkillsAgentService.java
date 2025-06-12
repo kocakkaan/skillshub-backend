@@ -92,4 +92,23 @@ public class SkillsAgentService {
             return Optional.empty();
         }
     }
+
+    public List<String> getMatchingEmployeeIds(String queryString, List<String> companyIds) {
+        try {
+            logger.info("Fetching matching employee IDs from agent for query: {}, companies: {}", queryString, companyIds);
+            return webClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                    .path("/employee-search")
+                    .queryParam("query", queryString)
+                    .queryParam("company_ids", String.join(",", companyIds))
+                    .build())
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<String>>() {})
+                .block();
+        } catch (Exception e) {
+            logger.error("Failed to get matching employee IDs from agent service", e);
+            return new ArrayList<>();
+        }
+}
 }
