@@ -19,13 +19,15 @@ public class ShortCvGeneratorUtilsTest {
     GeneratedShortCv generatedShortCv = Instancio.of(GeneratedShortCv.class)
         .supply(field(GeneratedShortCv.CvExperience::getDescriptions),
             () -> Instancio.ofList(GeneratedShortCv.CvExperience.class).size(5).create())
+        .supply(field(GeneratedShortCv::getIndustries), 
+            () -> Instancio.ofList(String.class).size(6).create())
         .create();
 
     ShortCv shortCv = ShortCvGeneratorUtils.convertToShortCv(generatedShortCv);
 
     assertEquals(generatedShortCv.getProfessionalBackground(), shortCv.getBackground());
-    if (generatedShortCv.getIndustries().size() > 5) {
-      assertEquals(5, shortCv.getIndustries().size());
+    if (generatedShortCv.getIndustries().size() > 4) {
+      assertEquals(4, shortCv.getIndustries().size());
     } else {
       assertEquals(generatedShortCv.getIndustries().size(), shortCv.getIndustries().size());
     }
@@ -52,8 +54,8 @@ public class ShortCvGeneratorUtilsTest {
     ShortCv shortCv = ShortCvGeneratorUtils.convertToShortCv(generatedShortCv);
 
     assertEquals(generatedShortCv.getProfessionalBackground(), shortCv.getBackground());
-    if (generatedShortCv.getIndustries().size() > 5) {
-      assertEquals(5, shortCv.getIndustries().size());
+    if (generatedShortCv.getIndustries().size() > 4) {
+      assertEquals(4, shortCv.getIndustries().size());
     } else {
       assertEquals(generatedShortCv.getIndustries().size(), shortCv.getIndustries().size());
     }

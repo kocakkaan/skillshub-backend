@@ -44,7 +44,7 @@ public class ShortCv {
     @Relationship(type = "GAINED_EXPERIENCE", direction = Direction.OUTGOING)
     private List<ResumeExperience> experiences = new ArrayList<>();
 
-    @AssertTrue(message = "A resume can have at most five industries assigned")
+    @AssertTrue(message = "A resume can have at most four industries assigned")
     private boolean isIndustryCountLowerAsFive() {
         return industries.size() < 5;
     }

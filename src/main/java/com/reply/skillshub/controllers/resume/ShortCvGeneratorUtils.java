@@ -28,9 +28,9 @@ public class ShortCvGeneratorUtils {
     if (industries == null || industries.isEmpty()) {
       return List.of();
     }
-    if (industries.size() > 5) {
-      logger.warn("Industries length is greater than 5, it will be cutoff");
-      return industries.subList(0, 5);
+    if (industries.size() > 4) {
+      logger.warn("Industries length is greater than 4, it will be cutoff");
+      return industries.subList(0, 4);
     }
     return industries;
   }
