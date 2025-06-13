@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriUtils;
 
@@ -24,6 +25,8 @@ public class ProjectAgentService {
 
     public void processProject(String projectId) {
         try {
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
             webClient
                     .post()
                     .uri(uriBuilder -> uriBuilder.path("/process-project")
@@ -32,7 +35,9 @@ public class ProjectAgentService {
                     .retrieve()
                     .bodyToMono(Void.class)
                     .block();
-            logger.info("Successfully sent projectId {} to /process-project", projectId);
+            stopWatch.stop();
+            logger.info("Successfully sent projectId {} to /process-project in {} ms", projectId,
+                    stopWatch.getTotalTimeMillis());
         } catch (Exception e) {
             logger.error("Failed to process project with ID '{}': {}", projectId, e.getMessage(), e);
         }
@@ -41,8 +46,10 @@ public class ProjectAgentService {
     public List<String> searchProjectsByQuery(String searchQuery, Integer topK) {
         try {
             logger.info("Sending search query '{}', topK '{}' to agent /search-projects", searchQuery, topK);
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
             String encodedSearchQuery = UriUtils.encodeQueryParam(searchQuery, StandardCharsets.UTF_8);
-            return webClient
+            List<String> result = webClient
                     .get()
                     .uri(uriBuilder -> uriBuilder.path("/search-projects")
                             .queryParam("query_string", encodedSearchQuery)
@@ -52,6 +59,9 @@ public class ProjectAgentService {
                     .bodyToMono(new ParameterizedTypeReference<List<String>>() {
                     })
                     .block();
+            stopWatch.stop();
+            logger.info("Agent search for projects completed in {} ms", stopWatch.getTotalTimeMillis());
+            return result;
         } catch (Exception e) {
             logger.error("Failed to search projects with query '{}': {}", searchQuery, e.getMessage(), e);
             return new ArrayList<>();
