@@ -1,5 +1,6 @@
 package com.reply.skillshub.controllers.resumeskill;
 
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import com.reply.skillshub.controllers.resume.ResumeConverterUtil;
@@ -13,9 +14,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ResumeSkillControllerService {
 
+  private final Logger logger = org.slf4j.LoggerFactory.getLogger(ResumeSkillControllerService.class);
+
   private final ResumeSkillService resumeSkillService;
 
   public ResumeSkillDto updateResumeSkillDto(String resumeSkillId, ResumeSkillDto resumeSkillDto) {
+    logger.info("Updating resume skill with ID: {}", resumeSkillId);
     ResumeSkill resumeSkill = resumeSkillService.findById(resumeSkillId);
     resumeSkill.setParent(resumeSkillDto.getParent());
     resumeSkill.setSkills(resumeSkillDto.getChildren());
