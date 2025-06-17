@@ -31,7 +31,11 @@ public class ProjectController implements ProjectsApi {
 
   @Override
   public ResponseEntity<List<ProjectDto>> projectsGet(@Valid Optional<String> search) {
-    return ResponseEntity.ok(projectControllerService.getAllProjects());
+    if (search.isPresent() && !search.get().isEmpty()) {
+      return ResponseEntity.ok(projectControllerService.getSearchProjects(search.get()));
+    } else {
+      return ResponseEntity.ok(projectControllerService.getAllProjects());
+    }
   }
 
   @Override

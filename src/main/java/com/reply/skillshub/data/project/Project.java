@@ -35,7 +35,6 @@ public class Project {
   @NotEmpty
   private String title;
 
-  @NotEmpty
   private String description;
 
   private String company;

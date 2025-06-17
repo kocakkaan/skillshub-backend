@@ -8,8 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,16 +20,21 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.reply.skillshub.base.exceptionhandling.exeptions.InsufficientRights;
+import com.reply.skillshub.base.exceptionhandling.exeptions.ProjectPictureNotDeletedException;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ProjectPictureNotFoundException;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ProjectPictureNotSavedException;
+import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.controllers.project.powerpoint.PowerPointInformation;
 import com.reply.skillshub.controllers.project.powerpoint.ProjectPowerPointService;
 import com.reply.skillshub.data.project.Project;
 import com.reply.skillshub.data.project.ProjectReference;
 import com.reply.skillshub.data.project.ProjectService;
 import com.reply.skillshub.data.projectcounter.ProjectCounterService;
+import com.reply.skillshub.data.userrole.UserRole;
 import com.reply.skillshub.openapi.model.CreateProjectDto;
 import com.reply.skillshub.openapi.model.ProjectDto;
+import com.reply.skillshub.services.ProjectAgentService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,11 +45,36 @@ public class ProjectControllerService {
   private final ProjectService projectService;
   private final ProjectCounterService projectCounterService;
   private final ProjectPowerPointService powerPointService;
+  private final LoadCurrentUser loadCurrentUser;
+  private final ProjectAgentService projectAgentService;
+
+  private static final int TOP_K = 5;
 
   @Value("${skillhub.projectpicture.path}")
   private String projectPicturePath;
 
+  private boolean isAdmin() {
+    return loadCurrentUser.loadSkillhubUserFromContext().getUserRole() == UserRole.ADMIN;
+  }
+
   public void deleteProject(String id) {
+    if (!isAdmin()) {
+      throw new InsufficientRights();
+    }
+
+    Project project = projectService.findById(id);
+
+    if (project != null) {
+      String pictureLocation = project.getProjectPictureLocation();
+      if (pictureLocation != null && !pictureLocation.isEmpty()) {
+        try {
+          Path filePath = Paths.get(projectPicturePath).resolve(pictureLocation).normalize();
+          Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+          throw new ProjectPictureNotDeletedException("Error deleting project picture: " + pictureLocation, e);
+        }
+      }
+    }
     projectService.deleteById(id);
   }
 
@@ -125,7 +157,22 @@ public class ProjectControllerService {
 
   public List<ProjectDto> getAllProjects() {
     var projects = projectService.findAll();
-    return projects.stream().sorted(Comparator.comparingInt(ProjectReference::getProjectId)).map(ProjectControllerServiceUtil::convertToProjectDto).toList();
+    return projects.stream().sorted(Comparator.comparingInt(ProjectReference::getProjectId))
+        .map(ProjectControllerServiceUtil::convertToProjectDto).toList();
+  }
+
+  public List<ProjectDto> getSearchProjects(String search) {
+    List<String> projectIdsFromAgent = projectAgentService.searchProjectsByQuery(search, TOP_K);
+    if (projectIdsFromAgent == null || projectIdsFromAgent.isEmpty()) {
+      return Collections.emptyList();
+    }
+    List<ProjectDto> projectReferences = projectIdsFromAgent.stream()
+        .map(projectService::findReferenceById)
+        .filter(Objects::nonNull)
+        .map(ProjectControllerServiceUtil::convertToProjectDto)
+        .toList();
+
+    return projectReferences;
   }
 
   public ProjectDto createProject(CreateProjectDto projectDto) {
@@ -143,6 +190,7 @@ public class ProjectControllerService {
     if (project != null) {
       ProjectControllerServiceUtil.updateProjectFromDto(project, projectDto);
       var updatedProject = projectService.save(project);
+      projectAgentService.processProject(updatedProject.getId());
       var projectReference = projectService.findReferenceById(updatedProject.getId());
       return ProjectControllerServiceUtil.convertToProjectDto(projectReference);
     }
