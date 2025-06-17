@@ -166,15 +166,13 @@ public class ProjectControllerService {
     if (projectIdsFromAgent == null || projectIdsFromAgent.isEmpty()) {
       return Collections.emptyList();
     }
-    List<ProjectReference> projectReferences = projectIdsFromAgent.stream()
+    List<ProjectDto> projectReferences = projectIdsFromAgent.stream()
         .map(projectService::findReferenceById)
         .filter(Objects::nonNull)
-        .toList();
-
-    return projectReferences.stream()
-        .sorted(Comparator.comparingInt(ProjectReference::getProjectId))
         .map(ProjectControllerServiceUtil::convertToProjectDto)
         .toList();
+
+    return projectReferences;
   }
 
   public ProjectDto createProject(CreateProjectDto projectDto) {
