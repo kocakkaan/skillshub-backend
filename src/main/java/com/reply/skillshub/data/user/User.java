@@ -80,7 +80,7 @@ public class User {
     @Relationship(type = "HAS_SKILL", cascadeUpdates = false)
     private List<Skill> skills = new ArrayList<>();
 
-    @Relationship(type = "HAS_RESUME")
+    @Relationship(type = "HAS_RESUME", cascadeUpdates = false)
     private List<ShortCv> resumes = new ArrayList<>();
 
     @Relationship(type = "HAS_CERTIFICATE")

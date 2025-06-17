@@ -41,6 +41,10 @@ public class ResumeService {
         return repository.save(resume);
     }
 
+    public ShortCv linkShortCvWithUser(String userId, String shortCvId) {
+        return repository.linkShortCvWithUser(userId, shortCvId);
+    }
+
     // T needs to have something in common with User.class
     public <T> T save(T resume) {
         return neo4jTemplate.save(ShortCv.class).one(resume);

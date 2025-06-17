@@ -235,14 +235,11 @@ public class ResumeControllerService {
             resume.setIndustries(baseResume.getIndustries());
             resume.setSkills(baseResume.getSkills());
             resume.setExperiences(baseResume.getExperiences());
+            resume.setBackground(baseResume.getBackground());
         }
         resume.setTitle(createInitialResumeDto.getTitle());
         var savedResume = resumeService.save(resume);
-        var resumeToAddToUser = new BaseResume();
-        resumeToAddToUser.setId(savedResume.getId());
-        resumeToAddToUser.setTitle(savedResume.getTitle());
-        user.getResumes().add(resumeToAddToUser);
-        userService.save(user);
+        resumeService.linkShortCvWithUser(user.getId(), savedResume.getId());
         return ResumeConverterUtil.convertResumeToDto(resume);
     }
 
