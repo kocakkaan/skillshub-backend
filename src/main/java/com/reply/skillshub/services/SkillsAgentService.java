@@ -3,6 +3,7 @@ package com.reply.skillshub.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,19 +97,24 @@ public class SkillsAgentService {
     public List<String> getMatchingEmployeeIds(String queryString, List<String> companyIds) {
         try {
             logger.info("Fetching matching employee IDs from agent for query: {}, companies: {}", queryString, companyIds);
-            return webClient
+            List<EmployeeSearchResult> results = webClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
-                    .path("/employee-search")
-                    .queryParam("query", queryString)
+                    .path("/search-employees")
+                    .queryParam("query_text", queryString)
                     .queryParam("company_ids", String.join(",", companyIds))
                     .build())
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<String>>() {})
+                .bodyToMono(new ParameterizedTypeReference<List<EmployeeSearchResult>>() {})
                 .block();
+            
+            // Extract IDs from the results
+            return results != null ? results.stream()
+                .map(EmployeeSearchResult::getId)
+                .collect(Collectors.toList()) : new ArrayList<>();
         } catch (Exception e) {
             logger.error("Failed to get matching employee IDs from agent service", e);
             return new ArrayList<>();
         }
-}
+    }
 }
