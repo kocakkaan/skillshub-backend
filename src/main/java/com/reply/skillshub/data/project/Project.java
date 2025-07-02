@@ -3,6 +3,7 @@ package com.reply.skillshub.data.project;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
@@ -13,6 +14,7 @@ import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
 import com.reply.skillshub.data.client.Client;
 import com.reply.skillshub.data.industry.Industry;
+import com.reply.skillshub.data.project.reference.ProjectReference;
 import com.reply.skillshub.data.projecttype.ProjectType;
 import com.reply.skillshub.data.skill.Skill;
 import com.reply.skillshub.data.user.User;
@@ -58,20 +60,22 @@ public class Project {
 
   private ProjectStatus status;
 
-  private List<String> initialSituation = new ArrayList<>();
-  private List<String> challenges = new ArrayList<>();
-  private List<String> approachTechnologies = new ArrayList<>();
-  private String valueAddedText0;
-  private String valueAddedText1;
-  private String valueAddedText2;
-
   private String projectPictureLocation;
+
+  @Relationship(type = "HAS_REFERENCE", direction = Direction.OUTGOING)
+  private List<ProjectReference> references = new ArrayList<>();
 
   @Relationship(type = "USED_TECHNOLOGY", direction = Direction.OUTGOING)
   private List<Skill> technologies = new ArrayList<>();
 
   public String getFormattedProjectId() {
     return "ID" + String.format("%04d", this.projectId);
+  }
+
+  public Optional<ProjectReference> getReferenceByLanguage(String language) {
+    return references.stream()
+        .filter(reference -> reference.getLanguage().equalsIgnoreCase(language))
+        .findFirst();
   }
 
 }

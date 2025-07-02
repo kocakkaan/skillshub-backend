@@ -2,7 +2,9 @@ package com.reply.skillshub.data.project;
 
 import java.util.List;
 
-public interface ProjectReference {
+import com.reply.skillshub.data.project.reference.ProjectReference;
+
+public interface ProjectRead {
 
     String getId();
 
@@ -16,23 +18,17 @@ public interface ProjectReference {
 
     List<ProjectType> getProjectType();
 
+    List<ProjectReference> getReferences();
+
     // String getStatus();
 
     List<Skill> getTechnologies();
 
-    List<String> getInitialSituation();
-    List<String> getChallenges();
-    List<String> getApproachTechnologies();
-
-    String getValueAddedText0();
-    String getValueAddedText1();
-    String getValueAddedText2();
     String getProjectPictureLocation();
-
-
 
     interface Client {
         String getId();
+
         String getName();
     }
 
@@ -42,17 +38,18 @@ public interface ProjectReference {
 
     interface Industry {
         String getId();
+
         String getLabel();
     }
 
     interface Skill {
         String getId();
+
         String getLabel();
     }
 
-    
-  public default String getFormattedProjectId() {
-    return "ID" + String.format("%04d", this.getProjectId());
-  }
-  
+    public default String getFormattedProjectId() {
+        return "ID" + String.format("%04d", this.getProjectId());
+    }
+
 }

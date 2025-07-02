@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.reply.skillshub.openapi.api.ProjectsApi;
 import com.reply.skillshub.openapi.model.CreateProjectDto;
 import com.reply.skillshub.openapi.model.ProjectDto;
+import com.reply.skillshub.openapi.model.UpdateProjectDto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -55,7 +56,7 @@ public class ProjectController implements ProjectsApi {
   }
 
   @Override
-  public ResponseEntity<ProjectDto> projectsProjectIdPut(String projectId, @Valid ProjectDto projectDto) {
+  public ResponseEntity<ProjectDto> projectsProjectIdPut(String projectId, @Valid UpdateProjectDto projectDto) {
     return ResponseEntity.ok(projectControllerService.updateProject(projectId, projectDto));
   }
 
