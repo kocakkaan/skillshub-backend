@@ -38,13 +38,17 @@ public class ProjectPowerPointService {
       return powerPointInformation;
     }
     powerPointInformation.setProjectId(resume.getFormattedProjectId());
-    powerPointInformation.setProjectTitle(resume.getTitle());
-    powerPointInformation.setApproachTechnologies(resume.getApproachTechnologies());
-    powerPointInformation.setInitialSituation(resume.getInitialSituation());
-    powerPointInformation.setChallenges(resume.getChallenges());
-    powerPointInformation.setValueAddedText0(resume.getValueAddedText0());
-    powerPointInformation.setValueAddedText1(resume.getValueAddedText1());
-    powerPointInformation.setValueAddedText2(resume.getValueAddedText2());
+    resume.getReferenceByLanguage(language)
+        .ifPresent(reference -> {
+          powerPointInformation.setProjectTitle(reference.getTitle());
+          powerPointInformation.setApproachTechnologies(reference.getApproachTechnologies());
+          powerPointInformation.setInitialSituation(reference.getInitialSituation());
+          powerPointInformation.setChallenges(reference.getChallenges());
+          powerPointInformation.setValueAddedText0(reference.getValueAddedText0());
+          powerPointInformation.setValueAddedText1(reference.getValueAddedText1());
+          powerPointInformation.setValueAddedText2(reference.getValueAddedText2());
+        });
+
 
     if (resume.getProjectPictureLocation() != null && !resume.getProjectPictureLocation().isEmpty()) {
       String fullPath = Paths.get(projectPicturePath, resume.getProjectPictureLocation()).toString();

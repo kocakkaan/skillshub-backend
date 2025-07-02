@@ -28,12 +28,14 @@ import com.reply.skillshub.base.services.LoadCurrentUser;
 import com.reply.skillshub.controllers.project.powerpoint.PowerPointInformation;
 import com.reply.skillshub.controllers.project.powerpoint.ProjectPowerPointService;
 import com.reply.skillshub.data.project.Project;
-import com.reply.skillshub.data.project.ProjectReference;
+import com.reply.skillshub.data.project.ProjectRead;
 import com.reply.skillshub.data.project.ProjectService;
+import com.reply.skillshub.data.project.reference.ProjectReference;
 import com.reply.skillshub.data.projectcounter.ProjectCounterService;
 import com.reply.skillshub.data.userrole.UserRole;
 import com.reply.skillshub.openapi.model.CreateProjectDto;
 import com.reply.skillshub.openapi.model.ProjectDto;
+import com.reply.skillshub.openapi.model.UpdateProjectDto;
 import com.reply.skillshub.services.ProjectAgentService;
 
 import lombok.RequiredArgsConstructor;
@@ -157,7 +159,7 @@ public class ProjectControllerService {
 
   public List<ProjectDto> getAllProjects() {
     var projects = projectService.findAll();
-    return projects.stream().sorted(Comparator.comparingInt(ProjectReference::getProjectId))
+    return projects.stream().sorted(Comparator.comparingInt(ProjectRead::getProjectId))
         .map(ProjectControllerServiceUtil::convertToProjectDto).toList();
   }
 
@@ -180,12 +182,18 @@ public class ProjectControllerService {
     project.setTitle(projectDto.getTitle());
     var nextProjectId = projectCounterService.incrementProjectId();
     project.setProjectId(nextProjectId);
+    var projectReferenceDe = new ProjectReference();
+    projectReferenceDe.setLanguage("de");
+    var projectReferenceEn = new ProjectReference();
+    projectReferenceEn.setLanguage("en");
+    project.getReferences().add(projectReferenceDe);
+    project.getReferences().add(projectReferenceEn);
     var savedProject = projectService.save(project);
     var projectReference = projectService.findReferenceById(savedProject.getId());
     return ProjectControllerServiceUtil.convertToProjectDto(projectReference);
   }
 
-  public ProjectDto updateProject(String id, ProjectDto projectDto) {
+  public ProjectDto updateProject(String id, UpdateProjectDto projectDto) {
     var project = projectService.findById(id);
     if (project != null) {
       ProjectControllerServiceUtil.updateProjectFromDto(project, projectDto);
