@@ -20,8 +20,7 @@ public class ProjectControllerServiceUtil {
     projectDto.setProjectId(project.getFormattedProjectId());
     projectDto.setTitle(project.getTitle());
     projectDto.setDescription(Optional.ofNullable(project.getDescription()));
-    projectDto.setProjectReferences(project.getReferences().stream()
-        .map(ProjectControllerServiceUtil::convertToProjectReferenceDto).toList());
+    projectDto.setIndustries(Optional.ofNullable(project.getIndustry() != null ? project.getIndustry().getLabel() : null));
 
     if (project.getProjectPictureLocation() != null && !project.getProjectPictureLocation().isEmpty()) {
       projectDto.setProjectPictureUrl(Optional.of("/api/projects/" + project.getId() + "/picture"));
