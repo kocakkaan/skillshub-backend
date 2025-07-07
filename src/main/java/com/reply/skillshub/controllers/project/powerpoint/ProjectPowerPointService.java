@@ -98,18 +98,16 @@ public class ProjectPowerPointService {
 
     var uniqueFolder = UUID.randomUUID().toString();
     String uniqueFolderPath = String.format("temp/%s", uniqueFolder);
+    ensureFolderExists(uniqueFolderPath);
 
     if (powerPointInformationList.size() > 1) {
       for (int count = 0; count < powerPointInformationList.size(); count++) {
         var slideShow = createPowerPointFromTemplate(powerPointInformationList.get(count));
 
         String templateName = String.format("%s/output_%s.pptx", uniqueFolderPath, count);
-        ensureFolderExists(uniqueFolderPath);
-        try {
-          FileOutputStream out = new FileOutputStream(templateName);
+        try (FileOutputStream out = new FileOutputStream(templateName)) {
           slideShow.write(out);
           out.flush();
-          out.close();
           slideShow.close();
         } catch (IOException e) {
           logger.error("Error while writing PowerPoint to output file", e);
@@ -170,16 +168,16 @@ public class ProjectPowerPointService {
       if (i == 0) {
         ppt = presentations.get(i);
       } else {
-          for (XSLFSlide srcSlide : presentations.get(i).getSlides()) {
-              XSLFSlide newSlide = ppt.createSlide();
-              newSlide.importContent(srcSlide);
-          }
-          try {
-           presentations.get(i).close();
+        for (XSLFSlide srcSlide : presentations.get(i).getSlides()) {
+          XSLFSlide newSlide = ppt.createSlide();
+          newSlide.importContent(srcSlide);
+        }
+        try {
+          presentations.get(i).close();
 
-          } catch (Exception e) {
-            // TODO: handle exception
-          }
+        } catch (Exception e) {
+          // TODO: handle exception
+        }
 
       }
     }
@@ -188,12 +186,14 @@ public class ProjectPowerPointService {
 
   private static void deleteFilesInFolder(String folderPath) throws IOException {
     Path folder = Paths.get(folderPath);
-    DirectoryStream<Path> stream = Files.newDirectoryStream(folder);
-    for (Path file : stream) {
-      Files.delete(file);
+    try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder)) {
+      for (Path file : stream) {
+        Files.delete(file);
+      }
+    } catch (IOException e) {
+      logger.error("Error deleting files in folder: " + folderPath, e);
     }
     Files.delete(folder);
-    stream.close();
   }
 
   public Resource getFirstSlideAsImage(XMLSlideShow ppt) {
