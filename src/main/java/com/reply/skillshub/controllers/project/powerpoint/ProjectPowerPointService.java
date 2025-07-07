@@ -5,10 +5,17 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
@@ -49,7 +56,6 @@ public class ProjectPowerPointService {
           powerPointInformation.setValueAddedText2(reference.getValueAddedText2());
         });
 
-
     if (resume.getProjectPictureLocation() != null && !resume.getProjectPictureLocation().isEmpty()) {
       String fullPath = Paths.get(projectPicturePath, resume.getProjectPictureLocation()).toString();
       powerPointInformation.setProjectPictureLocation(fullPath);
@@ -72,6 +78,7 @@ public class ProjectPowerPointService {
     ClassPathResource resource = new ClassPathResource(templateName);
     try (var fis = resource.getInputStream()) {
       XMLSlideShow slideShow = new XMLSlideShow(fis);
+      fis.close();
       var slide = slideShow.getSlides().get(0);
       for (var shape : slide.getShapes()) {
         FieldHandler
@@ -85,25 +92,108 @@ public class ProjectPowerPointService {
   }
 
   public XMLSlideShow createSlideShowFromMultipleTemplates(List<PowerPointInformation> powerPointInformationList) {
-    XMLSlideShow ppt = createPowerPointFromTemplate(powerPointInformationList.get(0));
     if (powerPointInformationList.size() == 1) {
-      return ppt;
+      return createPowerPointFromTemplate(powerPointInformationList.get(0));
     }
 
+    var uniqueFolder = UUID.randomUUID().toString();
+    String uniqueFolderPath = String.format("temp/%s", uniqueFolder);
+    ensureFolderExists(uniqueFolderPath);
+
     if (powerPointInformationList.size() > 1) {
-      for (int count = 1; count < powerPointInformationList.size(); count++) {
+      for (int count = 0; count < powerPointInformationList.size(); count++) {
         var slideShow = createPowerPointFromTemplate(powerPointInformationList.get(count));
-        var createdSlide = slideShow.getSlides().get(0);
-        ppt.createSlide().importContent(createdSlide);
-        try {
+
+        String templateName = String.format("%s/output_%s.pptx", uniqueFolderPath, count);
+        try (FileOutputStream out = new FileOutputStream(templateName)) {
+          slideShow.write(out);
+          out.flush();
           slideShow.close();
         } catch (IOException e) {
-          logger.error("An IO Exception has been thrown on closing the slideshow", e);
+          logger.error("Error while writing PowerPoint to output file", e);
         }
       }
     }
+    return mergePowerPointsFromFolder(uniqueFolderPath);
+  }
 
+  private static void ensureFolderExists(String folderPath) {
+    try {
+      Path folder = Paths.get(folderPath);
+      if (!Files.exists(folder)) {
+        Files.createDirectories(folder);
+      }
+    } catch (IOException e) {
+      throw new RuntimeException("Error creating folder: " + folderPath, e);
+    }
+  }
+
+  public static XMLSlideShow mergePowerPointsFromFolder(String folderPath) {
+    // Load all PowerPoint files from the folder
+    try {
+      List<XMLSlideShow> presentations = loadPresentationsFromFolder(folderPath);
+
+      // Merge the presentations
+      XMLSlideShow mergedPpt = mergePresentations(presentations);
+
+      // Delete all files in the folder
+      deleteFilesInFolder(folderPath);
+
+      return mergedPpt;
+    } catch (IOException e) {
+      throw new RuntimeException("Error merging PowerPoint presentations from folder: " + folderPath, e);
+    }
+
+  }
+
+  private static List<XMLSlideShow> loadPresentationsFromFolder(String folderPath) throws IOException {
+    List<XMLSlideShow> presentations = new ArrayList<>();
+    Path folder = Paths.get(folderPath);
+
+    // Iterate over each file in the folder
+    DirectoryStream<Path> stream = Files.newDirectoryStream(folder, "*.{pptx}");
+    for (Path file : stream) {
+      try (FileInputStream fis = new FileInputStream(file.toFile())) {
+        XMLSlideShow ppt = new XMLSlideShow(fis);
+        presentations.add(ppt);
+      }
+    }
+    stream.close();
+    return presentations;
+  }
+
+  private static XMLSlideShow mergePresentations(List<XMLSlideShow> presentations) {
+    XMLSlideShow ppt = null;
+    for (int i = 0; i < presentations.size(); i++) {
+      if (i == 0) {
+        ppt = presentations.get(i);
+      } else {
+        for (XSLFSlide srcSlide : presentations.get(i).getSlides()) {
+          XSLFSlide newSlide = ppt.createSlide();
+          newSlide.importContent(srcSlide);
+        }
+        try {
+          presentations.get(i).close();
+
+        } catch (Exception e) {
+          // TODO: handle exception
+        }
+
+      }
+    }
     return ppt;
+  }
+
+  private static void deleteFilesInFolder(String folderPath) throws IOException {
+    Path folder = Paths.get(folderPath);
+    try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder)) {
+      for (Path file : stream) {
+        Files.delete(file);
+      }
+    } catch (IOException e) {
+      logger.error("Error deleting files in folder: " + folderPath, e);
+    }
+    Files.delete(folder);
   }
 
   public Resource getFirstSlideAsImage(XMLSlideShow ppt) {
