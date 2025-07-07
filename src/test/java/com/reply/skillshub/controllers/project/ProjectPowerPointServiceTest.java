@@ -39,9 +39,9 @@ public class ProjectPowerPointServiceTest {
     assertNotNull(result);
     assertNull(result.getProjectId());
     assertNull(result.getProjectTitle());
-    assertNull(result.getApproachTechnologies());
-    assertNull(result.getInitialSituation());
-    assertNull(result.getChallenges());
+    assertEquals(0, result.getApproachTechnologies().size());
+    assertEquals(0, result.getInitialSituation().size());
+    assertEquals(0,result.getChallenges().size());
     assertNull(result.getValueAddedText0());
     assertNull(result.getValueAddedText1());
     assertNull(result.getValueAddedText2());
