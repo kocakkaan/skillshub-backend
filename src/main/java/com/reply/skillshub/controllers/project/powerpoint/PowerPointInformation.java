@@ -13,9 +13,9 @@ public class PowerPointInformation {
   private String projectTitle;
   private String projectPictureLocation;
 
-  private List<String> initialSituation;
-  private List<String> challenges;
-  private List<String> approachTechnologies;
+  private List<String> initialSituation = List.of();
+  private List<String> challenges = List.of();
+  private List<String> approachTechnologies = List.of();
 
   private String valueAddedText0;
   private String valueAddedText1;
