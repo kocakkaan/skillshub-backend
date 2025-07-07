@@ -206,8 +206,8 @@ public class ProjectControllerService {
   }
 
   public ProjectDto getProjectById(String id) {
-    var project = projectService.findReferenceById(id);
-    return ProjectControllerServiceUtil.convertToProjectDto(project);
+    var project = projectService.findReferenceWithReferencesById(id);
+    return ProjectControllerServiceUtil.convertProjectDtoWithReferences(project);
   }
 
 }

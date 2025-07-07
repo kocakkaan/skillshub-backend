@@ -42,6 +42,11 @@ public class ProjectService {
                 .orElseThrow(() -> new ResumeNotFound());
     }
 
+    public ProjectReadWithReference findReferenceWithReferencesById(String id) {
+        return repository.findById(id, ProjectReadWithReference.class)
+                .orElseThrow(() -> new ResumeNotFound());
+    }
+
     public <T> T findById(String id, Class<T> type) {
         return repository.findById(id, type).orElseThrow(() -> new ResumeNotFound());
     }

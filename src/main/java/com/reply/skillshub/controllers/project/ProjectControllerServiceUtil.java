@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.reply.skillshub.data.project.Project;
 import com.reply.skillshub.data.project.ProjectRead;
+import com.reply.skillshub.data.project.ProjectReadWithReference;
 import com.reply.skillshub.data.project.reference.ProjectReference;
 import com.reply.skillshub.openapi.model.ClientDto;
 import com.reply.skillshub.openapi.model.ProjectDto;
@@ -13,6 +14,13 @@ import com.reply.skillshub.openapi.model.ProjectReferenceDto;
 import com.reply.skillshub.openapi.model.UpdateProjectDto;
 
 public class ProjectControllerServiceUtil {
+
+  public static ProjectDto convertProjectDtoWithReferences(ProjectReadWithReference project) {
+    var projectDto = convertToProjectDto(project);
+    projectDto.setProjectReferences(project.getReferences().stream()
+          .map(ProjectControllerServiceUtil::convertToProjectReferenceDto).toList());
+    return projectDto;
+  }
 
   public static ProjectDto convertToProjectDto(ProjectRead project) {
     ProjectDto projectDto = new ProjectDto();
