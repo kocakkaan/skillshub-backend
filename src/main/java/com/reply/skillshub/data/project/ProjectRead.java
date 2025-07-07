@@ -2,8 +2,6 @@ package com.reply.skillshub.data.project;
 
 import java.util.List;
 
-import com.reply.skillshub.data.project.reference.ProjectReference;
-
 public interface ProjectRead {
 
     String getId();
@@ -18,11 +16,11 @@ public interface ProjectRead {
 
     List<ProjectType> getProjectType();
 
-    List<ProjectReference> getReferences();
-
     // String getStatus();
 
     List<Skill> getTechnologies();
+
+    Industry getIndustry();
 
     String getProjectPictureLocation();
 
