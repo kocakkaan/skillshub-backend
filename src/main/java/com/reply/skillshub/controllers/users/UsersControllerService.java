@@ -54,6 +54,7 @@ import com.reply.skillshub.openapi.model.ProfileDto;
 import com.reply.skillshub.openapi.model.ProfileDtoResumesInner;
 import com.reply.skillshub.openapi.model.SkillDto;
 import com.reply.skillshub.openapi.model.UserConfirmRequest;
+import com.reply.skillshub.services.LinkGeneratorService;
 import com.reply.skillshub.services.SkillsAgentService;
 
 import jakarta.validation.Valid;
@@ -85,8 +86,8 @@ public class UsersControllerService {
     @Value("${skillhub.profilepicture.path}")
     private String profilePicturePath;
 
-    @Value("${skillhub.frontend}")
-    private String server;
+
+    private final LinkGeneratorService linkGeneratorService;
 
     private boolean isAdmin() {
         return loadCurrentUser.loadSkillhubUserFromContext().getUserRole() == UserRole.ADMIN;
@@ -433,11 +434,7 @@ public class UsersControllerService {
         // email.setMessage(createNewUserMessage());
         email.setTemplate("new-user");
         Context context = new Context();
-        var stringBuilder = new StringBuilder();
-        stringBuilder.append(server);
-        stringBuilder.append("/confirm/");
-        stringBuilder.append(user.getConfirmationToken());
-        context.setVariable("link", stringBuilder.toString());
+        context.setVariable("link", linkGeneratorService.getConfirmationLink(user));
         context.setVariable("username", user.getFullname());
         email.setSubject("An account has been created for you");
         email.setContext(context);
