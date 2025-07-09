@@ -47,6 +47,7 @@ import com.reply.skillshub.openapi.model.ConfirmedUserResponse;
 import com.reply.skillshub.openapi.model.CreateUserRequest;
 import com.reply.skillshub.openapi.model.CreatedUserResponse;
 import com.reply.skillshub.openapi.model.EmployeeDto;
+import com.reply.skillshub.openapi.model.EmployeeDtoResumesInner;
 import com.reply.skillshub.openapi.model.ExperienceDto;
 import com.reply.skillshub.openapi.model.LanguageDto;
 import com.reply.skillshub.openapi.model.OccupationalCategoryDto;
@@ -302,8 +303,6 @@ public class UsersControllerService {
         profile.setSkills(user.getSkills().stream().map(this::convertToSkillDto).toList());
         profile.setLanguages(user.getSpeaks().stream().map(this::convertSpeaksToLanguageDto).toList());
         profile.setResumes(user.getResumes().stream().map(this::convertToResumeDto).toList());
-        profile.setCreatedBy(isAdmin() && user.getCreatedBy() != null ? user.getCreatedBy().getFullName() : null);
-        profile.setCreatedOn(isAdmin() ? user.getCreatedOn() : null);
         return profile;
     }
 
@@ -392,9 +391,19 @@ public class UsersControllerService {
                 .id(user.getId())
                 .fullname(user.getFullName())
                 .role(user.getUserRole().name())
+                .confirmed(user.getConfirmed())
+                .confirmationLink(linkGeneratorService.getConfirmationLink(user))
+                .resumes(user.getResumes().stream().map(this::convertToDtoResume).toList())
                 .createdBy(isAdmin() && user.getCreatedBy() != null ? user.getCreatedBy().getFullName() : null)
                 .createdOn(isAdmin() ? user.getCreatedOn() : null);
         return dto;
+    }
+
+    private EmployeeDtoResumesInner convertToDtoResume(Employee.Resume resume) {
+        var resumeDto =  new EmployeeDtoResumesInner();
+        resumeDto.setId(resume.getId());
+        resumeDto.setRole(resume.getRole());
+        return resumeDto;
     }
 
     private User createUserFromRequest(CreateUserRequest createUserRequest, String creatorId) {
