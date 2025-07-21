@@ -78,10 +78,18 @@ public class CompanyControllerService {
     public List<EmployeeDto> getCompanyEmployees(String companyId, Optional<String> searchString) {
         var company = companyService.findBaseCompanyById(companyId).orElseThrow(NoCompanyFound::new);
         final String companyName = company.getLabel();
-        userService.findByCompaniesIdIn(List.of(companyId));
-        if (searchString.isPresent()) {
-            var keywords = skillsAgentService.getKeywordsFromSearchString(searchString.get());
-            return userService.findByCompanyAndKeyWords(companyId, keywords).stream()
+        
+        if (searchString.isPresent() && !searchString.get().isBlank()) {
+            // Get matching employee IDs directly from agent service
+            List<String> matchingEmployeeIds = skillsAgentService.getMatchingEmployeeIds(
+                searchString.get(), 
+                List.of(companyId)
+            );
+            
+            // Fetch employees by IDs
+            List<Employee> employees = userService.findEmployeesByIds(matchingEmployeeIds);
+            
+            return employees.stream()
                     .map(employee -> convertEmployeeToApiDto(employee, companyName))
                     .toList();
         }

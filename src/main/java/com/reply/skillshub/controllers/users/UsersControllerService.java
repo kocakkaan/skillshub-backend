@@ -144,9 +144,8 @@ public class UsersControllerService {
 
     public List<EmployeeDto> getEmployeesAccessibleToCurrentUser(Optional<String> searchString) {
         BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
-        if (searchString.isPresent()) {
-            var keywords = skillsAgentService.getKeywordsFromSearchString(searchString.get());
-            return getEmployeesAccessibleToUserBySearchString(currentUser.getId(), keywords);
+        if (searchString.isPresent() && !searchString.get().isBlank()) {
+            return getEmployeesAccessibleToUserBySearchString(currentUser.getId(), searchString.get());
         }
         return getEmployeesAccessibleToUser(currentUser.getId());
     }
@@ -372,10 +371,18 @@ public class UsersControllerService {
         return userService.findByCompaniesIdIn(companyIds).stream().map(this::convertUserToEmployeeDto).toList();
     }
 
-    private List<EmployeeDto> getEmployeesAccessibleToUserBySearchString(String userId, List<String> keywords) {
+    private List<EmployeeDto> getEmployeesAccessibleToUserBySearchString(String userId, String searchString) {
         var companies = companyService.findMinimalCompanyByEmployeesId(userId);
         List<String> companyIds = companies.stream().map(MinimalCompany::getId).toList();
-        return userService.findByCompaniesAndKeyWords(companyIds, keywords).stream().map(this::convertUserToEmployeeDto)
+        
+        // Get matching employee IDs directly from agent service
+        List<String> matchingEmployeeIds = skillsAgentService.getMatchingEmployeeIds(searchString, companyIds);
+        
+        // Fetch employees by IDs
+        List<Employee> employees = userService.findEmployeesByIds(matchingEmployeeIds);
+        
+        return employees.stream()
+                .map(this::convertUserToEmployeeDto)
                 .toList();
     }
 

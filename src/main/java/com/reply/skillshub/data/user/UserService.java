@@ -3,6 +3,9 @@ package com.reply.skillshub.data.user;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.data.neo4j.core.Neo4jTemplate;
 import org.springframework.stereotype.Service;
@@ -68,6 +71,24 @@ public class UserService {
     public List<Employee> findByCompaniesAndKeyWords(List<String> companyId, List<String> keywordsInput) {
         var keywords = keywordsInput.stream().map(String::toLowerCase).toList();
         return userRepository.findByCompaniesIdInAndSkillsLabelInOrHasCertificatesCertificateNameIn(companyId, keywords, keywords);
+    }
+
+    public List<Employee> findEmployeesByIds(List<String> employeeIds) {
+        if (employeeIds == null || employeeIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        return employeeIds.stream()
+            .map(id -> {
+                try {
+                    return findById(id, Employee.class);
+                } catch (UserNotFound e) {
+                    //logger.debug("User with id {} not found", id);
+                    return null;
+                }
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     public BaseUser findByResumeId(String id) {
