@@ -5,7 +5,13 @@ import java.util.List;
 
 import com.neovisionaries.i18n.LanguageCode;
 
-public interface EmployeeProfile extends Employee {
+public interface EmployeeProfile {
+
+  public String getId();
+
+  public String getFirstName();
+
+  public String getLastName();
 
   public String getEmail();
 
@@ -26,6 +32,12 @@ public interface EmployeeProfile extends Employee {
   public String getCreatedUserId();
 
   public LocalDate getCreatedOn();
+
+  default String getFullName() {
+    return String.format("%s %s",
+        getFirstName() != null ? getFirstName() : "",
+        getLastName() != null ? getLastName() : "");
+  }
 
   interface Industry {
     public String getId();

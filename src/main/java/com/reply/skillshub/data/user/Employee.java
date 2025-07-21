@@ -1,6 +1,7 @@
 package com.reply.skillshub.data.user;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.reply.skillshub.data.userrole.UserRole;
 
@@ -11,6 +12,12 @@ public interface Employee {
   public String getFirstName();
 
   public String getLastName();
+
+  public String getConfirmationToken();
+
+  public boolean getConfirmed();
+
+  public List<Resume> getResumes();
 
   public UserRole getUserRole();
 
@@ -35,6 +42,11 @@ public interface Employee {
       return getFirstName().concat(" ").concat(getLastName());
     }
 
+  }
+
+  interface Resume {
+    public String getId();
+    public String getRole();
   }
 
 }

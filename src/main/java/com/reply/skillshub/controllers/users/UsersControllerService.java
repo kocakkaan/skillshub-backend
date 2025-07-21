@@ -47,6 +47,7 @@ import com.reply.skillshub.openapi.model.ConfirmedUserResponse;
 import com.reply.skillshub.openapi.model.CreateUserRequest;
 import com.reply.skillshub.openapi.model.CreatedUserResponse;
 import com.reply.skillshub.openapi.model.EmployeeDto;
+import com.reply.skillshub.openapi.model.EmployeeDtoResumesInner;
 import com.reply.skillshub.openapi.model.ExperienceDto;
 import com.reply.skillshub.openapi.model.LanguageDto;
 import com.reply.skillshub.openapi.model.OccupationalCategoryDto;
@@ -54,6 +55,7 @@ import com.reply.skillshub.openapi.model.ProfileDto;
 import com.reply.skillshub.openapi.model.ProfileDtoResumesInner;
 import com.reply.skillshub.openapi.model.SkillDto;
 import com.reply.skillshub.openapi.model.UserConfirmRequest;
+import com.reply.skillshub.services.LinkGeneratorService;
 import com.reply.skillshub.services.SkillsAgentService;
 
 import jakarta.validation.Valid;
@@ -85,8 +87,8 @@ public class UsersControllerService {
     @Value("${skillhub.profilepicture.path}")
     private String profilePicturePath;
 
-    @Value("${skillhub.frontend}")
-    private String server;
+
+    private final LinkGeneratorService linkGeneratorService;
 
     private boolean isAdmin() {
         return loadCurrentUser.loadSkillhubUserFromContext().getUserRole() == UserRole.ADMIN;
@@ -301,8 +303,6 @@ public class UsersControllerService {
         profile.setSkills(user.getSkills().stream().map(this::convertToSkillDto).toList());
         profile.setLanguages(user.getSpeaks().stream().map(this::convertSpeaksToLanguageDto).toList());
         profile.setResumes(user.getResumes().stream().map(this::convertToResumeDto).toList());
-        profile.setCreatedBy(isAdmin() && user.getCreatedBy() != null ? user.getCreatedBy().getFullName() : null);
-        profile.setCreatedOn(isAdmin() ? user.getCreatedOn() : null);
         return profile;
     }
 
@@ -391,9 +391,19 @@ public class UsersControllerService {
                 .id(user.getId())
                 .fullname(user.getFullName())
                 .role(user.getUserRole().name())
+                .confirmed(user.getConfirmed())
+                .confirmationLink(linkGeneratorService.getConfirmationLink(user))
+                .resumes(user.getResumes().stream().map(this::convertToDtoResume).toList())
                 .createdBy(isAdmin() && user.getCreatedBy() != null ? user.getCreatedBy().getFullName() : null)
                 .createdOn(isAdmin() ? user.getCreatedOn() : null);
         return dto;
+    }
+
+    private EmployeeDtoResumesInner convertToDtoResume(Employee.Resume resume) {
+        var resumeDto =  new EmployeeDtoResumesInner();
+        resumeDto.setId(resume.getId());
+        resumeDto.setRole(resume.getRole());
+        return resumeDto;
     }
 
     private User createUserFromRequest(CreateUserRequest createUserRequest, String creatorId) {
@@ -433,11 +443,7 @@ public class UsersControllerService {
         // email.setMessage(createNewUserMessage());
         email.setTemplate("new-user");
         Context context = new Context();
-        var stringBuilder = new StringBuilder();
-        stringBuilder.append(server);
-        stringBuilder.append("/confirm/");
-        stringBuilder.append(user.getConfirmationToken());
-        context.setVariable("link", stringBuilder.toString());
+        context.setVariable("link", linkGeneratorService.getConfirmationLink(user));
         context.setVariable("username", user.getFullname());
         email.setSubject("An account has been created for you");
         email.setContext(context);
