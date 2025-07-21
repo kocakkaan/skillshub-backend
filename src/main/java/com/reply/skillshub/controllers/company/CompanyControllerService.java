@@ -17,6 +17,7 @@ import com.reply.skillshub.openapi.model.CompanyDto;
 import com.reply.skillshub.openapi.model.CompanyInformationDto;
 import com.reply.skillshub.openapi.model.CreateCompanyRequest;
 import com.reply.skillshub.openapi.model.EmployeeDto;
+import com.reply.skillshub.services.LinkGeneratorService;
 import com.reply.skillshub.services.SkillsAgentService;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,8 @@ public class CompanyControllerService {
     private final CompanyService companyService;
 
     private final UserService userService;
+
+    private final LinkGeneratorService linkGeneratorService;
 
     private final SkillsAgentService skillsAgentService;
 
@@ -100,6 +103,8 @@ public class CompanyControllerService {
         return new EmployeeDto()
                 .id(employee.getId())
                 .fullname(employee.getFullName())
+                .confirmed(employee.getConfirmed() != null ? employee.getConfirmed() : false)
+                .confirmationLink(linkGeneratorService.getConfirmationLink(employee))
                 .createdBy(employee.getCreatedBy() != null ? employee.getCreatedBy().getFullName() : null)
                 .createdOn(employee.getCreatedOn() != null ? employee.getCreatedOn() : null)
                 .company(companyName);
@@ -110,6 +115,8 @@ public class CompanyControllerService {
                 .id(employee.getId())
                 .fullname(employee.getFullName())
                 .createdBy(employee.getCreatedBy().getFullName())
+                .confirmed(employee.getConfirmed())
+                .confirmationLink(linkGeneratorService.getConfirmationLink(employee))
                 .createdOn(employee.getCreatedOn())
                 .company(companyName);
     }
