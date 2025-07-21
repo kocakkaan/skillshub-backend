@@ -34,7 +34,9 @@ public interface EmployeeProfile {
   public LocalDate getCreatedOn();
 
   default String getFullName() {
-    return getFirstName().concat(" ").concat(getLastName());
+    return String.format("%s %s",
+        getFirstName() != null ? getFirstName() : "",
+        getLastName() != null ? getLastName() : "");
   }
 
   interface Industry {
