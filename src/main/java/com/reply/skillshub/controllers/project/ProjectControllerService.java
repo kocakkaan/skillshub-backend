@@ -49,6 +49,7 @@ public class ProjectControllerService {
   private final ProjectPowerPointService powerPointService;
   private final LoadCurrentUser loadCurrentUser;
   private final ProjectAgentService projectAgentService;
+  private final ProjectConverterService projectConverterService;
 
   private static final int TOP_K = 5;
 
@@ -196,7 +197,7 @@ public class ProjectControllerService {
   public ProjectDto updateProject(String id, UpdateProjectDto projectDto) {
     var project = projectService.findById(id);
     if (project != null) {
-      ProjectControllerServiceUtil.updateProjectFromDto(project, projectDto);
+      projectConverterService.updateProjectFromDto(project, projectDto);
       var updatedProject = projectService.save(project);
       projectAgentService.processProject(updatedProject.getId());
       var projectReference = projectService.findReferenceById(updatedProject.getId());
