@@ -61,4 +61,8 @@ public class ProjectService {
         return neo4jTemplate.save(Project.class).one(resume);
     }
 
+    public Optional<Project> findByProjectReferenceId(String projectReferenceId) {
+        return repository.findByProjectReferenceId(projectReferenceId);
+    }
+
 }
