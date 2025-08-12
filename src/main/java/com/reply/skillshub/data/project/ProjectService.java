@@ -62,7 +62,7 @@ public class ProjectService {
     }
 
     public Optional<Project> findByProjectReferenceId(String projectReferenceId) {
-        return repository.findByProjectReferenceId(projectReferenceId);
+        return repository.findByReferencesId(projectReferenceId);
     }
 
 }
