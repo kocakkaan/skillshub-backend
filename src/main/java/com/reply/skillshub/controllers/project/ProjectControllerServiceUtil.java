@@ -9,6 +9,7 @@ import com.reply.skillshub.data.project.ProjectRead;
 import com.reply.skillshub.data.project.ProjectReadWithReference;
 import com.reply.skillshub.data.project.reference.ProjectReference;
 import com.reply.skillshub.openapi.model.ClientDto;
+import com.reply.skillshub.openapi.model.ContactDto;
 import com.reply.skillshub.openapi.model.ProjectDto;
 import com.reply.skillshub.openapi.model.ProjectReferenceDto;
 import com.reply.skillshub.openapi.model.UpdateProjectDto;
@@ -47,6 +48,16 @@ public class ProjectControllerServiceUtil {
     }
 
     projectDto.setClients(clients);
+
+    if (project.getContact() != null) {
+      var contact = new ContactDto();
+      contact.setId(project.getContact().getId());
+      contact.setName(project.getContact().getName());
+      contact.setEmail(Optional.ofNullable(project.getContact().getEmail()));
+      contact.setPhone(Optional.ofNullable(project.getContact().getPhoneNumber()));
+      projectDto.setContact(Optional.of(contact));
+    }
+
     projectDto.setProjectType(project.getProjectType().stream().map(type -> type.getName()).toList());
     projectDto.setTechnologies(project.getTechnologies().stream().map(skill -> skill.getLabel()).toList());
     return projectDto;

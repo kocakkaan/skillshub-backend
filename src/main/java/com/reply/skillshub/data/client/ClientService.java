@@ -1,7 +1,6 @@
 package com.reply.skillshub.data.client;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -31,8 +30,8 @@ public class ClientService {
     return savedClient;
   }
 
-  public Optional<Client> findById(String id) {
-    return clientRepository.findById(id);
+  public Client findById(String id) {
+    return clientRepository.findById(id).orElseThrow();
   }
 
   public List<Client> findAllClients() {
