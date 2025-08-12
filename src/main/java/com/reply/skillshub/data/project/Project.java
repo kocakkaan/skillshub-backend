@@ -13,6 +13,7 @@ import org.springframework.data.neo4j.core.schema.Relationship.Direction;
 import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
 import com.reply.skillshub.data.client.Client;
+import com.reply.skillshub.data.contact.Contact;
 import com.reply.skillshub.data.industry.Industry;
 import com.reply.skillshub.data.project.reference.ProjectReference;
 import com.reply.skillshub.data.projecttype.ProjectType;
@@ -43,6 +44,9 @@ public class Project {
 
   @Relationship(type = "FOR_CLIENT", direction = Direction.OUTGOING)
   private List<Client> clients = new ArrayList<>();
+
+  @Relationship(type = "HAS_CONTACT", direction = Direction.OUTGOING)
+  private Contact contact;
 
   @Relationship(type = "IN_INDUSTRY", direction = Direction.OUTGOING)
   private Industry industry;

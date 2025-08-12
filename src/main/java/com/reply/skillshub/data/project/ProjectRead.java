@@ -14,6 +14,8 @@ public interface ProjectRead {
 
     List<Client> getClients();
 
+    Contact getContact();
+
     List<ProjectType> getProjectType();
 
     // String getStatus();
@@ -28,6 +30,16 @@ public interface ProjectRead {
         String getId();
 
         String getName();
+    }
+
+    interface Contact {
+        String getId();
+
+        String getName();
+
+        String getEmail();
+
+        String getPhoneNumber();
     }
 
     interface ProjectType {
