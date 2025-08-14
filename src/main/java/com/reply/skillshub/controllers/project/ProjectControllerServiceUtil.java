@@ -11,6 +11,8 @@ import com.reply.skillshub.data.project.reference.ProjectReference;
 import com.reply.skillshub.openapi.model.ClientDto;
 import com.reply.skillshub.openapi.model.ContactDto;
 import com.reply.skillshub.openapi.model.ProjectDto;
+import com.reply.skillshub.openapi.model.ProjectDtoInvolvedPeopleInner;
+import com.reply.skillshub.openapi.model.ProjectDtoManager;
 import com.reply.skillshub.openapi.model.ProjectReferenceDto;
 import com.reply.skillshub.openapi.model.UpdateProjectDto;
 
@@ -30,7 +32,32 @@ public class ProjectControllerServiceUtil {
     projectDto.setTitle(project.getTitle());
     projectDto.setDescription(Optional.ofNullable(project.getDescription()));
     projectDto.setIndustries(Optional.ofNullable(project.getIndustry() != null ? project.getIndustry().getLabel() : null));
+    projectDto.setIsPublic(Optional.ofNullable(project.getIsPublic()));
+    projectDto.setIsPublicSector(Optional.ofNullable(project.getIsPublicSector()));
+    
+    if (project.getManager() != null) {
+      var manager = new ProjectDtoManager();
+      manager.setId(project.getManager().getId());
+      manager.setName(project.getManager().getFullName());
+      projectDto.setManager(Optional.of(manager));
+    } else {
+      projectDto.setManager(Optional.empty());
+    }
 
+    var involvedPeople = project.getUsers().stream()
+        .map(user -> {
+          var involvedPerson = new ProjectDtoInvolvedPeopleInner();
+          involvedPerson.setId(user.getId());
+          involvedPerson.setName(user.getFullName());
+          return involvedPerson;
+        }).toList();
+
+    projectDto.setInvolvedPeople(involvedPeople);
+
+    projectDto.setCompany(Optional.ofNullable(project.getCompany()));
+    projectDto.setStartDate(Optional.ofNullable(project.getStartDate()));
+    projectDto.setEndDate(Optional.ofNullable(project.getEndDate()));
+    projectDto.setRevenue(Optional.ofNullable(project.getRevenue()));
     if (project.getProjectPictureLocation() != null && !project.getProjectPictureLocation().isEmpty()) {
       projectDto.setProjectPictureUrl(Optional.of("/api/projects/" + project.getId() + "/picture"));
     } else {
@@ -55,6 +82,10 @@ public class ProjectControllerServiceUtil {
       contact.setName(project.getContact().getName());
       contact.setEmail(Optional.ofNullable(project.getContact().getEmail()));
       contact.setPhone(Optional.ofNullable(project.getContact().getPhoneNumber()));
+      var client = new ClientDto();
+      client.setId(project.getContact().getCompany().getId());
+      client.setName(project.getContact().getCompany().getName());
+      contact.setCompany(client);
       projectDto.setContact(Optional.of(contact));
     }
 

@@ -1,5 +1,6 @@
 package com.reply.skillshub.data.project;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ProjectRead {
@@ -12,11 +13,27 @@ public interface ProjectRead {
 
     String getDescription();
 
+    String getCompany();
+
     List<Client> getClients();
 
     Contact getContact();
 
     List<ProjectType> getProjectType();
+
+    boolean getIsPublic();
+
+    boolean getIsPublicSector();
+
+    LocalDate getStartDate();
+
+    LocalDate getEndDate();
+
+    Double getRevenue();
+
+    User getManager();
+
+    List<User> getUsers();
 
     // String getStatus();
 
@@ -25,6 +42,18 @@ public interface ProjectRead {
     Industry getIndustry();
 
     String getProjectPictureLocation();
+
+    interface User {
+        String getId();
+
+        String getFirstName();
+
+        String getLastName();
+
+        default String getFullName() {
+            return getFirstName().concat(" ").concat(getLastName());
+        }
+    }
 
     interface Client {
         String getId();
@@ -40,6 +69,14 @@ public interface ProjectRead {
         String getEmail();
 
         String getPhoneNumber();
+
+        Company getCompany();
+
+        interface Company {
+            String getId();
+
+            String getName();
+        }
     }
 
     interface ProjectType {
