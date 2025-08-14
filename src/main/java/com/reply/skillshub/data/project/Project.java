@@ -51,7 +51,12 @@ public class Project {
   @Relationship(type = "IN_INDUSTRY", direction = Direction.OUTGOING)
   private Industry industry;
 
-  private boolean isPublic;
+  @Relationship(type = "MANAGED_BY", direction = Direction.OUTGOING)
+  private User manager;
+
+  private boolean isPublic = false;
+
+  private boolean isPublicSector = false;
 
   @Relationship(type = "HAS_PROJECT_TYPE", direction = Direction.OUTGOING)
   private List<ProjectType> projectType = new ArrayList<>();
@@ -61,6 +66,8 @@ public class Project {
 
   private LocalDate startDate;
   private LocalDate endDate;
+
+  private double revenue;
 
   private ProjectStatus status;
 
