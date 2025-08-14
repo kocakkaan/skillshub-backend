@@ -49,7 +49,7 @@ public class LanguageExtractorService {
       if (language.getIs_native()) {
         speaks.setLanguageLevel(LanguageLevel.C2);
       } else {
-        speaks.setLanguageLevel(LanguageLevel.valueOf(language.getProficiency()));
+        speaks.setLanguageLevel(LanguageLevel.fromString(language.getProficiency()));
       }
       
       extractedLanguages.add(speaks);
