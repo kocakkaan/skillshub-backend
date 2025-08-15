@@ -12,8 +12,8 @@ public enum LanguageLevel {
         try {
             return LanguageLevel.valueOf(level.toUpperCase());
         } catch (IllegalArgumentException e) {
-            logger.warning("Invalid language level: " + level + ". Returning null.");
-            return null;
+            logger.warning("Invalid language level: " + level + ". Returning B1.");
+            return LanguageLevel.B1; // Default to B1 if the level is invalid
         }
     }
 }
