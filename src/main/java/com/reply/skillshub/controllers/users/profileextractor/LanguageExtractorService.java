@@ -60,8 +60,17 @@ public class LanguageExtractorService {
   }
 
   private LanguageCode getLanguageFromText(String language) {
-    var foundLanguageCodes = LanguageCode.findByName(Pattern.compile(language, Pattern.CASE_INSENSITIVE));
-    return foundLanguageCodes != null ? foundLanguageCodes.get(0) : null;
+    try {
+      var foundLanguageCodes = LanguageCode.findByName(Pattern.compile(language, Pattern.CASE_INSENSITIVE));
+      if (foundLanguageCodes == null || foundLanguageCodes.isEmpty()) {
+        logger.warning("No language found for: " + language);
+        return null;
+      }
+      return foundLanguageCodes.get(0);
+    } catch (Exception e) {
+      logger.warning("Language not found: " + language + ". Attempting to find by regex.");
+    }
+    return null;
   }
 
 }
