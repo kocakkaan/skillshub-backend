@@ -43,6 +43,33 @@ public class ProjectAgentService {
         }
     }
 
+    public void translateProject(String projectId, String sourceLanguage) {
+        try {
+            logger.info(
+                    "Sending translate request for projectId {} from source language '{}' to agent /translate-project",
+                    projectId, sourceLanguage);
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+            webClient
+                    .post()
+                    .uri(uriBuilder -> uriBuilder.path("/translate-project")
+                            .queryParam("project_id", projectId)
+                            .queryParam("source_language", sourceLanguage)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(Void.class)
+                    .block();
+            stopWatch.stop();
+            logger.info("Agent translation for project {} from source language {} completed in {} ms", projectId,
+                    sourceLanguage,
+                    stopWatch.getTotalTimeMillis());
+        } catch (Exception e) {
+            logger.error("Failed to translate project with ID '{}' from source language '{}': {}", projectId,
+                    sourceLanguage,
+                    e.getMessage(), e);
+        }
+    }
+
     public List<String> searchProjectsByQuery(String searchQuery, Integer topK) {
         try {
             logger.info("Sending search query '{}', topK '{}' to agent /search-projects", searchQuery, topK);

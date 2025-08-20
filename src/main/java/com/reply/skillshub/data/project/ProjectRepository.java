@@ -11,4 +11,6 @@ public interface ProjectRepository extends Neo4jRepository<Project, String> {
 
     public <T> List<T> findAllBy(Class<T> type);
 
+    Optional<Project> findByReferencesId(String referenceId);
+
 }
