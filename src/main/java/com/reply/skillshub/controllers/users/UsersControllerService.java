@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
 
+import com.neovisionaries.i18n.LanguageCode;
 import com.reply.skillshub.base.exceptionhandling.exeptions.InsufficientRights;
 import com.reply.skillshub.base.exceptionhandling.exeptions.InvalidConfirmationToken;
 import com.reply.skillshub.base.exceptionhandling.exeptions.InvalidFileTypeException;
@@ -35,7 +37,10 @@ import com.reply.skillshub.data.EmailRequest;
 import com.reply.skillshub.data.company.Company;
 import com.reply.skillshub.data.company.CompanyService;
 import com.reply.skillshub.data.company.MinimalCompany;
+import com.reply.skillshub.data.language.Language;
 import com.reply.skillshub.data.skill.SkillService;
+import com.reply.skillshub.data.speaks.LanguageLevel;
+import com.reply.skillshub.data.speaks.Speaks;
 import com.reply.skillshub.data.user.BaseUser;
 import com.reply.skillshub.data.user.Employee;
 import com.reply.skillshub.data.user.EmployeeProfile;
@@ -50,10 +55,13 @@ import com.reply.skillshub.openapi.model.EmployeeDto;
 import com.reply.skillshub.openapi.model.EmployeeDtoResumesInner;
 import com.reply.skillshub.openapi.model.ExperienceDto;
 import com.reply.skillshub.openapi.model.LanguageDto;
+import com.reply.skillshub.openapi.model.LanguageSkillDto;
+import com.reply.skillshub.openapi.model.LanguageSkillDto.LevelEnum;
 import com.reply.skillshub.openapi.model.OccupationalCategoryDto;
 import com.reply.skillshub.openapi.model.ProfileDto;
 import com.reply.skillshub.openapi.model.ProfileDtoResumesInner;
 import com.reply.skillshub.openapi.model.SkillDto;
+import com.reply.skillshub.openapi.model.UpdateProfileDto;
 import com.reply.skillshub.openapi.model.UserConfirmRequest;
 import com.reply.skillshub.services.LinkGeneratorService;
 import com.reply.skillshub.services.SkillsAgentService;
@@ -87,11 +95,26 @@ public class UsersControllerService {
     @Value("${skillhub.profilepicture.path}")
     private String profilePicturePath;
 
-
     private final LinkGeneratorService linkGeneratorService;
 
     private boolean isAdmin() {
         return loadCurrentUser.loadSkillhubUserFromContext().getUserRole() == UserRole.ADMIN;
+    }
+
+    public ProfileDto updateUserProfileDto(String userId, UpdateProfileDto updateProfileDto) {
+        var user = userService.findById(updateProfileDto.getId(), UserToConfirm.class);
+        if (user == null) {
+            throw new UserNotFound("User not found with ID: " + userId);
+        }
+
+        user.setFirstName(updateProfileDto.getFirstName());
+        user.setLastName(updateProfileDto.getLastName());
+        user.setEmail(updateProfileDto.getEmail());
+        updateProfileDto.getPhone().ifPresent(user::setPhoneNumber);
+
+        userService.save(user);
+        var employeeProfile = userService.findEmployeeProfileById(user.getId());
+        return getProfileForUser(employeeProfile);
     }
 
     public ConfirmedUserResponse confirmUser(String confirmationToken, @Valid UserConfirmRequest userConfirmRequest) {
@@ -127,7 +150,8 @@ public class UsersControllerService {
 
         BaseUser currentUser = loadCurrentUser.loadSkillhubUserFromContext();
 
-        logger.info("Current user ID: {} started process to create user {}", currentUser.getId(), createUserRequest.getEmail());
+        logger.info("Current user ID: {} started process to create user {}", currentUser.getId(),
+                createUserRequest.getEmail());
 
         if (company.getEmployees().stream().noneMatch(user -> user.getId().equals(currentUser.getId()))) {
             throw new InsufficientRights();
@@ -161,6 +185,40 @@ public class UsersControllerService {
     public ProfileDto getProfileForEmployee(String employeeId) {
         var employeeProfile = userService.findEmployeeProfileById(employeeId);
         return getProfileForUser(employeeProfile);
+    }
+
+    public List<LanguageSkillDto> addLanguagesToUser(String userId, List<LanguageSkillDto> languages) {
+        var user = userService.findById(userId, UserWithSpeaks.class);
+
+        if (user == null) {
+            throw new UserNotFound("User not found with ID: " + userId);
+        }
+
+        List<Speaks> speaksToSave = new ArrayList<>();
+
+        for (LanguageSkillDto language : languages) {
+            Language lang = new Language();
+            var langCode = LanguageCode.getByCode(language.getLanguage().getLanguageCode());
+            
+            lang.setLanguageCode(langCode);
+            lang.setLanguageAlpha3Code(langCode.getAlpha3());
+            lang.setLanguageName(langCode.getName());
+
+            Speaks speaks = new Speaks();
+            speaks.setLanguage(lang);
+            if (language.getLevel() == LevelEnum.NATIVE) {
+                speaks.setNative(true);
+            } else {
+                speaks.setNative(false);
+                speaks.setLanguageLevel(LanguageLevel.fromString(language.getLevel().getValue()));
+            }
+
+            speaksToSave.add(speaks);
+            
+        }
+        user.setSpeaks(speaksToSave);
+        userService.save(user);
+        return languages;
     }
 
     public SkillDto addSkillToUser(String userId, String skillId) {
@@ -297,6 +355,9 @@ public class UsersControllerService {
         var profile = new ProfileDto();
         profile.setFullname(user.getFullName());
         profile.setEmail(user.getEmail());
+        profile.setFirstName(user.getFirstName());
+        profile.setLastName(user.getLastName());
+        profile.setPhone(Optional.ofNullable(user.getPhoneNumber()));
         profile.setId(user.getId());
         profile.setCertificates(user.getHasCertificates().stream().map(this::convertToCertificateDto).toList());
         profile.setExperiences(user.getExperiences().stream().map(this::convertToExperienceDto).toList());
@@ -314,9 +375,20 @@ public class UsersControllerService {
         return newResume;
     }
 
-    private LanguageDto convertSpeaksToLanguageDto(EmployeeProfile.Speaks speaks) {
-        var language = speaks.getLanguage();
-        return new LanguageDto(language.getLanguageName(), language.getLanguageCode().getName());
+    private LanguageSkillDto convertSpeaksToLanguageDto(EmployeeProfile.Speaks speaks) {
+        var language = new LanguageDto();
+        language.setLanguageName(speaks.getLanguage().getLanguageName());
+        language.setLanguageCode(speaks.getLanguage().getLanguageCode().toString());
+
+        var languageSkillDto = new LanguageSkillDto();
+        languageSkillDto.setLanguage(language);
+        if (speaks.isNative()) {
+            languageSkillDto.setLevel(LevelEnum.NATIVE);
+        } else {
+            languageSkillDto.setLevel(LevelEnum.fromValue(speaks.getLanguageLevel()));
+        }
+
+        return languageSkillDto;
     }
 
     private SkillDto convertToSkillDto(EmployeeProfile.Skill skill) {
@@ -374,13 +446,13 @@ public class UsersControllerService {
     private List<EmployeeDto> getEmployeesAccessibleToUserBySearchString(String userId, String searchString) {
         var companies = companyService.findMinimalCompanyByEmployeesId(userId);
         List<String> companyIds = companies.stream().map(MinimalCompany::getId).toList();
-        
+
         // Get matching employee IDs directly from agent service
         List<String> matchingEmployeeIds = skillsAgentService.getMatchingEmployeeIds(searchString, companyIds);
-        
+
         // Fetch employees by IDs
         List<Employee> employees = userService.findEmployeesByIds(matchingEmployeeIds);
-        
+
         return employees.stream()
                 .map(this::convertUserToEmployeeDto)
                 .toList();
@@ -400,7 +472,7 @@ public class UsersControllerService {
     }
 
     private EmployeeDtoResumesInner convertToDtoResume(Employee.Resume resume) {
-        var resumeDto =  new EmployeeDtoResumesInner();
+        var resumeDto = new EmployeeDtoResumesInner();
         resumeDto.setId(resume.getId());
         resumeDto.setRole(resume.getRole());
         return resumeDto;

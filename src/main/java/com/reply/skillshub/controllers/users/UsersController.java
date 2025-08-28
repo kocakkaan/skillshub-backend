@@ -14,8 +14,10 @@ import com.reply.skillshub.openapi.model.ConfirmedUserResponse;
 import com.reply.skillshub.openapi.model.CreateUserRequest;
 import com.reply.skillshub.openapi.model.CreatedUserResponse;
 import com.reply.skillshub.openapi.model.EmployeeDto;
+import com.reply.skillshub.openapi.model.LanguageSkillDto;
 import com.reply.skillshub.openapi.model.ProfileDto;
 import com.reply.skillshub.openapi.model.SkillDto;
+import com.reply.skillshub.openapi.model.UpdateProfileDto;
 import com.reply.skillshub.openapi.model.UserConfirmRequest;
 import com.reply.skillshub.openapi.model.UserMeProfilePicturePostRequest;
 
@@ -111,6 +113,17 @@ public class UsersController implements UsersApi {
         } catch (com.reply.skillshub.base.exceptionhandling.exeptions.ProfilePictureNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @Override
+    public ResponseEntity<ProfileDto> usersUserIdProfilePut(String userId, UpdateProfileDto updateProfileDto) {
+        return ResponseEntity.ok(usersControllerService.updateUserProfileDto(userId, updateProfileDto));
+    }
+
+    @Override
+    public ResponseEntity<List<LanguageSkillDto>> usersUserIdLanguagesPut(String userId,
+            List<LanguageSkillDto> languageSkillDto) {
+        return ResponseEntity.ok(usersControllerService.addLanguagesToUser(userId, languageSkillDto));
     }
 
 }
