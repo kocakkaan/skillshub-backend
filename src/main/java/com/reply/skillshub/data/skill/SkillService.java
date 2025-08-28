@@ -18,6 +18,7 @@ public class SkillService {
     public Skill save(Skill skill) {
         logger.info("Saving skill: {}", skill.getLabel());
         skill.setLabel(skill.getLabel().trim());
+        skill.setNormalizedLabel(skill.getLabel().toLowerCase().trim());
         var potentialSkill = skillRepository.findByLabelIgnoreCase(skill.getLabel());
         if (potentialSkill.isPresent()) {
             logger.info("Skill already exists, returning existing skill: {}", skill.getLabel());

@@ -51,6 +51,8 @@ public interface EmployeeProfile {
     public Language getLanguage();
 
     public boolean isNative();
+
+    public String getLanguageLevel();
   }
 
   interface Language {

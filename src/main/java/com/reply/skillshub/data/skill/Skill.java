@@ -19,4 +19,7 @@ public class Skill {
     @NotEmpty
     private String label;
 
+    @NotEmpty
+    private String normalizedLabel;
+
 }
