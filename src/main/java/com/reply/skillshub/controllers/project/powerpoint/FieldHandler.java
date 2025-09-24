@@ -8,11 +8,11 @@ import java.util.Optional;
 
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
-import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 
 import lombok.Data;
 
@@ -78,6 +78,10 @@ public enum FieldHandler {
         var textRun = paragraph.getTextRuns().get(0);
         var textStyles = getTextRunStyles(textRun);
 
+        if (powerPointInformation.getInitialSituation() == null || powerPointInformation.getInitialSituation().isEmpty()) {
+          return;
+        }
+
         text_shape.clearText();
 
         for (var initialSituation : powerPointInformation.getInitialSituation()) {
@@ -101,6 +105,10 @@ public enum FieldHandler {
 
         var textRun = paragraph.getTextRuns().get(0);
         var textStyles = getTextRunStyles(textRun);
+
+        if (powerPointInformation.getApproachTechnologies() == null || powerPointInformation.getApproachTechnologies().isEmpty()) {
+          return;
+        }
 
         text_shape.clearText();
 
@@ -154,6 +162,10 @@ public enum FieldHandler {
         var textRun = paragraph.getTextRuns().get(0);
         var textStyles = getTextRunStyles(textRun);
 
+        if (powerPointInformation.getChallenges() == null || powerPointInformation.getChallenges().isEmpty()) {
+          return;
+        }
+        
         text_shape.clearText();
 
         for (var industry : powerPointInformation.getChallenges()) {
