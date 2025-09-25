@@ -34,6 +34,7 @@ public class ProjectControllerServiceUtil {
     projectDto.setIndustries(Optional.ofNullable(project.getIndustry() != null ? project.getIndustry().getLabel() : null));
     projectDto.setIsPublic(Optional.ofNullable(project.getIsPublic()));
     projectDto.setIsPublicSector(Optional.ofNullable(project.getIsPublicSector()));
+    projectDto.setCountry(Optional.ofNullable(project.getCountry()));
     
     if (project.getManager() != null) {
       var manager = new ProjectDtoManager();

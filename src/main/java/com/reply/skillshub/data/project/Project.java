@@ -42,6 +42,8 @@ public class Project {
 
   private String company;
 
+  private String country;
+
   @Relationship(type = "FOR_CLIENT", direction = Direction.OUTGOING)
   private List<Client> clients = new ArrayList<>();
 

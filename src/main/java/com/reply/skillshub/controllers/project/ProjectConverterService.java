@@ -33,6 +33,7 @@ public class ProjectConverterService {
     projectDto.getStartDate().ifPresent(project::setStartDate);
     projectDto.getEndDate().ifPresent(project::setEndDate);
     projectDto.getRevenue().ifPresent(project::setRevenue);
+    projectDto.getCountry().ifPresent(project::setCountry);
     // projectDto.getProjectStatus().ifPresent(status -> project.setStatus(status.getValue()));
     projectDto.getManager().ifPresent(manager -> {
       var user = userService.findById(manager.getId());

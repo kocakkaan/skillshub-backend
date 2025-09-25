@@ -15,6 +15,8 @@ public interface ProjectRead {
 
     String getCompany();
 
+    String getCountry();
+
     List<Client> getClients();
 
     Contact getContact();
