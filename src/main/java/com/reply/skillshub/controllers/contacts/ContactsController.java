@@ -25,7 +25,7 @@ public class ContactsController implements ContactsApi {
   }
 
   @Override
-  public ResponseEntity<ContactDto> contactsContactIdPut(String contactId, @Valid UpdateContactDto updateContactDto) {
+  public ResponseEntity<ContactDto> contactsContactIdPut(String contactId,UpdateContactDto updateContactDto) {
     return ResponseEntity.ok(contactsControllerService.updateContact(contactId, updateContactDto));
   }
 
@@ -36,7 +36,7 @@ public class ContactsController implements ContactsApi {
   }
 
   @Override
-  public ResponseEntity<ContactDto> contactsPost(@Valid UpdateContactDto updateContactDto) {
+  public ResponseEntity<ContactDto> contactsPost(UpdateContactDto updateContactDto) {
     return ResponseEntity.ok(contactsControllerService.createContact(updateContactDto));
   }
 

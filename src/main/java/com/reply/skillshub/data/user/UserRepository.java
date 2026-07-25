@@ -7,6 +7,7 @@ import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 
 import com.neovisionaries.i18n.LanguageCode;
+import com.reply.skillshub.data.userrole.UserRole;
 
 public interface UserRepository extends Neo4jRepository<User, String> {
 
@@ -21,6 +22,13 @@ public interface UserRepository extends Neo4jRepository<User, String> {
         <T> Optional<T> findByConfirmationToken(String confirmationToken, Class<T> type);
 
         boolean existsByEmail(String email);
+
+        /**
+         * Returns the first User node matching the given role.
+         * Used by the signup flow to find the super/root admin that acts
+         * as the {@code createdBy} reference for newly signed-up users.
+         */
+        Optional<User> findFirstByUserRole(UserRole userRole);
 
         List<User> findBySpeaksLanguageLanguageCode(LanguageCode languageCode);
 

@@ -117,7 +117,7 @@ public class UsersControllerService {
         return getProfileForUser(employeeProfile);
     }
 
-    public ConfirmedUserResponse confirmUser(String confirmationToken, @Valid UserConfirmRequest userConfirmRequest) {
+    public ConfirmedUserResponse confirmUser(String confirmationToken, UserConfirmRequest userConfirmRequest) {
         var user = userService.findUserByConfirmationToken(confirmationToken, UserToConfirm.class);
 
         if (user.isEmpty()) {

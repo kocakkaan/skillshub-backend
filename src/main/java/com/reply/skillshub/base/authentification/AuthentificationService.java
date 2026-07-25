@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
+import java.time.LocalDate;
+
 import com.reply.skillshub.base.exceptionhandling.exeptions.UnconfirmedUser;
 import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ValidationException;
@@ -73,9 +75,18 @@ public class AuthentificationService {
             throw new ValidationException("Passwords must match");
         }
 
-        User newUser = convertSignupRequestToUser(signupRequest);
+        // Resolve the super/root admin user that will act as the creator of every
+        // self-registered user.  A super user must be pre-seeded in Neo4j (e.g. via
+        // Cypher) before the signup endpoint can be used.
+        User creator = userService.findFirstByUserRole(UserRole.ADMIN)
+                .orElseThrow(() -> new UserNotFound(
+                        "No ADMIN user found. A super user must be seeded in the database before signup."));
 
+        User newUser = convertSignupRequestToUser(signupRequest);
         newUser.setConfirmationToken(UUID.randomUUID().toString());
+        newUser.setCreatedBy(creator);
+        newUser.setCreatedUserId(creator.getId());
+        newUser.setCreatedOn(LocalDate.now());
 
         User savedUser = userService.save(newUser);
 

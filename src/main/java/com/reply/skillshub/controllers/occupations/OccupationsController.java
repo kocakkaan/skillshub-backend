@@ -19,7 +19,7 @@ public class OccupationsController implements OccupationsApi {
     private final OccupationsControllerService occupationControllerService;
 
     @Override
-    public ResponseEntity<List<OccupationalCategoryDto>> occupationsGet(@Valid Optional<String> label) {
+    public ResponseEntity<List<OccupationalCategoryDto>> occupationsGet(Optional<String> label) {
         return ResponseEntity.ok(occupationControllerService.getOccupations(label));
     }
 

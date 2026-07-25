@@ -39,14 +39,14 @@ public class UsersController implements UsersApi {
 
     @Override
     public ResponseEntity<ConfirmedUserResponse> usersConfirmationConfirmationTokenPut(String confirmationToken,
-            @Valid UserConfirmRequest userConfirmRequest) {
+            UserConfirmRequest userConfirmRequest) {
         return ResponseEntity.status(201)
                 .body(usersControllerService.confirmUser(confirmationToken, userConfirmRequest));
     }
 
     @Override
     public ResponseEntity<Void> userMeProfilePicturePost(
-            @Valid UserMeProfilePicturePostRequest userMeProfilePicturePostRequest) {
+            UserMeProfilePicturePostRequest userMeProfilePicturePostRequest) {
         String base64URL = userMeProfilePicturePostRequest.getBase64URL()
                 .orElseThrow(() -> new IllegalArgumentException("base64URL is required"));
         usersControllerService.saveUserProfilePictureFromBase64(base64URL);

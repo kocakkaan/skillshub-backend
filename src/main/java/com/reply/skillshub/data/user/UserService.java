@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.reply.skillshub.base.exceptionhandling.exeptions.UserNotFound;
 import com.reply.skillshub.base.exceptionhandling.exeptions.ValidationException;
+import com.reply.skillshub.data.userrole.UserRole;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -89,6 +90,15 @@ public class UserService {
             })
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the first User with the given role.
+     * Used by the signup flow to locate the super/root admin that serves
+     * as the {@code createdBy} reference for newly registered users.
+     */
+    public Optional<User> findFirstByUserRole(UserRole role) {
+        return userRepository.findFirstByUserRole(role);
     }
 
     public BaseUser findByResumeId(String id) {

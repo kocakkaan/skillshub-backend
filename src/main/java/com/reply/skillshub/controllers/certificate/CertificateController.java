@@ -28,7 +28,7 @@ public class CertificateController implements CertificatesApi {
     }
 
     @Override
-    public ResponseEntity<CertificateDto> usersUserIdCertificatesPost(String userId, @Valid CertificateDto certificateDto) {
+    public ResponseEntity<CertificateDto> usersUserIdCertificatesPost(String userId, CertificateDto certificateDto) {
         CertificateDto newCertificateDto;
 
         try {
@@ -52,7 +52,7 @@ public class CertificateController implements CertificatesApi {
     }
 
     @Override
-    public ResponseEntity<Void> usersUserIdCertificatesDelete(String userId, @NotNull @Valid String certificateId) {
+    public ResponseEntity<Void> usersUserIdCertificatesDelete(String userId,  String certificateId) {
         certificateControllerService.deleteCertificateForUser(userId, certificateId);
         return ResponseEntity.noContent().build();
     }

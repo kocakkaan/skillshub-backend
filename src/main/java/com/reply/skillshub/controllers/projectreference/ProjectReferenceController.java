@@ -17,7 +17,7 @@ public class ProjectReferenceController implements ReferencesApi{
 
   @Override
   public ResponseEntity<ProjectReferenceDto> projectsReferencesReferenceIdPut(String referenceId,
-      @Valid ProjectReferenceDto projectReferenceDto) {
+      ProjectReferenceDto projectReferenceDto) {
         return ResponseEntity.ok(
             projectReferenceControllerService.updateProjectReference(referenceId, projectReferenceDto));
   }

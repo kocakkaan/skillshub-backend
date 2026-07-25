@@ -199,7 +199,7 @@ public class ResumeController implements ResumesApi {
   }
 
   @Override
-  public ResponseEntity<Resource> export(@Valid ExportRequest exportRequest) {
+  public ResponseEntity<Resource> export(ExportRequest exportRequest) {
     var ppt = resumeControllerService.createPowerPointForMultipleShortCvs(exportRequest);
     var boas = new ByteArrayOutputStream();
     try {
@@ -224,13 +224,13 @@ public class ResumeController implements ResumesApi {
   }
 
   @Override
-  public ResponseEntity<List<UserWithShortCvDtos>> resumesGet(@NotNull @Valid List<String> users) {
+  public ResponseEntity<List<UserWithShortCvDtos>> resumesGet(List<String> users) {
     return ResponseEntity.ok(resumeControllerService.findResumesForUsers(users));
   }
 
   @Override
   public ResponseEntity<ShortCvDto> resumesResumeIdExperiencesPost(String resumeId,
-      @NotNull @Valid String experienceId) {
+      String experienceId) {
         return ResponseEntity.ok(resumeControllerService.addExperienceToResume(resumeId, experienceId));
   }
 

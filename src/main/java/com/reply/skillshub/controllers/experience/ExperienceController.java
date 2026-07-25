@@ -39,7 +39,7 @@ public class ExperienceController implements ExperiencesApi {
     }
 
     @Override
-    public ResponseEntity<ExperienceDto> usersUserIdExperiencesPost(String userId, @Valid ExperienceDto ExperienceDto) {
+    public ResponseEntity<ExperienceDto> usersUserIdExperiencesPost(String userId, ExperienceDto ExperienceDto) {
         return ResponseEntity.ok(experienceControllerService.createExperienceForUser(userId, ExperienceDto));
     }
     

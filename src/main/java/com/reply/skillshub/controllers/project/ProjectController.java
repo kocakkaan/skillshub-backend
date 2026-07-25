@@ -31,7 +31,7 @@ public class ProjectController implements ProjectsApi {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ProjectController.class);
 
   @Override
-  public ResponseEntity<List<ProjectDto>> projectsGet(@Valid Optional<String> search) {
+  public ResponseEntity<List<ProjectDto>> projectsGet(Optional<String> search) {
     if (search.isPresent() && !search.get().isEmpty()) {
       return ResponseEntity.ok(projectControllerService.getSearchProjects(search.get()));
     } else {
@@ -40,7 +40,7 @@ public class ProjectController implements ProjectsApi {
   }
 
   @Override
-  public ResponseEntity<ProjectDto> projectsPost(@Valid CreateProjectDto createProjectDto) {
+  public ResponseEntity<ProjectDto> projectsPost(CreateProjectDto createProjectDto) {
     return ResponseEntity.ok(projectControllerService.createProject(createProjectDto));
   }
 
@@ -56,13 +56,13 @@ public class ProjectController implements ProjectsApi {
   }
 
   @Override
-  public ResponseEntity<ProjectDto> projectsProjectIdPut(String projectId, @Valid UpdateProjectDto projectDto) {
+  public ResponseEntity<ProjectDto> projectsProjectIdPut(String projectId, UpdateProjectDto projectDto) {
     return ResponseEntity.ok(projectControllerService.updateProject(projectId, projectDto));
   }
 
   @Override
-  public ResponseEntity<Resource> exportMultipleProjectsToPptx(@NotNull @Valid String language,
-      @NotNull @Valid List<String> projects) {
+  public ResponseEntity<Resource> exportMultipleProjectsToPptx(String language,
+      List<String> projects) {
     var ppt = projectControllerService.exportMultipleProjectsToPptx(language, projects);
     var boas = new ByteArrayOutputStream();
     try {
@@ -87,7 +87,7 @@ public class ProjectController implements ProjectsApi {
   }
 
   @Override
-  public ResponseEntity<Resource> exportToPptx(String projectId, @NotNull @Valid String language) {
+  public ResponseEntity<Resource> exportToPptx(String projectId, String language) {
     var ppt = projectControllerService.exportToPptx(projectId, language);
     var boas = new ByteArrayOutputStream();
     try {
@@ -113,7 +113,7 @@ public class ProjectController implements ProjectsApi {
 
   @Override
   public ResponseEntity<Resource> projectsProjectIdExportPreviewPost(String projectId,
-      @NotNull @Valid String language) {
+      String language) {
     var image = projectControllerService.exportToImage(projectId, language);
     return ResponseEntity.ok(image);
   }

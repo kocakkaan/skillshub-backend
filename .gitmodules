@@ -1,4 +1,4 @@
 [submodule "skillshub_api_definition"]
 	path = skillshub_api_definition
-	url = git@github.com:MachineLearningReply/skillshub_api_definition.git
+	url = https://github.com/Ki-Reply-GmbH/skillshub-api-definition.git
 	branch = main

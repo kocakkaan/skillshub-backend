@@ -20,12 +20,12 @@ public class SkillController implements SkillsApi {
     private final SkillControllerService skillControllerService;
 
     @Override
-    public ResponseEntity<List<SkillDto>> skillsGet(@Valid Optional<String> label) {
+    public ResponseEntity<List<SkillDto>> skillsGet(Optional<String> label) {
         return ResponseEntity.ok(skillControllerService.getSkills(label));
     }
 
     @Override
-    public ResponseEntity<SkillDto> skillsPost(@Valid SkillsPostRequest skillsPostRequest) {
+    public ResponseEntity<SkillDto> skillsPost(SkillsPostRequest skillsPostRequest) {
         return ResponseEntity.status(201).body(skillControllerService.addSkill(skillsPostRequest));
     }
     
